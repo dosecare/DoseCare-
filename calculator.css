@@ -744,33 +744,6 @@
 
 
 /* =========================================
-   DIRECT SEARCH DIVIDER
-========================================= */
-
-.direct-search-label {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin: 25px 0 20px;
-}
-
-.direct-search-label::before,
-.direct-search-label::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: rgba(150, 215, 255, 0.08);
-}
-
-.direct-search-label span {
-    font-size: 9px;
-    letter-spacing: 2.5px;
-    color: rgba(180, 220, 240, 0.35);
-    white-space: nowrap;
-}
-
-
-/* =========================================
    CALCULATE BUTTON
 ========================================= */
 
@@ -895,6 +868,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 15px;
+    margin-bottom: 25px;
 }
 
 .result-header > div:first-child > span {
@@ -914,6 +888,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
     border-radius: 50%;
     background: rgba(75, 200, 175, 0.09);
     border: 1px solid rgba(95, 220, 190, 0.15);
@@ -922,160 +897,20 @@
 
 
 /* =========================================
-   RESULT MAIN
-========================================= */
-
-.result-main {
-    display: flex;
-    align-items: center;
-    gap: 35px;
-    margin-top: 25px;
-}
-
-.result-value {
-    display: flex;
-    align-items: baseline;
-    gap: 9px;
-    min-width: 210px;
-}
-
-.result-value strong {
-    font-size: clamp(42px, 7vw, 64px);
-    line-height: 1;
-    color: white;
-}
-
-.result-value span {
-    color: #70dfff;
-    font-size: 16px;
-}
-
-.result-per-dose {
-    color: rgba(200, 230, 245, 0.48);
-    font-size: 12px;
-}
-
-
-/* =========================================
-   DOSE SUMMARY
-========================================= */
-
-.dose-summary {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-top: 28px;
-}
-
-.dose-summary-item {
-    min-height: 82px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 7px;
-    padding: 15px;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, 0.035);
-    border: 1px solid rgba(145, 210, 245, 0.08);
-}
-
-.dose-summary-item span {
-    color: rgba(195, 225, 240, 0.42);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-}
-
-.dose-summary-item strong {
-    color: #eefaff;
-    font-size: 16px;
-}
-
-
-/* =========================================
-   RESULT DETAILS
-========================================= */
-
-.result-details {
-    margin-top: 20px;
-    padding: 17px;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, 0.025);
-    border: 1px solid rgba(145, 210, 245, 0.07);
-    color: rgba(215, 235, 250, 0.65);
-    font-size: 13px;
-    line-height: 1.8;
-}
-
-.result-details strong {
-    color: rgba(240, 248, 255, 0.9);
-}
-
-
-/* =========================================
-   IMPORTANT INFORMATION
-========================================= */
-
-.result-important {
-    margin-top: 15px;
-}
-
-.result-important p {
-    margin: 0 0 8px;
-    padding: 13px 15px;
-    border-radius: 13px;
-    background: rgba(70, 170, 240, 0.04);
-    border: 1px solid rgba(100, 200, 250, 0.07);
-    color: rgba(215, 235, 250, 0.58);
-    font-size: 12px;
-    line-height: 1.65;
-}
-
-.result-important strong {
-    color: rgba(240, 248, 255, 0.85);
-}
-
-
-/* =========================================
-   RESULT WARNING
-========================================= */
-
-.result-warning {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-top: 25px;
-    padding: 13px 15px;
-    border-radius: 13px;
-    background: rgba(240, 180, 80, 0.045);
-    border: 1px solid rgba(240, 190, 100, 0.09);
-}
-
-.result-warning > span {
-    font-size: 14px;
-    color: #eec375;
-}
-
-.result-warning p {
-    color: rgba(225, 215, 195, 0.5);
-    font-size: 11px;
-    line-height: 1.6;
-}
-
-
-/* =========================================
-   FUTURE 3-CARD RESULT LAYOUT
+   THREE RESULT CARDS
 ========================================= */
 
 .result-cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1.15fr 1fr;
     gap: 15px;
-    margin-top: 25px;
+    margin-top: 0;
+    align-items: stretch;
 }
 
 .result-card-item {
-    padding: 20px;
+    min-width: 0;
+    padding: 21px;
     border-radius: 18px;
     background: rgba(255, 255, 255, 0.035);
     border: 1px solid rgba(130, 210, 255, 0.10);
@@ -1093,20 +928,51 @@
 }
 
 .result-card-item .card-title {
-    margin-bottom: 14px;
+    margin-bottom: 18px;
     color: white;
     font-size: 17px;
     font-weight: 600;
 }
 
-.result-card-item .card-value {
+
+/* =========================================
+   CARD 01 — FINAL DOSE
+========================================= */
+
+.final-dose-values {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.final-dose-value {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    min-width: 0;
+}
+
+.final-dose-value strong {
     color: white;
-    font-size: 27px;
+    font-size: clamp(28px, 3vw, 38px);
+    line-height: 1;
     font-weight: 600;
 }
 
-.result-card-item .card-subtitle {
-    margin-top: 6px;
+.final-dose-value span {
+    color: #70dfff;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.final-dose-divider {
+    color: rgba(180, 225, 250, 0.35);
+    font-size: 18px;
+}
+
+.card-subtitle {
+    margin-top: 10px;
     color: rgba(195, 225, 240, 0.45);
     font-size: 11px;
     line-height: 1.5;
@@ -1114,47 +980,179 @@
 
 
 /* =========================================
-   CALCULATION STEPS
+   PATIENT RESULT INFO
+========================================= */
+
+.patient-result-info {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 9px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(145, 210, 245, 0.07);
+}
+
+.patient-result-info > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.patient-result-info span {
+    color: rgba(195, 225, 240, 0.42);
+    font-size: 10px;
+}
+
+.patient-result-info strong {
+    color: rgba(240, 248, 255, 0.88);
+    font-size: 12px;
+    text-align: right;
+}
+
+
+/* =========================================
+   CARD 02 — CALCULATION STEPS
 ========================================= */
 
 .calculation-steps {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 9px;
 }
 
 .calculation-step {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    padding: 13px 14px;
-    border-radius: 13px;
+    gap: 10px;
+    padding: 11px 12px;
+    border-radius: 12px;
     background: rgba(255, 255, 255, 0.025);
     border: 1px solid rgba(145, 210, 245, 0.06);
 }
 
 .calculation-step-number {
-    width: 25px;
-    height: 25px;
+    width: 23px;
+    height: 23px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+    border-radius: 7px;
     background: rgba(70, 170, 240, 0.08);
     color: #6edbff;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 600;
 }
 
 .calculation-step-content {
+    min-width: 0;
     color: rgba(215, 235, 250, 0.62);
-    font-size: 12px;
-    line-height: 1.7;
+    font-size: 11px;
+    line-height: 1.65;
 }
 
 .calculation-step-content strong {
     color: rgba(240, 248, 255, 0.92);
+}
+
+
+/* =========================================
+   CARD 03 — CLINICAL INFORMATION
+========================================= */
+
+.clinical-result-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.clinical-result-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 11px 12px;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(145, 210, 245, 0.06);
+}
+
+.clinical-result-item span {
+    color: rgba(195, 225, 240, 0.42);
+    font-size: 10px;
+}
+
+.clinical-result-item strong {
+    color: rgba(240, 248, 255, 0.9);
+    font-size: 12px;
+    text-align: right;
+}
+
+.clinical-result-details {
+    margin-top: 4px;
+    padding: 13px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    color: rgba(215, 235, 250, 0.58);
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.clinical-result-details strong {
+    color: rgba(240, 248, 255, 0.9);
+}
+
+
+/* =========================================
+   IMPORTANT INFORMATION
+========================================= */
+
+.result-important {
+    margin-top: 12px;
+}
+
+.result-important p {
+    margin: 0 0 8px;
+    padding: 11px 12px;
+    border-radius: 12px;
+    background: rgba(70, 170, 240, 0.04);
+    border: 1px solid rgba(100, 200, 250, 0.07);
+    color: rgba(215, 235, 250, 0.58);
+    font-size: 11px;
+    line-height: 1.65;
+}
+
+.result-important strong {
+    color: rgba(240, 248, 255, 0.85);
+}
+
+
+/* =========================================
+   SAFETY WARNING
+========================================= */
+
+.result-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 18px;
+    padding: 13px 15px;
+    border-radius: 13px;
+    background: rgba(240, 180, 80, 0.045);
+    border: 1px solid rgba(240, 190, 100, 0.09);
+}
+
+.result-warning > span {
+    flex-shrink: 0;
+    font-size: 14px;
+    color: #eec375;
+}
+
+.result-warning p {
+    color: rgba(225, 215, 195, 0.5);
+    font-size: 11px;
+    line-height: 1.6;
 }
 
 
@@ -1175,6 +1173,18 @@
 /* =========================================
    MOBILE
 ========================================= */
+
+@media (max-width: 900px) {
+
+    .result-cards {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .result-card-clinical {
+        grid-column: 1 / -1;
+    }
+}
+
 
 @media (max-width: 700px) {
 
@@ -1235,16 +1245,6 @@
         font-size: 21px;
     }
 
-    .result-main {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 20px;
-    }
-
-    .result-value {
-        min-width: 0;
-    }
-
     .calculator-logo {
         font-size: 19px;
     }
@@ -1254,12 +1254,12 @@
         height: 34px;
     }
 
-    .dose-summary {
+    .result-cards {
         grid-template-columns: 1fr;
     }
 
-    .result-cards {
-        grid-template-columns: 1fr;
+    .result-card-clinical {
+        grid-column: auto;
     }
 
     .medicine-result-item {
@@ -1293,6 +1293,14 @@
         width: 110px;
         font-size: 13px;
     }
+
+    .final-dose-values {
+        gap: 8px;
+    }
+
+    .final-dose-value strong {
+        font-size: 32px;
+    }
 }
 
 
@@ -1323,7 +1331,15 @@
         padding: 20px 16px;
     }
 
-    .result-value strong {
-        font-size: 42px;
+    .final-dose-values {
+        flex-wrap: wrap;
+    }
+
+    .final-dose-value strong {
+        font-size: 30px;
+    }
+
+    .result-card-item {
+        padding: 18px 16px;
     }
 }
