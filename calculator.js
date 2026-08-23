@@ -114,6 +114,14 @@ const resultPerDose =
 
 const resultImportant =
     document.getElementById("result-important");
+const conditionGroup =
+    document.getElementById("condition-group");
+
+const conditionSelect =
+    document.getElementById("condition-select");
+
+const selectedConditionInfo =
+    document.getElementById("selected-condition-info");
 
 
 /* =========================================
