@@ -245,37 +245,89 @@
             <div class="calculator-divider"></div>
 
 
-<!-- =========================================
-     CONDITION SELECT
-========================================= -->
 
-<div
-    class="form-group condition-group"
-    id="condition-group"
-    style="display: none;"
->
+            <!-- =========================================
+                 CONDITION SELECT
+                 Appears ONLY when the selected medicine
+                 has multiple condition-based regimens.
+            ========================================== -->
 
-    <label for="condition-select">
-        Condition
-    </label>
+            <div
+                class="form-group condition-group"
+                id="condition-group"
+                style="display: none;"
+            >
 
-    <select
-        id="condition-select"
-        class="form-select"
-    >
+                <div class="section-title condition-section-title">
 
-        <option value="">
-            Select a condition
-        </option>
+                    <div class="step-number">
+                        C
+                    </div>
 
-    </select>
+                    <div>
 
-    <div
-        id="selected-condition-info"
-        class="selected-condition-info"
-    ></div>
+                        <h2>
+                            Select Condition
+                        </h2>
 
-</div>
+                        <p>
+                            Select the clinical condition to use
+                            the appropriate dosing regimen.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="medicine-field">
+
+                    <label for="condition-select">
+                        Condition
+                    </label>
+
+
+                    <div class="select-wrapper">
+
+                        <select
+                            id="condition-select"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                Select a condition
+                            </option>
+
+                        </select>
+
+
+                        <span class="select-arrow">
+                            ▾
+                        </span>
+
+                    </div>
+
+
+                    <p class="input-hint">
+                        This section appears only when the
+                        selected medicine has different dosing
+                        regimens for different conditions.
+                    </p>
+
+                </div>
+
+
+                <!-- SELECTED CONDITION INFORMATION -->
+
+                <div
+                    id="selected-condition-info"
+                    class="selected-condition-info"
+                ></div>
+
+            </div>
+
+
+
             <!-- =========================================
                  STEP 02 — PATIENT
             ========================================== -->
@@ -724,6 +776,7 @@
                         </p>
 
 
+
                         <!-- PATIENT INFO -->
 
                         <div class="patient-result-info">
@@ -780,8 +833,8 @@
                             id="calculation-steps"
                         >
 
-                            <!-- JavaScript will insert
-                                 calculation steps here -->
+                            <!-- JavaScript inserts the complete
+                                 step-by-step calculation here -->
 
                         </div>
 
@@ -790,7 +843,7 @@
 
 
                     <!-- =================================
-                         CARD 03 — CLINICAL INFO
+                         CARD 03 — CLINICAL INFORMATION
                     ================================== -->
 
                     <article class="result-card-item result-card-clinical">
@@ -801,12 +854,19 @@
 
 
                         <h3 class="card-title">
-                            Dose Details
+                            Treatment Information
                         </h3>
 
 
+
+                        <!-- =================================
+                             BASIC DOSE DETAILS
+                        ================================== -->
+
                         <div class="clinical-result-list">
 
+
+                            <!-- FREQUENCY -->
 
                             <div class="clinical-result-item">
 
@@ -821,6 +881,9 @@
                             </div>
 
 
+
+                            <!-- MINIMUM DOSE -->
+
                             <div class="clinical-result-item">
 
                                 <span>
@@ -833,6 +896,9 @@
 
                             </div>
 
+
+
+                            <!-- MAXIMUM DOSE -->
 
                             <div class="clinical-result-item">
 
@@ -847,6 +913,8 @@
                             </div>
 
 
+                            <!-- EXTRA DOSE DETAILS -->
+
                             <div
                                 class="clinical-result-details"
                                 id="result-details"
@@ -856,12 +924,177 @@
                         </div>
 
 
-                        <!-- IMPORTANT INFORMATION -->
+
+                        <!-- =================================
+                             TREATMENT INFORMATION
+                        ================================== -->
 
                         <div
-                            class="result-important"
-                            id="result-important"
-                        ></div>
+                            class="treatment-information"
+                            id="treatment-information"
+                        >
+
+
+                            <!-- ACTIVE INGREDIENT -->
+
+                            <div
+                                class="treatment-info-item"
+                                id="result-active-ingredient-container"
+                            >
+
+                                <span class="treatment-info-label">
+                                    Active Ingredient
+                                </span>
+
+                                <p id="result-active-ingredient">
+                                    —
+                                </p>
+
+                            </div>
+
+
+
+                            <!-- DRUG CLASS -->
+
+                            <div
+                                class="treatment-info-item"
+                                id="result-drug-class-container"
+                            >
+
+                                <span class="treatment-info-label">
+                                    Drug Class
+                                </span>
+
+                                <p id="result-drug-class">
+                                    —
+                                </p>
+
+                            </div>
+
+
+
+                            <!-- MECHANISM OF ACTION -->
+
+                            <div
+                                class="treatment-info-item"
+                                id="result-mechanism-container"
+                            >
+
+                                <span class="treatment-info-label">
+                                    Mechanism of Action
+                                </span>
+
+                                <p id="result-mechanism">
+                                    —
+                                </p>
+
+                            </div>
+
+
+
+                            <!-- THERAPEUTIC USE -->
+
+                            <div
+                                class="treatment-info-item"
+                                id="result-therapeutic-use-container"
+                            >
+
+                                <span class="treatment-info-label">
+                                    Therapeutic Use
+                                </span>
+
+                                <p id="result-therapeutic-use">
+                                    —
+                                </p>
+
+                            </div>
+
+
+
+                            <!-- SELECTED CONDITION -->
+
+                            <div
+                                class="treatment-info-item"
+                                id="result-condition-container"
+                            >
+
+                                <span class="treatment-info-label">
+                                    Condition
+                                </span>
+
+                                <p id="result-condition">
+                                    —
+                                </p>
+
+                            </div>
+
+
+
+                            <!-- DURATION -->
+
+                            <div
+                                class="treatment-info-item"
+                                id="result-duration-container"
+                            >
+
+                                <span class="treatment-info-label">
+                                    Treatment Duration
+                                </span>
+
+                                <p id="result-duration">
+                                    —
+                                </p>
+
+                            </div>
+
+
+
+                            <!-- ROUTE / DOSAGE FORM -->
+
+                            <div
+                                class="treatment-info-item"
+                                id="result-dosage-form-container"
+                            >
+
+                                <span class="treatment-info-label">
+                                    Dosage Form
+                                </span>
+
+                                <p id="result-dosage-form">
+                                    Oral Liquid
+                                </p>
+
+                            </div>
+
+
+
+                            <!-- CLINICAL NOTES -->
+
+                            <div
+                                class="treatment-info-item"
+                                id="result-clinical-notes-container"
+                            >
+
+                                <span class="treatment-info-label">
+                                    Clinical Notes
+                                </span>
+
+                                <p id="result-clinical-notes">
+                                    —
+                                </p>
+
+                            </div>
+
+
+
+                            <!-- IMPORTANT INFORMATION -->
+
+                            <div
+                                class="result-important"
+                                id="result-important"
+                            ></div>
+
+                        </div>
 
                     </article>
 
