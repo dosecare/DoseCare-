@@ -1,7 +1,7 @@
 /* =========================================
    DoseCare
    Pediatric Dose Calculator
-   Corrected Full Version
+   FULL UPDATED VERSION
 
    - Oral liquid medicines only
    - Syrups / Oral Solutions / Oral Suspensions
@@ -9,12 +9,19 @@
    - mg/kg/day
    - condition-based dosing
    - severity-based dosing
-   - Frequency
+   - Frequency + interval in hours
    - mg → mL conversion
    - Step-by-step calculation
    - 3 result cards
    - Patient information
-   - Dose information
+   - Extended medicine information
+   - Mechanism of action
+   - Active ingredient
+   - Drug class
+   - Therapeutic uses
+   - Important information
+   - Warnings
+   - Duration
    - History using localStorage
 ========================================= */
 
@@ -196,6 +203,296 @@ function cloneObject(object) {
 
 
 /* =========================================
+   MEDICINE INFORMATION HELPERS
+========================================= */
+
+function getMedicineField(
+    medicine,
+    fields,
+    fallback = ""
+) {
+
+    if (!medicine) {
+        return fallback;
+    }
+
+    for (const field of fields) {
+
+        const value =
+            medicine[field];
+
+        if (
+            value !== undefined &&
+            value !== null &&
+            value !== ""
+        ) {
+
+            return value;
+        }
+    }
+
+    return fallback;
+}
+
+
+function getMedicineDrugClass(medicine) {
+
+    const value =
+        getMedicineField(
+            medicine,
+            [
+                "drugClass",
+                "drugClasses",
+                "class",
+                "therapeuticClass",
+                "pharmacologicalClass"
+            ],
+            ""
+        );
+
+
+    if (Array.isArray(value)) {
+
+        return value
+            .filter(Boolean)
+            .join(" · ");
+    }
+
+
+    return String(value || "");
+}
+
+
+function getActiveIngredient(medicine) {
+
+    const value =
+        getMedicineField(
+            medicine,
+            [
+                "activeIngredient",
+                "activeIngredients",
+                "active_ingredient",
+                "genericName",
+                "ingredient"
+            ],
+            ""
+        );
+
+
+    if (Array.isArray(value)) {
+
+        return value
+            .filter(Boolean)
+            .join(", ");
+    }
+
+
+    return String(value || "");
+}
+
+
+function getMechanismOfAction(medicine) {
+
+    return getMedicineField(
+        medicine,
+        [
+            "mechanismOfAction",
+            "mechanism",
+            "mechanism_of_action",
+            "pharmacologicalMechanism",
+            "howItWorks"
+        ],
+        ""
+    );
+}
+
+
+function getTherapeuticUses(medicine) {
+
+    const value =
+        getMedicineField(
+            medicine,
+            [
+                "therapeuticUses",
+                "therapeuticUse",
+                "uses",
+                "indications",
+                "indication"
+            ],
+            ""
+        );
+
+
+    if (Array.isArray(value)) {
+
+        return value
+            .filter(Boolean)
+            .join(", ");
+    }
+
+
+    return String(value || "");
+}
+
+
+function getMedicineNotes(medicine) {
+
+    const value =
+        getMedicineField(
+            medicine,
+            [
+                "notes",
+                "importantInformation",
+                "importantNotes",
+                "clinicalNotes"
+            ],
+            ""
+        );
+
+
+    if (Array.isArray(value)) {
+
+        return value
+            .filter(Boolean)
+            .join(" ");
+    }
+
+
+    return String(value || "");
+}
+
+
+function getMedicineWarnings(medicine) {
+
+    const value =
+        getMedicineField(
+            medicine,
+            [
+                "warnings",
+                "warning",
+                "importantWarnings",
+                "precautions"
+            ],
+            ""
+        );
+
+
+    if (Array.isArray(value)) {
+
+        return value
+            .filter(Boolean)
+            .join(" ");
+    }
+
+
+    return String(value || "");
+}
+
+
+function getContraindications(medicine) {
+
+    const value =
+        getMedicineField(
+            medicine,
+            [
+                "contraindications",
+                "contraindication"
+            ],
+            ""
+        );
+
+
+    if (Array.isArray(value)) {
+
+        return value
+            .filter(Boolean)
+            .join(", ");
+    }
+
+
+    return String(value || "");
+}
+
+
+function getCommonAdverseEffects(medicine) {
+
+    const value =
+        getMedicineField(
+            medicine,
+            [
+                "commonAdverseEffects",
+                "adverseEffects",
+                "sideEffects",
+                "commonSideEffects"
+            ],
+            ""
+        );
+
+
+    if (Array.isArray(value)) {
+
+        return value
+            .filter(Boolean)
+            .join(", ");
+    }
+
+
+    return String(value || "");
+}
+
+
+function getMonitoringInformation(medicine) {
+
+    const value =
+        getMedicineField(
+            medicine,
+            [
+                "monitoring",
+                "monitoringParameters",
+                "clinicalMonitoring"
+            ],
+            ""
+        );
+
+
+    if (Array.isArray(value)) {
+
+        return value
+            .filter(Boolean)
+            .join(", ");
+    }
+
+
+    return String(value || "");
+}
+
+
+function getStorageInformation(medicine) {
+
+    const value =
+        getMedicineField(
+            medicine,
+            [
+                "storage",
+                "storageInformation"
+            ],
+            ""
+        );
+
+
+    if (Array.isArray(value)) {
+
+        return value
+            .filter(Boolean)
+            .join(" ");
+    }
+
+
+    return String(value || "");
+}
+
+
+/* =========================================
    MEDICINE FORM
    STRICTLY ORAL LIQUIDS
 ========================================= */
@@ -220,10 +517,6 @@ function isLiquidMedicine(medicine) {
             .filter(Boolean)
             .map(normalizeText);
 
-
-    /*
-       Explicitly forbidden dosage forms.
-    */
 
     const forbiddenForms = [
         "tablet",
@@ -263,14 +556,6 @@ function isLiquidMedicine(medicine) {
     }
 
 
-    /*
-       Accepted forms:
-       Syrup
-       Oral solution
-       Oral suspension
-       Oral liquid
-    */
-
     const isAcceptedLiquidForm =
         forms.some(
             form =>
@@ -293,27 +578,10 @@ function isLiquidMedicine(medicine) {
     }
 
 
-    /*
-       If dosage form is explicitly present
-       but is not one of the accepted forms,
-       reject it.
-
-       This prevents a tablet/capsule or
-       unknown dosage form from being accepted
-       merely because it has a concentration.
-    */
-
     if (forms.length > 0) {
         return false;
     }
 
-
-    /*
-       Legacy medicine records may not contain
-       dosageForm. In that case, only accept the
-       medicine when its route clearly identifies
-       oral use AND its concentrations are valid.
-    */
 
     const route =
         normalizeText(
@@ -1183,11 +1451,293 @@ function getRegimenLabel(regimen) {
     }
 
 
+    if (
+        type ===
+        "condition_based"
+    ) {
+
+        return (
+            doseText
+                ? `${doseText} mg/kg`
+                : "Condition-based dose"
+        );
+    }
+
+
+    if (
+        type ===
+        "severity_based"
+    ) {
+
+        return (
+            doseText
+                ? `${doseText} mg/kg/day`
+                : "Severity-based dose"
+        );
+    }
+
+
     return (
         doseText
             ? `${doseText} mg/kg`
             : "Dose option"
     );
+}
+
+
+/* =========================================
+   FREQUENCY + HOURS
+========================================= */
+
+function getFrequencyNumber(dosing) {
+
+    if (!dosing) {
+        return 1;
+    }
+
+
+    const frequency =
+        Number(
+            dosing.frequency
+        );
+
+
+    if (
+        Number.isFinite(
+            frequency
+        ) &&
+        frequency > 0
+    ) {
+        return frequency;
+    }
+
+
+    if (
+        Array.isArray(
+            dosing.frequencyOptions
+        )
+    ) {
+
+        const first =
+            Number(
+                dosing.frequencyOptions[0]
+            );
+
+
+        if (
+            Number.isFinite(first) &&
+            first > 0
+        ) {
+            return first;
+        }
+    }
+
+
+    return 1;
+}
+
+
+function getFrequencyHours(
+    dosing,
+    frequency
+) {
+
+    if (!dosing) {
+        return null;
+    }
+
+
+    const explicitHours =
+        Number(
+            dosing.intervalHours ??
+            dosing.frequencyHours ??
+            dosing.hoursBetweenDoses
+        );
+
+
+    if (
+        Number.isFinite(explicitHours) &&
+        explicitHours > 0
+    ) {
+
+        return explicitHours;
+    }
+
+
+    const intervalText =
+        normalizeText(
+            dosing.interval ||
+            dosing.frequencyText ||
+            ""
+        );
+
+
+    const hourMatch =
+        intervalText.match(
+            /(\d+(?:\.\d+)?)\s*(?:hour|hours|hr|hrs|h)/
+        );
+
+
+    if (hourMatch) {
+
+        const hours =
+            Number(
+                hourMatch[1]
+            );
+
+        if (
+            Number.isFinite(hours) &&
+            hours > 0
+        ) {
+            return hours;
+        }
+    }
+
+
+    const numericFrequency =
+        Number(
+            frequency
+        );
+
+
+    if (
+        Number.isFinite(
+            numericFrequency
+        ) &&
+        numericFrequency > 0
+    ) {
+
+        const calculatedHours =
+            24 /
+            numericFrequency;
+
+
+        if (
+            Number.isFinite(
+                calculatedHours
+            )
+        ) {
+
+            return calculatedHours;
+        }
+    }
+
+
+    return null;
+}
+
+
+function formatFrequencyHours(hours) {
+
+    if (
+        !Number.isFinite(hours) ||
+        hours <= 0
+    ) {
+        return "";
+    }
+
+
+    if (
+        Math.abs(
+            hours -
+            Math.round(hours)
+        ) < 0.001
+    ) {
+
+        return `${Math.round(hours)} hours`;
+    }
+
+
+    return `${formatNumber(hours, 1)} hours`;
+}
+
+
+function getFrequencyText(
+    dosing,
+    frequency
+) {
+
+    const explicitText =
+        dosing &&
+        (
+            dosing.frequencyText ||
+            dosing.interval
+        );
+
+
+    let baseText = "";
+
+
+    if (explicitText) {
+
+        baseText =
+            String(
+                explicitText
+            );
+
+    } else {
+
+        const numericFrequency =
+            Number(
+                frequency
+            );
+
+
+        if (numericFrequency === 1) {
+            baseText = "Once daily";
+
+        } else if (numericFrequency === 2) {
+            baseText = "Twice daily";
+
+        } else if (numericFrequency === 3) {
+            baseText = "Three times daily";
+
+        } else if (numericFrequency === 4) {
+            baseText = "Four times daily";
+
+        } else {
+
+            baseText =
+                `${formatNumber(numericFrequency, 0)} times daily`;
+        }
+    }
+
+
+    const hours =
+        getFrequencyHours(
+            dosing,
+            frequency
+        );
+
+
+    if (
+        Number.isFinite(hours)
+    ) {
+
+        const hoursText =
+            formatFrequencyHours(
+                hours
+            );
+
+
+        if (
+            !normalizeText(baseText)
+                .includes(
+                    normalizeText(hoursText)
+                )
+        ) {
+
+            return (
+                `${baseText} (every ${hoursText.replace(
+                    " hours",
+                    " hours"
+                )})`
+            );
+        }
+    }
+
+
+    return baseText;
 }
 
 
@@ -1304,9 +1854,9 @@ function displaySelectedRegimenInfo(regimen) {
 
 
     const frequencyNumber =
-        Number(
-            regimen.frequency
-        ) || 1;
+        getFrequencyNumber(
+            regimen
+        );
 
 
     const frequency =
@@ -1483,6 +2033,7 @@ function selectMedicine(medicine) {
                     )
                 )}
             </strong>
+
             <span>
                 ${escapeHtml(
                     String(form)
@@ -1695,18 +2246,10 @@ if (medicineSearch) {
 
 
                             const drugClass =
-                                Array.isArray(
-                                    medicine.drugClass
+                                getMedicineDrugClass(
+                                    medicine
                                 )
-                                    ? medicine.drugClass
-                                        .join(" ")
-                                        .toLowerCase()
-                                    : String(
-                                        medicine.drugClass ||
-                                        medicine.class ||
-                                        ""
-                                    )
-                                    .toLowerCase();
+                                .toLowerCase();
 
 
                             return (
@@ -1788,17 +2331,10 @@ function showSearchResults(results) {
 
 
             const drugClass =
-                Array.isArray(
-                    medicine.drugClass
-                )
-                    ? medicine.drugClass.join(
-                        " · "
-                    )
-                    : (
-                        medicine.drugClass ||
-                        medicine.class ||
-                        "Medicine"
-                    );
+                getMedicineDrugClass(
+                    medicine
+                ) ||
+                "Medicine";
 
 
             item.innerHTML = `
@@ -2140,118 +2676,7 @@ function validateMedicineAge(medicine) {
 
 
 /* =========================================
-   FREQUENCY
-========================================= */
-
-function getFrequencyNumber(dosing) {
-
-    if (!dosing) {
-        return 1;
-    }
-
-
-    const frequency =
-        Number(
-            dosing.frequency
-        );
-
-
-    if (
-        Number.isFinite(
-            frequency
-        ) &&
-        frequency > 0
-    ) {
-        return frequency;
-    }
-
-
-    if (
-        Array.isArray(
-            dosing.frequencyOptions
-        )
-    ) {
-
-        const first =
-            Number(
-                dosing.frequencyOptions[0]
-            );
-
-
-        if (
-            Number.isFinite(first) &&
-            first > 0
-        ) {
-            return first;
-        }
-    }
-
-
-    return 1;
-}
-
-
-function getFrequencyText(
-    dosing,
-    frequency
-) {
-
-    if (
-        dosing &&
-        dosing.interval
-    ) {
-
-        return String(
-            dosing.interval
-        );
-    }
-
-
-    if (
-        dosing &&
-        dosing.frequencyText
-    ) {
-
-        return String(
-            dosing.frequencyText
-        );
-    }
-
-
-    const numericFrequency =
-        Number(
-            frequency
-        );
-
-
-    if (numericFrequency === 1) {
-        return "Once daily";
-    }
-
-
-    if (numericFrequency === 2) {
-        return "Twice daily";
-    }
-
-
-    if (numericFrequency === 3) {
-        return "Three times daily";
-    }
-
-
-    if (numericFrequency === 4) {
-        return "Four times daily";
-    }
-
-
-    return (
-        `${formatNumber(numericFrequency, 0)} times daily`
-    );
-}
-
-
-/* =========================================
-   CALCULATE DOSING RULE
+   DOSING CALCULATION
 ========================================= */
 
 function calculateDosingRule(
@@ -2296,7 +2721,7 @@ function calculateDosingRule(
 
 
     /* =====================================
-       MG / KG / DOSE
+       MG/KG/DOSE
     ===================================== */
 
     if (
@@ -2454,6 +2879,12 @@ function calculateDosingRule(
             dosesPerDay:
                 frequency,
 
+            intervalHours:
+                getFrequencyHours(
+                    dosing,
+                    frequency
+                ),
+
             unit:
                 "mg/kg/dose",
 
@@ -2471,7 +2902,7 @@ function calculateDosingRule(
 
 
     /* =====================================
-       MG / KG / DAY
+       MG/KG/DAY
     ===================================== */
 
     if (
@@ -2626,6 +3057,12 @@ function calculateDosingRule(
 
             dosesPerDay:
                 frequency,
+
+            intervalHours:
+                getFrequencyHours(
+                    dosing,
+                    frequency
+                ),
 
             unit:
                 "mg/kg/day",
@@ -2793,6 +3230,12 @@ function calculateDosingRule(
 
             dosesPerDay:
                 frequency,
+
+            intervalHours:
+                getFrequencyHours(
+                    dosing,
+                    frequency
+                ),
 
             unit:
                 "mg/kg/day",
@@ -2963,6 +3406,12 @@ function calculateDosingRule(
             dosesPerDay:
                 frequency,
 
+            intervalHours:
+                getFrequencyHours(
+                    dosing,
+                    frequency
+                ),
+
             unit:
                 "mg/kg/day",
 
@@ -3069,6 +3518,347 @@ function formatRange(
 
 
 /* =========================================
+   INFORMATION ROW
+========================================= */
+
+function buildInformationRow(
+    label,
+    value,
+    allowHtml = false
+) {
+
+    if (
+        value === undefined ||
+        value === null ||
+        value === ""
+    ) {
+        return "";
+    }
+
+
+    return `
+
+        <div class="dose-info-row">
+
+            <span>
+                ${escapeHtml(label)}
+            </span>
+
+            <strong>
+                ${
+                    allowHtml
+                        ? value
+                        : escapeHtml(
+                            String(value)
+                        )
+                }
+            </strong>
+
+        </div>
+    `;
+}
+
+
+/* =========================================
+   MEDICINE INFORMATION SECTION
+========================================= */
+
+function buildMedicineInformationHTML() {
+
+    if (!selectedMedicine) {
+        return "";
+    }
+
+
+    const activeIngredient =
+        getActiveIngredient(
+            selectedMedicine
+        );
+
+
+    const drugClass =
+        getMedicineDrugClass(
+            selectedMedicine
+        );
+
+
+    const mechanism =
+        getMechanismOfAction(
+            selectedMedicine
+        );
+
+
+    const therapeuticUses =
+        getTherapeuticUses(
+            selectedMedicine
+        );
+
+
+    const contraindications =
+        getContraindications(
+            selectedMedicine
+        );
+
+
+    const adverseEffects =
+        getCommonAdverseEffects(
+            selectedMedicine
+        );
+
+
+    const monitoring =
+        getMonitoringInformation(
+            selectedMedicine
+        );
+
+
+    const storage =
+        getStorageInformation(
+            selectedMedicine
+        );
+
+
+    const notes =
+        getMedicineNotes(
+            selectedMedicine
+        );
+
+
+    const warnings =
+        getMedicineWarnings(
+            selectedMedicine
+        );
+
+
+    let html = "";
+
+
+    if (activeIngredient) {
+
+        html += `
+
+            <div class="medicine-detail-block">
+
+                <span class="medicine-detail-label">
+                    Active ingredient
+                </span>
+
+                <p>
+                    ${escapeHtml(
+                        activeIngredient
+                    )}
+                </p>
+
+            </div>
+        `;
+    }
+
+
+    if (drugClass) {
+
+        html += `
+
+            <div class="medicine-detail-block">
+
+                <span class="medicine-detail-label">
+                    Drug class
+                </span>
+
+                <p>
+                    ${escapeHtml(
+                        drugClass
+                    )}
+                </p>
+
+            </div>
+        `;
+    }
+
+
+    if (mechanism) {
+
+        html += `
+
+            <div class="medicine-detail-block">
+
+                <span class="medicine-detail-label">
+                    Mechanism of action
+                </span>
+
+                <p>
+                    ${escapeHtml(
+                        mechanism
+                    )}
+                </p>
+
+            </div>
+        `;
+    }
+
+
+    if (therapeuticUses) {
+
+        html += `
+
+            <div class="medicine-detail-block">
+
+                <span class="medicine-detail-label">
+                    Therapeutic uses
+                </span>
+
+                <p>
+                    ${escapeHtml(
+                        therapeuticUses
+                    )}
+                </p>
+
+            </div>
+        `;
+    }
+
+
+    if (contraindications) {
+
+        html += `
+
+            <div class="medicine-detail-block">
+
+                <span class="medicine-detail-label">
+                    Contraindications
+                </span>
+
+                <p>
+                    ${escapeHtml(
+                        contraindications
+                    )}
+                </p>
+
+            </div>
+        `;
+    }
+
+
+    if (adverseEffects) {
+
+        html += `
+
+            <div class="medicine-detail-block">
+
+                <span class="medicine-detail-label">
+                    Common adverse effects
+                </span>
+
+                <p>
+                    ${escapeHtml(
+                        adverseEffects
+                    )}
+                </p>
+
+            </div>
+        `;
+    }
+
+
+    if (monitoring) {
+
+        html += `
+
+            <div class="medicine-detail-block">
+
+                <span class="medicine-detail-label">
+                    Monitoring
+                </span>
+
+                <p>
+                    ${escapeHtml(
+                        monitoring
+                    )}
+                </p>
+
+            </div>
+        `;
+    }
+
+
+    if (storage) {
+
+        html += `
+
+            <div class="medicine-detail-block">
+
+                <span class="medicine-detail-label">
+                    Storage
+                </span>
+
+                <p>
+                    ${escapeHtml(
+                        storage
+                    )}
+                </p>
+
+            </div>
+        `;
+    }
+
+
+    if (notes) {
+
+        html += `
+
+            <div class="medicine-detail-block">
+
+                <span class="medicine-detail-label">
+                    Important information
+                </span>
+
+                <p>
+                    ${escapeHtml(
+                        notes
+                    )}
+                </p>
+
+            </div>
+        `;
+    }
+
+
+    if (warnings) {
+
+        html += `
+
+            <div class="medicine-detail-block warning-detail-block">
+
+                <span class="medicine-detail-label">
+                    Warnings
+                </span>
+
+                <p>
+                    ${escapeHtml(
+                        warnings
+                    )}
+                </p>
+
+            </div>
+        `;
+    }
+
+
+    if (!html) {
+
+        return `
+            <div class="medicine-detail-empty">
+                Additional medicine information is not
+                available in the current medicine record.
+            </div>
+        `;
+    }
+
+
+    return html;
+}
+
+
+/* =========================================
    RESULT CARD
 ========================================= */
 
@@ -3082,49 +3872,69 @@ function buildResultCards(
         return;
     }
 
-    const ageMonths = getAgeInMonths();
+
+    const ageMonths =
+        getAgeInMonths();
+
 
     const ageText =
         Number.isFinite(ageMonths)
             ? formatAgeFromMonths(ageMonths)
             : "—";
 
+
     const weight =
         weightInput
-            ? parseFloat(weightInput.value)
+            ? parseFloat(
+                weightInput.value
+            )
             : NaN;
+
 
     const weightText =
         Number.isFinite(weight)
             ? `${formatNumber(weight)} kg`
             : "—";
 
-    const minMg = result.minMg;
-    const maxMg = result.maxMg;
 
-    const minMl = calculateVolume(
-        minMg,
-        concentrationMg,
-        concentrationMl
-    );
+    const minMg =
+        result.minMg;
 
-    const maxMl = calculateVolume(
-        maxMg,
-        concentrationMg,
-        concentrationMl
-    );
 
-    const finalMg = formatRange(
-        minMg,
-        maxMg,
-        " mg"
-    );
+    const maxMg =
+        result.maxMg;
 
-    const finalMl = formatRange(
-        minMl,
-        maxMl,
-        " mL"
-    );
+
+    const minMl =
+        calculateVolume(
+            minMg,
+            concentrationMg,
+            concentrationMl
+        );
+
+
+    const maxMl =
+        calculateVolume(
+            maxMg,
+            concentrationMg,
+            concentrationMl
+        );
+
+
+    const finalMg =
+        formatRange(
+            minMg,
+            maxMg,
+            " mg"
+        );
+
+
+    const finalMl =
+        formatRange(
+            minMl,
+            maxMl,
+            " mL"
+        );
 
 
     /* =====================================
@@ -3133,12 +3943,18 @@ function buildResultCards(
 
     let calculationHTML = "";
 
+
     const isPerDose =
-        result.type === "mg_per_kg_per_dose";
+        result.type ===
+        "mg_per_kg_per_dose";
+
 
     const isPerDay =
-        result.type === "mg_per_kg_per_day" ||
-        result.type === "weight_based";
+        result.type ===
+            "mg_per_kg_per_day" ||
+        result.type ===
+            "weight_based";
+
 
     const rateIsSingle =
         isSingleValue(
@@ -3480,25 +4296,33 @@ function buildResultCards(
 
 
     /* =====================================
-       DOSE INFORMATION — CARD 3
+       DOSE INFORMATION
     ===================================== */
 
-    let informationHTML = `
+    let informationHTML = "";
 
-        <div class="dose-info-row">
 
-            <span>
-                Frequency
-            </span>
+    informationHTML +=
+        buildInformationRow(
+            "Frequency",
+            result.frequency || "—"
+        );
 
-            <strong>
-                ${escapeHtml(
-                    result.frequency || "—"
-                )}
-            </strong>
 
-        </div>
-    `;
+    if (
+        Number.isFinite(
+            result.intervalHours
+        )
+    ) {
+
+        informationHTML +=
+            buildInformationRow(
+                "Interval between doses",
+                `Every ${formatFrequencyHours(
+                    result.intervalHours
+                )}`
+            );
+    }
 
 
     if (
@@ -3506,28 +4330,23 @@ function buildResultCards(
         Number.isFinite(result.dailyMaxMg)
     ) {
 
-        informationHTML += `
-
-            <div class="dose-info-row">
-
-                <span>
-                    Total daily dose
-                </span>
-
-                <strong>
-                    ${formatRange(
-                        result.dailyMinMg,
-                        result.dailyMaxMg,
-                        " mg/day"
-                    )}
-                </strong>
-
-            </div>
-        `;
+        informationHTML +=
+            buildInformationRow(
+                "Total daily dose",
+                formatRange(
+                    result.dailyMinMg,
+                    result.dailyMaxMg,
+                    " mg/day"
+                )
+            );
     }
 
 
-    if (Number.isFinite(result.maxPerDose)) {
+    if (
+        Number.isFinite(
+            result.maxPerDose
+        )
+    ) {
 
         const maxPerDoseMl =
             calculateVolume(
@@ -3536,34 +4355,39 @@ function buildResultCards(
                 concentrationMl
             );
 
-        informationHTML += `
 
-            <div class="dose-info-row">
-
-                <span>
-                    Maximum per dose
-                </span>
-
-                <strong>
-                    ${formatNumber(result.maxPerDose)}
+        informationHTML +=
+            buildInformationRow(
+                "Maximum per dose",
+                `
+                    ${formatNumber(
+                        result.maxPerDose
+                    )}
                     mg
                     ${
-                        Number.isFinite(maxPerDoseMl)
+                        Number.isFinite(
+                            maxPerDoseMl
+                        )
                             ? `
                                 /
-                                ${formatNumber(maxPerDoseMl)}
+                                ${formatNumber(
+                                    maxPerDoseMl
+                                )}
                                 mL
                             `
                             : ""
                     }
-                </strong>
-
-            </div>
-        `;
+                `,
+                true
+            );
     }
 
 
-    if (Number.isFinite(result.maxDailyDose)) {
+    if (
+        Number.isFinite(
+            result.maxDailyDose
+        )
+    ) {
 
         const maxDailyMl =
             calculateVolume(
@@ -3572,75 +4396,71 @@ function buildResultCards(
                 concentrationMl
             );
 
-        informationHTML += `
 
-            <div class="dose-info-row">
-
-                <span>
-                    Maximum daily dose
-                </span>
-
-                <strong>
-                    ${formatNumber(result.maxDailyDose)}
+        informationHTML +=
+            buildInformationRow(
+                "Maximum daily dose",
+                `
+                    ${formatNumber(
+                        result.maxDailyDose
+                    )}
                     mg/day
                     ${
-                        Number.isFinite(maxDailyMl)
+                        Number.isFinite(
+                            maxDailyMl
+                        )
                             ? `
                                 /
-                                ${formatNumber(maxDailyMl)}
+                                ${formatNumber(
+                                    maxDailyMl
+                                )}
                                 mL/day
                             `
                             : ""
                     }
-                </strong>
-
-            </div>
-        `;
+                `,
+                true
+            );
     }
 
 
     if (result.duration) {
 
-        informationHTML += `
-
-            <div class="dose-info-row">
-
-                <span>
-                    Duration
-                </span>
-
-                <strong>
-                    ${escapeHtml(result.duration)}
-                </strong>
-
-            </div>
-        `;
+        informationHTML +=
+            buildInformationRow(
+                "Duration",
+                result.duration
+            );
     }
 
 
     if (
-        Number.isFinite(concentrationMg) &&
-        Number.isFinite(concentrationMl)
+        Number.isFinite(
+            concentrationMg
+        ) &&
+        Number.isFinite(
+            concentrationMl
+        )
     ) {
 
-        informationHTML += `
-
-            <div class="dose-info-row">
-
-                <span>
-                    Concentration
-                </span>
-
-                <strong>
-                    ${formatNumber(concentrationMg)}
-                    mg /
-                    ${formatNumber(concentrationMl)}
-                    mL
-                </strong>
-
-            </div>
-        `;
+        informationHTML +=
+            buildInformationRow(
+                "Concentration",
+                `${formatNumber(
+                    concentrationMg
+                )} mg / ${formatNumber(
+                    concentrationMl
+                )} mL`
+            );
     }
+
+
+    /* =====================================
+       EXTENDED MEDICINE INFORMATION
+    ===================================== */
+
+    const medicineInformationHTML =
+        buildMedicineInformationHTML();
 
 
     /* =====================================
@@ -3650,10 +4470,19 @@ function buildResultCards(
     let importantHTML = "";
 
 
-    if (
-        selectedMedicine &&
-        selectedMedicine.notes
-    ) {
+    const notes =
+        getMedicineNotes(
+            selectedMedicine
+        );
+
+
+    const warnings =
+        getMedicineWarnings(
+            selectedMedicine
+        );
+
+
+    if (notes) {
 
         importantHTML += `
 
@@ -3666,11 +4495,11 @@ function buildResultCards(
                 <p>
 
                     <strong>
-                        Important note
+                        Important information
                     </strong>
 
                     ${escapeHtml(
-                        selectedMedicine.notes
+                        notes
                     )}
 
                 </p>
@@ -3680,10 +4509,7 @@ function buildResultCards(
     }
 
 
-    if (
-        selectedMedicine &&
-        selectedMedicine.warnings
-    ) {
+    if (warnings) {
 
         importantHTML += `
 
@@ -3700,7 +4526,7 @@ function buildResultCards(
                     </strong>
 
                     ${escapeHtml(
-                        selectedMedicine.warnings
+                        warnings
                     )}
 
                 </p>
@@ -3861,6 +4687,21 @@ function buildResultCards(
             </div>
 
 
+            <div class="calculation-frequency">
+
+                <span>
+                    Administration
+                </span>
+
+                <strong>
+                    ${escapeHtml(
+                        result.frequency || "—"
+                    )}
+                </strong>
+
+            </div>
+
+
             <div class="calculation-steps">
 
                 ${calculationHTML}
@@ -3885,7 +4726,7 @@ function buildResultCards(
                     </span>
 
                     <h3>
-                        Additional Details
+                        Medicine & Dose Details
                     </h3>
 
                 </div>
@@ -3900,6 +4741,30 @@ function buildResultCards(
             <div class="dose-information-list">
 
                 ${informationHTML}
+
+            </div>
+
+
+            <div class="medicine-information-section">
+
+                <div class="medicine-information-title">
+
+                    <span>
+                        MEDICINE INFORMATION
+                    </span>
+
+                    <h4>
+                        About this medicine
+                    </h4>
+
+                </div>
+
+
+                <div class="medicine-information-list">
+
+                    ${medicineInformationHTML}
+
+                </div>
 
             </div>
 
@@ -3942,6 +4807,7 @@ function buildResultCards(
 
     showResult();
 }
+
 
 /* =========================================
    LEGACY DISPLAY FUNCTION
@@ -4043,6 +4909,9 @@ function saveCalculationToHistory(data) {
 
         frequency:
             data.frequency,
+
+        intervalHours:
+            data.intervalHours,
 
         duration:
             data.duration,
@@ -4483,6 +5352,10 @@ function calculateDose() {
 
         frequency:
             result.frequency ||
+            "",
+
+        intervalHours:
+            result.intervalHours ||
             "",
 
         duration:
