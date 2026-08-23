@@ -1387,7 +1387,368 @@ function getMedicineRegimens(medicine) {
     return regimens;
 }
 
+/* =========================================
+   CONDITION REGIMENS
+   Shows only when the medicine has
+   multiple condition-specific regimens.
+========================================= */
 
+function getConditionRegimens(medicine) {
+
+    if (
+        !medicine ||
+        !medicine.dosing
+    ) {
+        return [];
+    }
+
+    const dosing =
+        medicine.dosing;
+
+    const conditions = [];
+
+    /* -----------------------------------------
+       dosing.conditionBased[]
+    ----------------------------------------- */
+
+    if (
+        Array.isArray(
+            dosing.conditionBased
+        )
+    ) {
+
+        dosing.conditionBased.forEach(
+            (item, index) => {
+
+                const regimen =
+                    normalizeRegimen(
+                        item,
+                        `Condition ${index + 1}`
+                    );
+
+                if (!regimen) {
+                    return;
+                }
+
+                const condition =
+                    regimen.condition ||
+                    regimen.indication ||
+                    regimen.label ||
+                    regimen.name;
+
+                if (condition) {
+
+                    regimen.condition =
+                        String(condition);
+
+                    conditions.push(
+                        regimen
+                    );
+                }
+            }
+        );
+    }
+
+
+    /* -----------------------------------------
+       dosing.conditions{}
+    ----------------------------------------- */
+
+    if (
+        conditions.length === 0 &&
+        dosing.conditions &&
+        typeof dosing.conditions === "object" &&
+        !Array.isArray(
+            dosing.conditions
+        )
+    ) {
+
+        Object.entries(
+            dosing.conditions
+        )
+        .forEach(
+            ([condition, regimen]) => {
+
+                const normalized =
+                    normalizeRegimen(
+                        regimen,
+                        condition
+                    );
+
+                if (!normalized) {
+                    return;
+                }
+
+                normalized.condition =
+                    normalized.condition ||
+                    condition;
+
+                normalized.label =
+                    normalized.label ||
+                    condition;
+
+                conditions.push(
+                    normalized
+                );
+            }
+        );
+    }
+
+
+    /* -----------------------------------------
+       dosing.indications[]
+    ----------------------------------------- */
+
+    if (
+        conditions.length === 0 &&
+        Array.isArray(
+            dosing.indications
+        )
+    ) {
+
+        dosing.indications.forEach(
+            (item, index) => {
+
+                const regimen =
+                    normalizeRegimen(
+                        item,
+                        `Condition ${index + 1}`
+                    );
+
+                if (!regimen) {
+                    return;
+                }
+
+                const condition =
+                    regimen.condition ||
+                    regimen.indication ||
+                    regimen.label ||
+                    regimen.name;
+
+                if (condition) {
+
+                    regimen.condition =
+                        String(condition);
+
+                    conditions.push(
+                        regimen
+                    );
+                }
+            }
+        );
+    }
+
+
+    /*
+       Remove duplicate conditions.
+    */
+
+    const unique = [];
+
+    const seen = new Set();
+
+    conditions.forEach(
+        regimen => {
+
+            const key =
+                normalizeText(
+                    regimen.condition
+                );
+
+            if (
+                key &&
+                !seen.has(key)
+            ) {
+
+                seen.add(key);
+
+                unique.push(
+                    regimen
+                );
+            }
+        }
+    );
+
+
+    /*
+       Condition selector appears ONLY
+       when there are 2+ conditions.
+    */
+
+    if (unique.length < 2) {
+        return [];
+    }
+
+
+    return unique;
+}
+/* =========================================
+   CONDITION SELECTOR UI
+========================================= */
+
+function createConditionSelector(medicine) {
+
+    if (
+        !conditionGroup ||
+        !conditionSelect
+    ) {
+        return;
+    }
+
+
+    const conditions =
+        getConditionRegimens(
+            medicine
+        );
+
+
+    conditionSelect.innerHTML = `
+        <option value="">
+            Select a condition
+        </option>
+    `;
+
+
+    /*
+       Hide condition selector when
+       medicine does not have multiple
+       condition-specific regimens.
+    */
+
+    if (
+        conditions.length < 2
+    ) {
+
+        conditionGroup.style.display =
+            "none";
+
+        if (selectedConditionInfo) {
+
+            selectedConditionInfo.innerHTML =
+                "";
+        }
+
+        return;
+    }
+
+
+    conditions.forEach(
+        (regimen, index) => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                String(index);
+
+            option.textContent =
+                getConditionLabel(
+                    regimen
+                );
+
+            conditionSelect.appendChild(
+                option
+            );
+        }
+    );
+
+
+    conditionGroup.style.display =
+        "block";
+}
+
+
+function getConditionLabel(regimen) {
+
+    if (!regimen) {
+        return "Condition";
+    }
+
+
+    return (
+        regimen.condition ||
+        regimen.indication ||
+        regimen.label ||
+        regimen.name ||
+        "Condition"
+    );
+}
+
+
+function getSelectedConditionRegimen() {
+
+    if (
+        !selectedMedicine ||
+        !conditionSelect
+    ) {
+        return null;
+    }
+
+
+    const conditions =
+        getConditionRegimens(
+            selectedMedicine
+        );
+
+
+    const index =
+        Number(
+            conditionSelect.value
+        );
+
+
+    if (
+        !Number.isInteger(index) ||
+        !conditions[index]
+    ) {
+        return null;
+    }
+
+
+    return conditions[index];
+}
+
+
+function displaySelectedCondition(
+    regimen
+) {
+
+    if (!selectedConditionInfo) {
+        return;
+    }
+
+
+    if (!regimen) {
+
+        selectedConditionInfo.innerHTML =
+            "";
+
+        return;
+    }
+
+
+    selectedConditionInfo.innerHTML = `
+
+        <div class="selected-condition-card">
+
+            <span>
+                Selected condition
+            </span>
+
+            <strong>
+                ${escapeHtml(
+                    getConditionLabel(
+                        regimen
+                    )
+                )}
+            </strong>
+
+        </div>
+
+    `;
+}
 function getRegimenLabel(regimen) {
 
     if (!regimen) {
@@ -1407,7 +1768,60 @@ function getRegimenLabel(regimen) {
             regimen.condition
         );
     }
+/* =========================================
+   CONDITION CHANGE
+========================================= */
 
+if (conditionSelect) {
+
+    conditionSelect.addEventListener(
+        "change",
+        () => {
+
+            const regimen =
+                getSelectedConditionRegimen();
+
+
+            if (!regimen) {
+
+                displaySelectedCondition(
+                    null
+                );
+
+                selectedRegimen =
+                    null;
+
+                hideValidation();
+                hideResult();
+
+                return;
+            }
+
+
+            selectedRegimen =
+                regimen;
+
+
+            displaySelectedCondition(
+                regimen
+            );
+
+
+            /*
+               The selected condition becomes
+               the active dosing regimen.
+            */
+
+            displaySelectedRegimenInfo(
+                regimen
+            );
+
+
+            hideValidation();
+            hideResult();
+        }
+    );
+}
 
     if (regimen.indication) {
         return String(
