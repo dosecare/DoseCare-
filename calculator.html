@@ -210,9 +210,7 @@
 
                     <div class="select-wrapper">
 
-                        <select
-                            id="medicine-select"
-                        >
+                        <select id="medicine-select">
 
                             <option value="">
                                 Select a medicine
@@ -545,7 +543,7 @@
 
 
             <!-- =========================================
-                 CALCULATE
+                 CALCULATE BUTTON
             ========================================== -->
 
             <div class="calculate-area">
@@ -593,7 +591,7 @@
 
 
             <!-- =========================================
-                 RESULT CARD
+                 CALCULATION RESULT
             ========================================== -->
 
             <div
@@ -602,7 +600,9 @@
             >
 
 
-                <!-- RESULT HEADER -->
+                <!-- =====================================
+                     RESULT HEADER
+                ====================================== -->
 
                 <div class="result-header">
 
@@ -614,7 +614,7 @@
 
 
                         <h2>
-                            Recommended Dose
+                            Dose Result
                         </h2>
 
                     </div>
@@ -628,112 +628,220 @@
 
 
 
-                <!-- MAIN DOSE -->
+                <!-- =====================================
+                     THREE RESULT CARDS
+                ====================================== -->
 
-                <div class="result-main">
-
-                    <div class="result-value">
-
-                        <strong id="dose-result">
-                            —
-                        </strong>
+                <div class="result-cards">
 
 
-                        <span id="dose-unit">
-                            mg
+                    <!-- =================================
+                         CARD 01 — FINAL DOSE
+                    ================================== -->
+
+                    <article class="result-card-item result-card-dose">
+
+                        <span class="card-label">
+                            FINAL DOSE
                         </span>
 
-                    </div>
+
+                        <h3 class="card-title">
+                            Recommended Dose
+                        </h3>
 
 
-                    <p
-                        class="result-per-dose"
-                        id="result-per-dose"
-                    >
-                        Per dose
-                    </p>
+                        <div class="final-dose-values">
+
+                            <div class="final-dose-value">
+
+                                <strong id="dose-result">
+                                    —
+                                </strong>
+
+                                <span id="dose-unit">
+                                    mg
+                                </span>
+
+                            </div>
+
+
+                            <div class="final-dose-divider">
+                                =
+                            </div>
+
+
+                            <div class="final-dose-value">
+
+                                <strong id="dose-result-ml">
+                                    —
+                                </strong>
+
+                                <span>
+                                    mL
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <p
+                            class="card-subtitle"
+                            id="result-per-dose"
+                        >
+                            Per dose
+                        </p>
+
+
+                        <!-- PATIENT INFO -->
+
+                        <div class="patient-result-info">
+
+                            <div>
+
+                                <span>
+                                    Patient
+                                </span>
+
+                                <strong id="result-patient-age">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Weight
+                                </span>
+
+                                <strong id="result-patient-weight">
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- =================================
+                         CARD 02 — CALCULATION
+                    ================================== -->
+
+                    <article class="result-card-item result-card-calculation">
+
+                        <span class="card-label">
+                            CALCULATION
+                        </span>
+
+
+                        <h3 class="card-title">
+                            How was it calculated?
+                        </h3>
+
+
+                        <div
+                            class="calculation-steps"
+                            id="calculation-steps"
+                        >
+
+                            <!-- JavaScript will insert
+                                 calculation steps here -->
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- =================================
+                         CARD 03 — CLINICAL INFO
+                    ================================== -->
+
+                    <article class="result-card-item result-card-clinical">
+
+                        <span class="card-label">
+                            CLINICAL INFORMATION
+                        </span>
+
+
+                        <h3 class="card-title">
+                            Dose Details
+                        </h3>
+
+
+                        <div class="clinical-result-list">
+
+
+                            <div class="clinical-result-item">
+
+                                <span>
+                                    Frequency
+                                </span>
+
+                                <strong id="dose-frequency">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="clinical-result-item">
+
+                                <span>
+                                    Minimum Dose
+                                </span>
+
+                                <strong id="minimum-dose">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="clinical-result-item">
+
+                                <span>
+                                    Maximum Dose
+                                </span>
+
+                                <strong id="maximum-dose">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div
+                                class="clinical-result-details"
+                                id="result-details"
+                            >
+                            </div>
+
+                        </div>
+
+
+                        <!-- IMPORTANT INFORMATION -->
+
+                        <div
+                            class="result-important"
+                            id="result-important"
+                        ></div>
+
+                    </article>
 
                 </div>
 
 
 
-                <!-- DOSE SUMMARY -->
-
-                <div class="dose-summary">
-
-
-                    <!-- MINIMUM DOSE -->
-
-                    <div class="dose-summary-item">
-
-                        <span>
-                            Minimum Dose
-                        </span>
-
-
-                        <strong id="minimum-dose">
-                            —
-                        </strong>
-
-                    </div>
-
-
-
-                    <!-- MAXIMUM DOSE -->
-
-                    <div class="dose-summary-item">
-
-                        <span>
-                            Maximum Dose
-                        </span>
-
-
-                        <strong id="maximum-dose">
-                            —
-                        </strong>
-
-                    </div>
-
-
-
-                    <!-- FREQUENCY -->
-
-                    <div class="dose-summary-item">
-
-                        <span>
-                            Frequency
-                        </span>
-
-
-                        <strong id="dose-frequency">
-                            —
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-
-                <!-- RESULT DETAILS -->
-
-                <div
-                    class="result-details"
-                    id="result-details"
-                ></div>
-
-
-
-                <!-- IMPORTANT INFORMATION -->
-
-                <div
-                    class="result-important"
-                    id="result-important"
-                ></div>
-
-
-
-                <!-- SAFETY WARNING -->
+                <!-- =====================================
+                     SAFETY WARNING
+                ====================================== -->
 
                 <div class="result-warning">
 
