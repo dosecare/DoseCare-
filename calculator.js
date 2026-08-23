@@ -3082,71 +3082,49 @@ function buildResultCards(
         return;
     }
 
-
-    const ageMonths =
-        getAgeInMonths();
-
+    const ageMonths = getAgeInMonths();
 
     const ageText =
         Number.isFinite(ageMonths)
-            ? formatAgeFromMonths(
-                ageMonths
-            )
+            ? formatAgeFromMonths(ageMonths)
             : "—";
-
 
     const weight =
         weightInput
-            ? parseFloat(
-                weightInput.value
-            )
+            ? parseFloat(weightInput.value)
             : NaN;
-
 
     const weightText =
         Number.isFinite(weight)
             ? `${formatNumber(weight)} kg`
             : "—";
 
+    const minMg = result.minMg;
+    const maxMg = result.maxMg;
 
-    const minMg =
-        result.minMg;
+    const minMl = calculateVolume(
+        minMg,
+        concentrationMg,
+        concentrationMl
+    );
 
+    const maxMl = calculateVolume(
+        maxMg,
+        concentrationMg,
+        concentrationMl
+    );
 
-    const maxMg =
-        result.maxMg;
+    const finalMg = formatRange(
+        minMg,
+        maxMg,
+        " mg"
+    );
 
-
-    const minMl =
-        calculateVolume(
-            minMg,
-            concentrationMg,
-            concentrationMl
-        );
-
-
-    const maxMl =
-        calculateVolume(
-            maxMg,
-            concentrationMg,
-            concentrationMl
-        );
-
-
-    const finalMg =
-        formatRange(
-            minMg,
-            maxMg,
-            " mg"
-        );
-
-
-    const finalMl =
-        formatRange(
-            minMl,
-            maxMl,
-            " mL"
-        );
+    const finalMl = formatRange(
+        minMl,
+        maxMl,
+        " mL"
+    );
 
 
     /* =====================================
@@ -3155,18 +3133,12 @@ function buildResultCards(
 
     let calculationHTML = "";
 
-
     const isPerDose =
-        result.type ===
-        "mg_per_kg_per_dose";
-
+        result.type === "mg_per_kg_per_dose";
 
     const isPerDay =
-        result.type ===
-            "mg_per_kg_per_day" ||
-        result.type ===
-            "weight_based";
-
+        result.type === "mg_per_kg_per_day" ||
+        result.type === "weight_based";
 
     const rateIsSingle =
         isSingleValue(
@@ -3399,16 +3371,8 @@ function buildResultCards(
 
     const volumeStepNumber =
         isPerDose
-            ? (
-                rateIsSingle
-                    ? "02"
-                    : "03"
-            )
-            : (
-                rateIsSingle
-                    ? "03"
-                    : "04"
-            );
+            ? (rateIsSingle ? "02" : "03")
+            : (rateIsSingle ? "03" : "04");
 
 
     calculationHTML += `
@@ -3487,8 +3451,7 @@ function buildResultCards(
                         ${formatNumber(maxMg)}
                         mg ×
                         ${formatNumber(concentrationMl)}
-                        mL
-                        ÷
+                        mL ÷
                         ${formatNumber(concentrationMg)}
                         mg
                     </p>
@@ -3517,7 +3480,7 @@ function buildResultCards(
 
 
     /* =====================================
-       DOSE INFORMATION
+       DOSE INFORMATION — CARD 3
     ===================================== */
 
     let informationHTML = `
@@ -3530,8 +3493,7 @@ function buildResultCards(
 
             <strong>
                 ${escapeHtml(
-                    result.frequency ||
-                    "—"
+                    result.frequency || "—"
                 )}
             </strong>
 
@@ -3540,12 +3502,8 @@ function buildResultCards(
 
 
     if (
-        Number.isFinite(
-            result.dailyMinMg
-        ) &&
-        Number.isFinite(
-            result.dailyMaxMg
-        )
+        Number.isFinite(result.dailyMinMg) &&
+        Number.isFinite(result.dailyMaxMg)
     ) {
 
         informationHTML += `
@@ -3569,11 +3527,7 @@ function buildResultCards(
     }
 
 
-    if (
-        Number.isFinite(
-            result.maxPerDose
-        )
-    ) {
+    if (Number.isFinite(result.maxPerDose)) {
 
         const maxPerDoseMl =
             calculateVolume(
@@ -3581,7 +3535,6 @@ function buildResultCards(
                 concentrationMg,
                 concentrationMl
             );
-
 
         informationHTML += `
 
@@ -3592,20 +3545,13 @@ function buildResultCards(
                 </span>
 
                 <strong>
-                    ${formatNumber(
-                        result.maxPerDose
-                    )}
+                    ${formatNumber(result.maxPerDose)}
                     mg
-
                     ${
-                        Number.isFinite(
-                            maxPerDoseMl
-                        )
+                        Number.isFinite(maxPerDoseMl)
                             ? `
                                 /
-                                ${formatNumber(
-                                    maxPerDoseMl
-                                )}
+                                ${formatNumber(maxPerDoseMl)}
                                 mL
                             `
                             : ""
@@ -3617,11 +3563,7 @@ function buildResultCards(
     }
 
 
-    if (
-        Number.isFinite(
-            result.maxDailyDose
-        )
-    ) {
+    if (Number.isFinite(result.maxDailyDose)) {
 
         const maxDailyMl =
             calculateVolume(
@@ -3629,7 +3571,6 @@ function buildResultCards(
                 concentrationMg,
                 concentrationMl
             );
-
 
         informationHTML += `
 
@@ -3640,20 +3581,13 @@ function buildResultCards(
                 </span>
 
                 <strong>
-                    ${formatNumber(
-                        result.maxDailyDose
-                    )}
+                    ${formatNumber(result.maxDailyDose)}
                     mg/day
-
                     ${
-                        Number.isFinite(
-                            maxDailyMl
-                        )
+                        Number.isFinite(maxDailyMl)
                             ? `
                                 /
-                                ${formatNumber(
-                                    maxDailyMl
-                                )}
+                                ${formatNumber(maxDailyMl)}
                                 mL/day
                             `
                             : ""
@@ -3676,9 +3610,32 @@ function buildResultCards(
                 </span>
 
                 <strong>
-                    ${escapeHtml(
-                        result.duration
-                    )}
+                    ${escapeHtml(result.duration)}
+                </strong>
+
+            </div>
+        `;
+    }
+
+
+    if (
+        Number.isFinite(concentrationMg) &&
+        Number.isFinite(concentrationMl)
+    ) {
+
+        informationHTML += `
+
+            <div class="dose-info-row">
+
+                <span>
+                    Concentration
+                </span>
+
+                <strong>
+                    ${formatNumber(concentrationMg)}
+                    mg /
+                    ${formatNumber(concentrationMl)}
+                    mL
                 </strong>
 
             </div>
@@ -3799,9 +3756,7 @@ function buildResultCards(
                     </span>
 
                     <strong>
-                        ${escapeHtml(
-                            ageText
-                        )}
+                        ${escapeHtml(ageText)}
                     </strong>
 
                 </div>
@@ -3814,9 +3769,7 @@ function buildResultCards(
                     </span>
 
                     <strong>
-                        ${escapeHtml(
-                            weightText
-                        )}
+                        ${escapeHtml(weightText)}
                     </strong>
 
                 </div>
@@ -3829,7 +3782,7 @@ function buildResultCards(
                 <div class="final-dose-item">
 
                     <span>
-                        Dose
+                        Final dose
                     </span>
 
                     <strong>
@@ -3846,7 +3799,7 @@ function buildResultCards(
                 <div class="final-dose-item">
 
                     <span>
-                        Volume
+                        Final volume
                     </span>
 
                     <strong>
@@ -3858,22 +3811,6 @@ function buildResultCards(
                     </small>
 
                 </div>
-
-            </div>
-
-
-            <div class="final-dose-frequency">
-
-                <span>
-                    Frequency
-                </span>
-
-                <strong>
-                    ${escapeHtml(
-                        result.frequency ||
-                        "—"
-                    )}
-                </strong>
 
             </div>
 
@@ -4005,7 +3942,6 @@ function buildResultCards(
 
     showResult();
 }
-
 
 /* =========================================
    LEGACY DISPLAY FUNCTION
