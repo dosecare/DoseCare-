@@ -3664,3 +3664,920 @@ respiratoryMedicines.forEach(
     ]
 
 }
+/* =========================================
+   CHLORPHENAMINE
+   FIRST-GENERATION / SEDATING ANTIHISTAMINE
+========================================= */
+
+{
+    id:
+        "chlorphenamine",
+
+    genericName:
+        "Chlorphenamine Maleate",
+
+    name:
+        "Chlorphenamine",
+
+    brandNames: [
+        "Piriton"
+    ],
+
+
+    /* ---------------------------------
+       CLASSIFICATION
+    --------------------------------- */
+
+    drugClass: [
+        "Antihistamine",
+        "H1 receptor antagonist",
+        "First-generation antihistamine"
+    ],
+
+    class:
+        "First-generation H1 Antihistamine · Sedating",
+
+
+    /* ---------------------------------
+       ANTIHISTAMINE GENERATION
+    --------------------------------- */
+
+    antihistamineGeneration:
+        "first_generation",
+
+    sedation:
+        "sedating",
+
+    sedationLevel:
+        "high",
+
+
+    /* ---------------------------------
+       CLINICAL USE
+    --------------------------------- */
+
+    conditions: [
+        "allergic rhinitis",
+        "hay fever",
+        "urticaria",
+        "angioedema",
+        "food allergy",
+        "insect bite reactions",
+        "drug allergy reactions"
+    ],
+
+    condition:
+        "Allergic Rhinitis · Urticaria · Allergic Conditions",
+
+    route:
+        "Oral",
+
+    dosageForms: [
+        "syrup",
+        "oral solution"
+    ],
+
+    commonPediatricConcentrations: [
+        "2 mg/5 mL"
+    ],
+
+    indications:
+        "Symptomatic relief of allergic conditions responsive to antihistamines, including allergic rhinitis, urticaria and reactions to insect bites, foods or medicines.",
+
+
+    /* ---------------------------------
+       MECHANISM OF ACTION
+    --------------------------------- */
+
+    moa:
+        "Chlorphenamine is a first-generation H1-receptor antagonist that reduces the effects of histamine. Because it crosses the blood-brain barrier, it can cause central nervous system sedation.",
+
+
+    /* ---------------------------------
+       PEDIATRIC INFORMATION
+    --------------------------------- */
+
+    pediatric:
+        "The referenced 2 mg/5 mL oral syrup provides age-based dosing from 1 year of age. It is not recommended for children younger than 1 year.",
+
+
+    /* ---------------------------------
+       DOSING
+       AGE-BASED
+    --------------------------------- */
+
+    dosing: {
+
+        type:
+            "fixed_age_dose",
+
+        calculatorReady:
+            false,
+
+        configured:
+            false,
+
+        route:
+            "oral",
+
+        concentration:
+            "2 mg/5 mL",
+
+        ageBasedDosing: [
+
+            {
+
+                minimumAgeYears:
+                    1,
+
+                maximumAgeYears:
+                    2,
+
+                doseMl:
+                    2.5,
+
+                doseMg:
+                    1,
+
+                frequencyText:
+                    "Twice daily",
+
+                frequencyPerDay:
+                    2,
+
+                maximumDailyDoseMg:
+                    2
+
+            },
+
+            {
+
+                minimumAgeYears:
+                    2,
+
+                maximumAgeYears:
+                    6,
+
+                doseMl:
+                    2.5,
+
+                doseMg:
+                    1,
+
+                frequencyText:
+                    "Every 4–6 hours as needed",
+
+                minimumIntervalHours:
+                    4,
+
+                maximumDosesPer24Hours:
+                    6,
+
+                maximumDailyDoseMg:
+                    6
+
+            },
+
+            {
+
+                minimumAgeYears:
+                    6,
+
+                maximumAgeYears:
+                    12,
+
+                doseMl:
+                    5,
+
+                doseMg:
+                    2,
+
+                frequencyText:
+                    "Every 4–6 hours as needed",
+
+                minimumIntervalHours:
+                    4,
+
+                maximumDosesPer24Hours:
+                    6,
+
+                maximumDailyDoseMg:
+                    12
+
+            },
+
+            {
+
+                minimumAgeYears:
+                    12,
+
+                doseMl:
+                    10,
+
+                doseMg:
+                    4,
+
+                frequencyText:
+                    "Every 4–6 hours as needed",
+
+                minimumIntervalHours:
+                    4,
+
+                maximumDosesPer24Hours:
+                    6,
+
+                maximumDailyDoseMg:
+                    24
+
+            }
+
+        ]
+
+    },
+
+
+    indicationSpecific:
+        false,
+
+
+    /* ---------------------------------
+       CONTRAINDICATIONS
+    --------------------------------- */
+
+    contraindications: [
+
+        "Hypersensitivity to chlorphenamine or other antihistamines",
+
+        "Use with monoamine oxidase inhibitors or within 14 days of stopping an MAOI",
+
+        "Premature infants or neonates",
+
+        "Acute asthma"
+
+    ],
+
+
+    /* ---------------------------------
+       PRECAUTIONS
+    --------------------------------- */
+
+    precautions: [
+
+        "Drowsiness and sedation",
+
+        "Epilepsy",
+
+        "Glaucoma",
+
+        "Urinary retention",
+
+        "Renal impairment",
+
+        "Hepatic impairment",
+
+        "Cardiovascular disease",
+
+        "Asthma",
+
+        "Bronchitis",
+
+        "Concurrent sedative medicines",
+
+        "Do not combine with other antihistamine-containing cough and cold medicines"
+
+    ],
+
+
+    /* ---------------------------------
+       ADVERSE EFFECTS
+    --------------------------------- */
+
+    adverseEffects: [
+
+        "Drowsiness",
+
+        "Sedation",
+
+        "Dizziness",
+
+        "Blurred vision",
+
+        "Dry mouth",
+
+        "Gastrointestinal disturbance",
+
+        "Urinary retention",
+
+        "Paradoxical excitation in children",
+
+        "Headache"
+
+    ],
+
+
+    /* ---------------------------------
+       IMPORTANT NOTES
+    --------------------------------- */
+
+    notes:
+        "Chlorphenamine is a first-generation sedating antihistamine. Drowsiness and anticholinergic effects are important clinical considerations. The referenced 2 mg/5 mL syrup provides 1 mg twice daily for children 1–2 years, 1 mg every 4–6 hours for children 2–6 years, 2 mg every 4–6 hours for children 6–12 years, and 4 mg every 4–6 hours for children over 12 years. Do not exceed the product-specific maximum daily dose.",
+
+
+    /* ---------------------------------
+       REFERENCES
+    --------------------------------- */
+
+    references: [
+
+        {
+            organization:
+                "electronic Medicines Compendium",
+
+            title:
+                "Piriton Syrup — Summary of Product Characteristics",
+
+            url:
+                "https://www.medicines.org.uk/emc/product/3928/smpc"
+        },
+
+        {
+            organization:
+                "electronic Medicines Compendium",
+
+            title:
+                "Boots 1 Year Plus Allergy Relief Antihistamine 2 mg/5 mL Syrup — SmPC",
+
+            url:
+                "https://www.medicines.org.uk/emc/product/3866/smpc"
+        }
+
+    ]
+
+},
+/* =========================================
+   DIPHENHYDRAMINE
+   FIRST-GENERATION / SEDATING ANTIHISTAMINE
+========================================= */
+
+{
+    id:
+        "diphenhydramine",
+
+    genericName:
+        "Diphenhydramine Hydrochloride",
+
+    name:
+        "Diphenhydramine",
+
+    brandNames: [
+        "Benadryl"
+    ],
+
+
+    /* ---------------------------------
+       CLASSIFICATION
+    --------------------------------- */
+
+    drugClass: [
+        "Antihistamine",
+        "H1 receptor antagonist",
+        "First-generation antihistamine"
+    ],
+
+    class:
+        "First-generation H1 Antihistamine · Sedating",
+
+
+    /* ---------------------------------
+       ANTIHISTAMINE GENERATION
+    --------------------------------- */
+
+    antihistamineGeneration:
+        "first_generation",
+
+    sedation:
+        "sedating",
+
+    sedationLevel:
+        "high",
+
+
+    /* ---------------------------------
+       CLINICAL USE
+    --------------------------------- */
+
+    conditions: [
+        "allergic rhinitis",
+        "hay fever",
+        "runny nose",
+        "sneezing",
+        "itchy eyes",
+        "watery eyes",
+        "itching of the nose or throat"
+    ],
+
+    condition:
+        "Allergic Rhinitis · Respiratory Allergy Symptoms",
+
+    route:
+        "Oral",
+
+    dosageForms: [
+        "oral solution",
+        "oral liquid"
+    ],
+
+    commonPediatricConcentrations: [
+        "12.5 mg/5 mL"
+    ],
+
+    indications:
+        "Temporary relief of symptoms associated with hay fever and other upper respiratory allergies, including runny nose, sneezing, and itchy or watery eyes.",
+
+
+    /* ---------------------------------
+       MECHANISM OF ACTION
+    --------------------------------- */
+
+    moa:
+        "Diphenhydramine is a first-generation H1-receptor antagonist that blocks histamine-mediated effects. Its penetration into the central nervous system contributes to sedation.",
+
+
+    /* ---------------------------------
+       PEDIATRIC INFORMATION
+    --------------------------------- */
+
+    pediatric:
+        "For the referenced 12.5 mg/5 mL oral solution, children under 2 years should not receive the product. Children 2–5 years should only receive it when directed by a physician. Children 6–11 years have labeled dosing of 5–10 mL every 4–6 hours.",
+
+
+    /* ---------------------------------
+       DOSING
+       AGE-BASED
+    --------------------------------- */
+
+    dosing: {
+
+        type:
+            "fixed_age_dose",
+
+        calculatorReady:
+            false,
+
+        configured:
+            false,
+
+        route:
+            "oral",
+
+        concentration:
+            "12.5 mg/5 mL",
+
+        ageBasedDosing: [
+
+            {
+
+                minimumAgeYears:
+                    2,
+
+                maximumAgeYears:
+                    5,
+
+                doseMl:
+                    null,
+
+                doseMg:
+                    null,
+
+                frequencyText:
+                    "Only if directed by a physician",
+
+                physicianDirected:
+                    true
+
+            },
+
+            {
+
+                minimumAgeYears:
+                    6,
+
+                maximumAgeYears:
+                    12,
+
+                doseRangeMl:
+                    "5–10",
+
+                doseRangeMg:
+                    "12.5–25",
+
+                frequencyText:
+                    "Every 4–6 hours as needed",
+
+                minimumIntervalHours:
+                    4,
+
+                maximumDosesPer24Hours:
+                    6
+
+            },
+
+            {
+
+                minimumAgeYears:
+                    12,
+
+                doseRangeMl:
+                    "10–20",
+
+                doseRangeMg:
+                    "25–50",
+
+                frequencyText:
+                    "Every 4–6 hours as needed",
+
+                minimumIntervalHours:
+                    4,
+
+                maximumDosesPer24Hours:
+                    6
+
+            }
+
+        ]
+
+    },
+
+
+    indicationSpecific:
+        false,
+
+
+    /* ---------------------------------
+       CONTRAINDICATIONS
+    --------------------------------- */
+
+    contraindications: [
+
+        "Hypersensitivity to diphenhydramine",
+
+        "Use with monoamine oxidase inhibitors",
+
+        "Use for the purpose of inducing sleep in children"
+
+    ],
+
+
+    /* ---------------------------------
+       PRECAUTIONS
+    --------------------------------- */
+
+    precautions: [
+
+        "Marked drowsiness may occur",
+
+        "Sedatives and tranquilizers may increase drowsiness",
+
+        "Glaucoma",
+
+        "Chronic bronchitis or other breathing problems",
+
+        "Paradoxical excitability may occur in children",
+
+        "Do not use with another product containing diphenhydramine",
+
+        "Do not use to make a child sleepy"
+
+    ],
+
+
+    /* ---------------------------------
+       ADVERSE EFFECTS
+    --------------------------------- */
+
+    adverseEffects: [
+
+        "Marked drowsiness",
+
+        "Sedation",
+
+        "Dizziness",
+
+        "Dry mouth",
+
+        "Blurred vision",
+
+        "Gastrointestinal discomfort",
+
+        "Excitability",
+
+        "Confusion"
+
+    ],
+
+
+    /* ---------------------------------
+       IMPORTANT NOTES
+    --------------------------------- */
+
+    notes:
+        "Diphenhydramine is a strongly sedating first-generation antihistamine. The referenced 12.5 mg/5 mL oral solution should not be used in children under 2 years and should only be used in children 2–5 years when directed by a physician. Children 6–11 years receive 5–10 mL every 4–6 hours, with no more than 6 doses in 24 hours. It must not be used simply to make a child sleepy.",
+
+
+    /* ---------------------------------
+       REFERENCES
+    --------------------------------- */
+
+    references: [
+
+        {
+            organization:
+                "U.S. National Library of Medicine",
+
+            title:
+                "DailyMed — Diphenhydramine HCl Oral Solution 12.5 mg/5 mL",
+
+            url:
+                "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7406e4e4-3093-4cd1-80ce-93f7b6db2a87"
+        }
+
+    ]
+
+},
+/* =========================================
+   HYDROXYZINE
+   FIRST-GENERATION / SEDATING ANTIHISTAMINE
+========================================= */
+
+{
+    id:
+        "hydroxyzine",
+
+    genericName:
+        "Hydroxyzine Hydrochloride",
+
+    name:
+        "Hydroxyzine",
+
+    brandNames: [],
+
+
+    /* ---------------------------------
+       CLASSIFICATION
+    --------------------------------- */
+
+    drugClass: [
+        "Antihistamine",
+        "H1 receptor antagonist",
+        "First-generation antihistamine"
+    ],
+
+    class:
+        "First-generation H1 Antihistamine · Sedating",
+
+
+    /* ---------------------------------
+       ANTIHISTAMINE GENERATION
+    --------------------------------- */
+
+    antihistamineGeneration:
+        "first_generation",
+
+    sedation:
+        "sedating",
+
+    sedationLevel:
+        "high",
+
+
+    /* ---------------------------------
+       CLINICAL USE
+    --------------------------------- */
+
+    conditions: [
+        "pruritus due to allergic conditions",
+        "chronic urticaria",
+        "atopic dermatitis",
+        "contact dermatitis",
+        "histamine-mediated pruritus"
+    ],
+
+    condition:
+        "Allergic Pruritus · Urticaria · Dermatoses",
+
+    route:
+        "Oral",
+
+    dosageForms: [
+        "syrup",
+        "oral solution"
+    ],
+
+    commonPediatricConcentrations: [
+        "10 mg/5 mL"
+    ],
+
+    indications:
+        "Symptomatic management of pruritus associated with allergic conditions such as chronic urticaria, atopic dermatitis and contact dermatitis, and histamine-mediated pruritus.",
+
+
+    /* ---------------------------------
+       MECHANISM OF ACTION
+    --------------------------------- */
+
+    moa:
+        "Hydroxyzine is a first-generation H1-receptor antagonist with antihistaminic effects. It also produces central nervous system depression, contributing to its sedative effect.",
+
+
+    /* ---------------------------------
+       PEDIATRIC INFORMATION
+    --------------------------------- */
+
+    pediatric:
+        "The referenced 10 mg/5 mL oral solution provides pediatric dosing for allergic pruritus. Children under 6 years receive 50 mg daily in divided doses, while children over 6 years receive 50–100 mg daily in divided doses.",
+
+
+    /* ---------------------------------
+       DOSING
+       AGE-BASED
+    --------------------------------- */
+
+    dosing: {
+
+        type:
+            "fixed_daily_dose",
+
+        calculatorReady:
+            false,
+
+        configured:
+            false,
+
+        route:
+            "oral",
+
+        concentration:
+            "10 mg/5 mL",
+
+        indication:
+            "allergic_pruritus",
+
+        ageBasedDosing: [
+
+            {
+
+                minimumAgeYears:
+                    0,
+
+                maximumAgeYears:
+                    6,
+
+                totalDailyDoseMg:
+                    50,
+
+                totalDailyDoseMl:
+                    25,
+
+                frequencyText:
+                    "In divided doses",
+
+                maximumDailyDoseMg:
+                    50,
+
+                maximumDailyDoseMl:
+                    25
+
+            },
+
+            {
+
+                minimumAgeYears:
+                    6,
+
+                totalDailyDoseRangeMg:
+                    "50–100",
+
+                totalDailyDoseRangeMl:
+                    "25–50",
+
+                frequencyText:
+                    "In divided doses",
+
+                maximumDailyDoseMg:
+                    100,
+
+                maximumDailyDoseMl:
+                    50
+
+            }
+
+        ]
+
+    },
+
+
+    indicationSpecific:
+        true,
+
+
+    /* ---------------------------------
+       CONTRAINDICATIONS
+    --------------------------------- */
+
+    contraindications: [
+
+        "Known hypersensitivity to hydroxyzine",
+
+        "Hypersensitivity to cetirizine or levocetirizine",
+
+        "Prolonged QT interval",
+
+        "Known long QT syndrome"
+
+    ],
+
+
+    /* ---------------------------------
+       PRECAUTIONS
+    --------------------------------- */
+
+    precautions: [
+
+        "Drowsiness and sedation",
+
+        "Risk of QT prolongation",
+
+        "Congenital long QT syndrome",
+
+        "Family history of long QT syndrome",
+
+        "Cardiovascular disease",
+
+        "Electrolyte abnormalities",
+
+        "Concomitant use of other QT-prolonging medicines",
+
+        "Concomitant use of CNS depressants",
+
+        "Renal impairment",
+
+        "Hepatic impairment"
+
+    ],
+
+
+    /* ---------------------------------
+       ADVERSE EFFECTS
+    --------------------------------- */
+
+    adverseEffects: [
+
+        "Drowsiness",
+
+        "Sedation",
+
+        "Dry mouth",
+
+        "Dizziness",
+
+        "Headache",
+
+        "Confusion",
+
+        "Tremor",
+
+        "QT prolongation",
+
+        "Torsade de Pointes"
+
+    ],
+
+
+    /* ---------------------------------
+       IMPORTANT NOTES
+    --------------------------------- */
+
+    notes:
+        "Hydroxyzine is a strongly sedating first-generation antihistamine. The referenced 10 mg/5 mL oral solution is used for allergic pruritus rather than routine allergic rhinitis. For pruritus, children under 6 years receive 50 mg daily in divided doses, while children over 6 years receive 50–100 mg daily in divided doses. Hydroxyzine is contraindicated in patients with prolonged QT and requires caution with other QT-prolonging medicines.",
+
+
+    /* ---------------------------------
+       REFERENCES
+    --------------------------------- */
+
+    references: [
+
+        {
+            organization:
+                "U.S. National Library of Medicine",
+
+            title:
+                "DailyMed — Hydroxyzine Hydrochloride Oral Solution, USP 10 mg/5 mL",
+
+            url:
+                "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0de7a377-7a8f-4119-b172-1eadb4b7e1be"
+        }
+
+    ]
+
+},
