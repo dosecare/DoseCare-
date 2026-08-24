@@ -2556,3 +2556,734 @@ analgesicMedicines.forEach(
 
     }
 );
+/* =========================================
+   MORPHINE SULFATE
+========================================= */
+
+{
+    id:
+        "morphine-sulfate",
+
+    genericName:
+        "Morphine Sulfate",
+
+    name:
+        "Morphine Sulfate",
+
+    brandNames: [],
+
+
+    /* ---------------------------------
+       CLASSIFICATION
+    --------------------------------- */
+
+    drugClass: [
+        "Opioid analgesic",
+        "Strong analgesic"
+    ],
+
+    class:
+        "Opioid Analgesic · Strong Analgesic",
+
+
+    /* ---------------------------------
+       CLINICAL USE
+    --------------------------------- */
+
+    conditions: [
+        "severe pain",
+        "acute pain"
+    ],
+
+    condition:
+        "Severe Pain",
+
+    route:
+        "Oral",
+
+    dosageForms: [
+        "oral solution"
+    ],
+
+    commonPediatricConcentrations: [
+        "2 mg/mL",
+        "4 mg/mL"
+    ],
+
+    indications:
+        "Relief of severe pain when opioid analgesia is clinically appropriate.",
+
+
+    /* ---------------------------------
+       MECHANISM OF ACTION
+    --------------------------------- */
+
+    moa:
+        "Morphine is a mu-opioid receptor agonist that alters the perception and response to pain and produces analgesic effects through central nervous system mechanisms.",
+
+
+    /* ---------------------------------
+       PEDIATRIC INFORMATION
+    --------------------------------- */
+
+    pediatric:
+        "Morphine sulfate oral solution may be used in pediatric patients 2 years of age and older. Pediatric dosing must be individualized according to body weight, pain severity, clinical response and previous opioid exposure. Only the 2 mg/mL and 4 mg/mL oral-solution concentrations are appropriate for pediatric use according to the referenced prescribing information.",
+
+
+    /* ---------------------------------
+       DOSING
+    --------------------------------- */
+
+    dosing: {
+
+        type:
+            "mg_per_kg_per_dose",
+
+        minDose:
+            0.15,
+
+        maxDose:
+            0.3,
+
+        frequency:
+            6,
+
+        frequencyText:
+            "Every 4 hours as needed",
+
+        interval:
+            "Every 4 hours as needed",
+
+        intervalHours:
+            4,
+
+        frequencyPerDay:
+            6,
+
+        unit:
+            "mg/kg/dose",
+
+        dailyUnit:
+            "mg/kg/day",
+
+        route:
+            "oral",
+
+        minimumAgeYears:
+            2,
+
+        maxInitialDoseMg:
+            20,
+
+        configured:
+            true
+
+    },
+
+
+    indicationSpecific:
+        false,
+
+
+    /* ---------------------------------
+       CONTRAINDICATIONS
+    --------------------------------- */
+
+    contraindications: [
+
+        "Significant respiratory depression",
+
+        "Acute or severe bronchial asthma in an unmonitored setting or without resuscitative equipment",
+
+        "Known or suspected gastrointestinal obstruction including paralytic ileus",
+
+        "Hypersensitivity to morphine or other opioid components",
+
+        "Concurrent use of monoamine oxidase inhibitors or use within 14 days"
+
+    ],
+
+
+    /* ---------------------------------
+       PRECAUTIONS
+    --------------------------------- */
+
+    precautions: [
+
+        "Respiratory depression",
+
+        "Sedation",
+
+        "Opioid-naive patients",
+
+        "Renal impairment",
+
+        "Hepatic impairment",
+
+        "Hypotension",
+
+        "Head injury or increased intracranial pressure",
+
+        "Seizure disorders",
+
+        "Risk of misuse, abuse and addiction",
+
+        "Physical dependence and withdrawal",
+
+        "Concomitant use of other CNS depressants",
+
+        "Use the lowest effective dose for the shortest appropriate duration"
+
+    ],
+
+
+    /* ---------------------------------
+       ADVERSE EFFECTS
+    --------------------------------- */
+
+    adverseEffects: [
+
+        "Respiratory depression",
+
+        "Sedation",
+
+        "Somnolence",
+
+        "Nausea",
+
+        "Vomiting",
+
+        "Constipation",
+
+        "Pruritus",
+
+        "Hypotension",
+
+        "Dizziness",
+
+        "Urinary retention"
+
+    ],
+
+
+    /* ---------------------------------
+       IMPORTANT NOTES
+    --------------------------------- */
+
+    notes:
+        "For pediatric patients 2 years of age and older, initiate with 0.15–0.3 mg/kg every 4 hours as needed for pain. Do not exceed 20 mg as an initial pediatric dose. Only use the 2 mg/mL or 4 mg/mL oral-solution concentrations in pediatric patients. The 20 mg/mL concentrated oral solution is intended only for opioid-tolerant adults and must not be used for pediatric dosing. Morphine requires specialist clinical judgment and monitoring.",
+
+
+    /* ---------------------------------
+       REFERENCES
+    --------------------------------- */
+
+    references: [
+
+        {
+            organization:
+                "U.S. National Library of Medicine",
+
+            title:
+                "DailyMed - Morphine Sulfate Oral Solution",
+
+            url:
+                "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6605ced6-68fe-4d7d-baa6-2526f7c9a64a"
+        },
+
+        {
+            organization:
+                "Electronic Medicines Compendium",
+
+            title:
+                "Morphine Sulfate 10 mg/5 mL Oral Solution - Summary of Product Characteristics",
+
+            url:
+                "https://www.medicines.org.uk/emc/product/2629/smpc"
+        }
+
+    ]
+
+},
+
+
+/* =========================================
+   TRAMADOL
+========================================= */
+
+{
+    id:
+        "tramadol",
+
+    genericName:
+        "Tramadol",
+
+    name:
+        "Tramadol",
+
+    brandNames: [],
+
+
+    /* ---------------------------------
+       CLASSIFICATION
+    --------------------------------- */
+
+    drugClass: [
+        "Opioid analgesic",
+        "Centrally acting analgesic"
+    ],
+
+    class:
+        "Opioid Analgesic · Centrally Acting Analgesic",
+
+
+    /* ---------------------------------
+       CLINICAL USE
+    --------------------------------- */
+
+    conditions: [
+        "moderate to severe pain"
+    ],
+
+    condition:
+        "Moderate to Severe Pain",
+
+    route:
+        "Oral",
+
+    dosageForms: [
+        "oral solution"
+    ],
+
+    commonPediatricConcentrations: [
+        "5 mg/mL",
+        "10 mg/mL"
+    ],
+
+    indications:
+        "Treatment of moderate to severe pain in appropriately selected patients.",
+
+
+    /* ---------------------------------
+       MECHANISM OF ACTION
+    --------------------------------- */
+
+    moa:
+        "Tramadol is a centrally acting analgesic with opioid activity at mu receptors and additional effects on norepinephrine and serotonin reuptake.",
+
+
+    /* ---------------------------------
+       PEDIATRIC INFORMATION
+    --------------------------------- */
+
+    pediatric:
+        "Tramadol oral solution is contraindicated in children younger than 12 years. In adolescents 12–18 years, use requires careful assessment of respiratory risk and other opioid-related risks. It is not configured as a routine pediatric weight-based calculator regimen in DoseCare.",
+
+
+    /* ---------------------------------
+       DOSING
+    ---------------------------------
+
+       The current DoseCare calculator does
+       not support this fixed-dose adolescent
+       regimen safely as a generic mg/kg rule.
+
+       Therefore this medicine is intentionally
+       NOT calculator-ready.
+    --------------------------------- */
+
+    dosing: {
+
+        type:
+            "fixed_dose",
+
+        configured:
+            false,
+
+        calculatorReady:
+            false,
+
+        minimumAgeYears:
+            12,
+
+        frequencyText:
+            "50–100 mg every 4–6 hours",
+
+        route:
+            "oral",
+
+        maxDailyDoseMg:
+            400,
+
+        note:
+            "Fixed-dose adolescent regimen; requires specialist clinical assessment and is not currently supported by the DoseCare calculator engine."
+
+    },
+
+
+    indicationSpecific:
+        false,
+
+
+    /* ---------------------------------
+       CONTRAINDICATIONS
+    --------------------------------- */
+
+    contraindications: [
+
+        "Children younger than 12 years",
+
+        "Patients younger than 18 years following tonsillectomy and/or adenoidectomy",
+
+        "Significant respiratory depression",
+
+        "Acute or severe bronchial asthma in an unmonitored setting",
+
+        "Known or suspected gastrointestinal obstruction",
+
+        "Concurrent MAOI use or MAOI use within the previous 14 days",
+
+        "Hypersensitivity to tramadol or opioids"
+
+    ],
+
+
+    /* ---------------------------------
+       PRECAUTIONS
+    --------------------------------- */
+
+    precautions: [
+
+        "Respiratory depression",
+
+        "Risk of seizures",
+
+        "CYP2D6 metabolic variability",
+
+        "CYP3A4 drug interactions",
+
+        "Serotonergic drug interactions",
+
+        "Sedation",
+
+        "Risk of dependence and withdrawal",
+
+        "Avoid in adolescents with significant respiratory risk factors",
+
+        "Use under appropriate medical supervision"
+
+    ],
+
+
+    /* ---------------------------------
+       ADVERSE EFFECTS
+    --------------------------------- */
+
+    adverseEffects: [
+
+        "Nausea",
+
+        "Vomiting",
+
+        "Dizziness",
+
+        "Somnolence",
+
+        "Constipation",
+
+        "Respiratory depression",
+
+        "Seizures",
+
+        "Serotonin syndrome",
+
+        "Dependence",
+
+        "Withdrawal symptoms"
+
+    ],
+
+
+    /* ---------------------------------
+       IMPORTANT NOTES
+    --------------------------------- */
+
+    notes:
+        "Tramadol oral solution is not for children under 12 years. It is contraindicated in patients under 18 years after tonsillectomy/adenoidectomy because of the risk of life-threatening respiratory depression. The current DoseCare calculator intentionally does not calculate tramadol because the appropriate adolescent regimen is fixed-dose rather than a simple mg/kg rule.",
+
+
+    /* ---------------------------------
+       REFERENCES
+    --------------------------------- */
+
+    references: [
+
+        {
+            organization:
+                "U.S. National Library of Medicine",
+
+            title:
+                "DailyMed - Tramadol Hydrochloride Oral Solution",
+
+            url:
+                "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2804c640-9d47-4b40-b58b-da321b79cf39"
+        },
+
+        {
+            organization:
+                "Electronic Medicines Compendium",
+
+            title:
+                "Tramadol Hydrochloride 10 mg/mL Oral Solution - Summary of Product Characteristics",
+
+            url:
+                "https://www.medicines.org.uk/emc/product/12624/smpc"
+        }
+
+    ]
+
+},
+
+
+/* =========================================
+   OXYCODONE
+========================================= */
+
+{
+    id:
+        "oxycodone",
+
+    genericName:
+        "Oxycodone Hydrochloride",
+
+    name:
+        "Oxycodone",
+
+    brandNames: [],
+
+
+    /* ---------------------------------
+       CLASSIFICATION
+    --------------------------------- */
+
+    drugClass: [
+        "Opioid analgesic",
+        "Strong analgesic"
+    ],
+
+    class:
+        "Opioid Analgesic · Strong Analgesic",
+
+
+    /* ---------------------------------
+       CLINICAL USE
+    --------------------------------- */
+
+    conditions: [
+        "severe pain"
+    ],
+
+    condition:
+        "Severe Pain",
+
+    route:
+        "Oral",
+
+    dosageForms: [
+        "oral solution"
+    ],
+
+    commonPediatricConcentrations: [
+        "1 mg/mL",
+        "10 mg/mL"
+    ],
+
+    indications:
+        "Treatment of severe pain that can be adequately managed with opioid analgesics in appropriately selected adolescents.",
+
+
+    /* ---------------------------------
+       MECHANISM OF ACTION
+    --------------------------------- */
+
+    moa:
+        "Oxycodone is an opioid agonist that acts primarily at mu-opioid receptors in the central nervous system to produce analgesia.",
+
+
+    /* ---------------------------------
+       PEDIATRIC INFORMATION
+    --------------------------------- */
+
+    pediatric:
+        "Oxycodone oral solution may be used in adolescents 12 years of age and older under specialist supervision for severe pain. It is not recommended in children younger than 12 years because safety and efficacy have not been established.",
+
+
+    /* ---------------------------------
+       DOSING
+    ---------------------------------
+
+       Fixed-dose adolescent regimen.
+
+       NOT calculator-ready until DoseCare
+       supports fixed-dose pediatric regimens.
+    --------------------------------- */
+
+    dosing: {
+
+        type:
+            "fixed_dose",
+
+        configured:
+            false,
+
+        calculatorReady:
+            false,
+
+        minimumAgeYears:
+            12,
+
+        initialDoseMg:
+            5,
+
+        frequencyText:
+            "Every 6 hours initially",
+
+        alternativeInterval:
+            "Every 4 hours if clinically required",
+
+        maximumDosesPerDay:
+            6,
+
+        route:
+            "oral",
+
+        note:
+            "Requires specialist opioid prescribing and individual titration. Current DoseCare engine does not calculate this fixed-dose regimen."
+
+    },
+
+
+    indicationSpecific:
+        false,
+
+
+    /* ---------------------------------
+       CONTRAINDICATIONS
+    --------------------------------- */
+
+    contraindications: [
+
+        "Children younger than 12 years",
+
+        "Significant respiratory depression",
+
+        "Acute or severe bronchial asthma in an unmonitored setting",
+
+        "Known or suspected gastrointestinal obstruction",
+
+        "Hypersensitivity to oxycodone or other opioid components",
+
+        "Concurrent MAOI use or recent MAOI use"
+
+    ],
+
+
+    /* ---------------------------------
+       PRECAUTIONS
+    --------------------------------- */
+
+    precautions: [
+
+        "Respiratory depression",
+
+        "Sedation",
+
+        "Opioid-naive patients",
+
+        "Renal impairment",
+
+        "Hepatic impairment",
+
+        "Low body weight",
+
+        "Risk of dependence and misuse",
+
+        "Physical dependence and withdrawal",
+
+        "Concomitant CNS depressants",
+
+        "Use only under specialist supervision",
+
+        "Use the lowest effective dose for the shortest appropriate duration"
+
+    ],
+
+
+    /* ---------------------------------
+       ADVERSE EFFECTS
+    --------------------------------- */
+
+    adverseEffects: [
+
+        "Nausea",
+
+        "Vomiting",
+
+        "Constipation",
+
+        "Somnolence",
+
+        "Dizziness",
+
+        "Respiratory depression",
+
+        "Pruritus",
+
+        "Hypotension",
+
+        "Urinary retention",
+
+        "Dependence"
+
+    ],
+
+
+    /* ---------------------------------
+       IMPORTANT NOTES
+    --------------------------------- */
+
+    notes:
+        "Oxycodone oral solution is not recommended below 12 years of age. For adolescents 12 years and older, the referenced SmPC gives an initial dose of 5 mg every 6 hours, with the interval potentially reduced to every 4 hours if necessary. The current DoseCare calculator intentionally does not calculate this fixed-dose opioid regimen until a dedicated fixed-dose pediatric engine is implemented.",
+
+
+    /* ---------------------------------
+       REFERENCES
+    --------------------------------- */
+
+    references: [
+
+        {
+            organization:
+                "Electronic Medicines Compendium",
+
+            title:
+                "Oxycodone Hydrochloride 1 mg/mL Oral Solution - Summary of Product Characteristics",
+
+            url:
+                "https://www.medicines.org.uk/emc/product/15806/smpc"
+        },
+
+        {
+            organization:
+                "Electronic Medicines Compendium",
+
+            title:
+                "Oxycodone Hydrochloride 10 mg/mL Oral Solution - Summary of Product Characteristics",
+
+            url:
+                "https://www.medicines.org.uk/emc/product/13371/smpc"
+        }
+
+    ]
+
+}
