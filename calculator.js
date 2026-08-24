@@ -5848,16 +5848,25 @@ function buildResultCards(
     let calculationHTML = "";
 
 
-    const isPerDose =
-        result.type ===
-        "mg_per_kg_per_dose";
+  const isPerDose =
+    result.type ===
+    "mg_per_kg_per_dose";
 
+const isPerDay =
+    result.type ===
+        "mg_per_kg_per_day" ||
+    result.type ===
+        "weight_based" ||
+    result.type ===
+        "condition_based" ||
+    result.type ===
+        "severity_based";
 
-    const isPerDay =
-        result.type ===
-            "mg_per_kg_per_day" ||
-        result.type ===
-            "weight_based";
+const isFixedDose =
+    result.type ===
+        "fixed_dose" ||
+    result.type ===
+        "fixed_daily_dose";
 
 
     const rateIsSingle =
@@ -5866,7 +5875,70 @@ function buildResultCards(
             result.maxDoseRate
         );
 
+/* -------------------------------------
+   FIXED DOSE
+------------------------------------- */
 
+if (isFixedDose) {
+
+    calculationHTML += `
+
+        <div class="calculation-step">
+
+            <span class="calculation-step-number">
+                01
+            </span>
+
+            <div class="calculation-step-content">
+
+                <strong>
+                    Select the age/weight-specific dose
+                </strong>
+
+                <p>
+                    DoseCare matched the patient's
+                    ${
+                        result.originalType ===
+                        "fixed_age_dose"
+                            ? "age"
+                            : result.originalType ===
+                              "weight_based_fixed_dose"
+                                ? "weight"
+                                : "configured regimen"
+                    }
+                    to the medicine's approved dosing rule.
+                </p>
+
+                <div class="calculation-equation">
+
+                    <strong>
+                        ${formatNumber(result.minMg)}
+                        ${
+                            isSingleValue(
+                                result.minMg,
+                                result.maxMg
+                            )
+                                ? ""
+                                : `–${formatNumber(result.maxMg)}`
+                        }
+                        mg/dose
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+}
+
+
+/* -------------------------------------
+   MG/KG/DOSE
+------------------------------------- */
+
+else if (isPerDose) {
     /* -------------------------------------
        MG/KG/DOSE
     ------------------------------------- */
