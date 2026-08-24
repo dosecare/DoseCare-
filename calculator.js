@@ -3193,21 +3193,28 @@ function validateMedicineAge(medicine) {
     };
 }
 
-
 /* =========================================
    DOSING CALCULATION
+   Supports:
+   - mg/kg/dose
+   - mg/kg/day
+   - condition_based
+   - severity_based
+   - fixed_age_dose
+   - weight_based_fixed_dose
+   - fixed_daily_dose
 ========================================= */
 
 function calculateDosingRule(
     medicine,
     weight,
-    regimen
+    regimen,
+    ageMonths
 ) {
 
     if (!medicine) {
 
         return {
-
             success: false,
 
             message:
@@ -3224,13 +3231,1413 @@ function calculateDosingRule(
     if (!dosing) {
 
         return {
-
             success: false,
 
             message:
                 "A pediatric dosing regimen has not been configured for this medicine."
         };
     }
+
+
+    const type =
+        normalizeText(
+            dosing.type
+        );
+
+
+    /* =====================================
+       HELPER
+       Parse numeric dose ranges
+       Example:
+       "5–10" → [5, 10]
+       "5-10" → [5, 10]
+    ===================================== */
+
+    function parseDoseRange(value) {
+
+        if (
+            typeof value === "number" &&
+            Number.isFinite(value)
+        ) {
+
+            return {
+                min: value,
+                max: value
+            };
+        }
+
+
+        if (
+            typeof value !== "string"
+        ) {
+            return null;
+        }
+
+
+        const cleaned =
+            value
+                .replace(/–/g, "-")
+                .trim();
+
+
+        const match =
+            cleaned.match(
+                /^(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)$/
+            );
+
+
+        if (match) {
+
+            const min =
+                Number(match[1]);
+
+            const max =
+                Number(match[2]);
+
+
+            if (
+                Number.isFinite(min) &&
+                Number.isFinite(max) &&
+                min >= 0 &&
+                max >= min
+            ) {
+
+                return {
+                    min,
+                    max
+                };
+            }
+        }
+
+
+        const single =
+            Number(cleaned);
+
+
+        if (
+            Number.isFinite(single) &&
+            single >= 0
+        ) {
+
+            return {
+                min: single,
+                max: single
+            };
+        }
+
+
+        return null;
+    }
+
+
+    /* =====================================
+       FIND AGE-BASED REGIMEN
+    ===================================== */
+
+    function findAgeRegimen() {
+
+        if (
+            !Number.isFinite(ageMonths)
+        ) {
+            return null;
+        }
+
+
+        const ageRegimens =
+            Array.isArray(
+                dosing.ageBasedDosing
+            )
+                ? dosing.ageBasedDosing
+                : [];
+
+
+        for (
+            const item of ageRegimens
+        ) {
+
+            const minMonths =
+                Number(
+                    item.minimumAgeMonths
+                );
+
+
+            const maxMonths =
+                Number(
+                    item.maximumAgeMonths
+                );
+
+
+            const minYears =
+                Number(
+                    item.minimumAgeYears
+                );
+
+
+            const maxYears =
+                Number(
+                    item.maximumAgeYears
+                );
+
+
+            const lowerBound =
+                Number.isFinite(minMonths)
+                    ? minMonths
+                    : Number.isFinite(minYears)
+                        ? minYears * 12
+                        : 0;
+
+
+            const upperBound =
+                Number.isFinite(maxMonths)
+                    ? maxMonths
+                    : Number.isFinite(maxYears)
+                        ? maxYears * 12
+                        : Infinity;
+
+
+            if (
+                ageMonths >= lowerBound &&
+                ageMonths < upperBound
+            ) {
+
+                return item;
+            }
+
+
+            /*
+               If the final age group has no
+               maximum age, allow it.
+            */
+
+            if (
+                ageMonths >= lowerBound &&
+                upperBound === Infinity
+            ) {
+
+                return item;
+            }
+        }
+
+
+        return null;
+    }
+
+
+    /* =====================================
+       FIND WEIGHT-BASED REGIMEN
+    ===================================== */
+
+    function findWeightRegimen() {
+
+        if (
+            !Number.isFinite(weight)
+        ) {
+            return null;
+        }
+
+
+        const weightRegimens =
+            Array.isArray(
+                dosing.weightBasedDosing
+            )
+                ? dosing.weightBasedDosing
+                : [];
+
+
+        for (
+            const item of weightRegimens
+        ) {
+
+            const minWeight =
+                Number(
+                    item.minimumWeightKg
+                );
+
+
+            const maxWeight =
+                Number(
+                    item.maximumWeightKg
+                );
+
+
+            const lowerBound =
+                Number.isFinite(minWeight)
+                    ? minWeight
+                    : 0;
+
+
+            const upperBound =
+                Number.isFinite(maxWeight)
+                    ? maxWeight
+                    : Infinity;
+
+
+            /*
+               Use < for the upper boundary so
+               30 kg belongs to the next regimen
+               when the database defines 30 kg
+               as its lower boundary.
+            */
+
+            if (
+                weight >= lowerBound &&
+                weight < upperBound
+            ) {
+
+                return item;
+            }
+
+
+            if (
+                weight >= lowerBound &&
+                upperBound === Infinity
+            ) {
+
+                return item;
+            }
+        }
+
+
+        return null;
+    }
+
+
+    /* =====================================
+       FIXED AGE DOSE
+    ===================================== */
+
+    if (
+        type ===
+        "fixed_age_dose"
+    ) {
+
+        const ageRegimen =
+            findAgeRegimen();
+
+
+        if (!ageRegimen) {
+
+            return {
+                success: false,
+
+                message:
+                    "No pediatric dose regimen matches the patient's age for this medicine."
+            };
+        }
+
+
+        const doseRange =
+            parseDoseRange(
+                ageRegimen.doseMg ??
+                ageRegimen.doseRangeMg
+            );
+
+
+        if (!doseRange) {
+
+            return {
+                success: false,
+
+                message:
+                    "The age-specific dose is incomplete or invalid for this medicine."
+            };
+        }
+
+
+        const frequency =
+            Number(
+                ageRegimen.frequencyPerDay ??
+                ageRegimen.dosesPerDay ??
+                dosing.frequencyPerDay ??
+                dosing.frequency
+            );
+
+
+        const frequencyValue =
+            Number.isFinite(frequency) &&
+            frequency > 0
+                ? frequency
+                : 1;
+
+
+        const frequencyText =
+            ageRegimen.frequencyText ||
+            dosing.frequencyText ||
+            dosing.frequency ||
+            "As directed";
+
+
+        const intervalHours =
+            Number(
+                ageRegimen.intervalHours ??
+                ageRegimen.minimumIntervalHours ??
+                dosing.intervalHours
+            );
+
+
+        const dailyMinMg =
+            doseRange.min *
+            frequencyValue;
+
+
+        const dailyMaxMg =
+            doseRange.max *
+            frequencyValue;
+
+
+        return {
+
+            success: true,
+
+            type:
+                "fixed_dose",
+
+            originalType:
+                type,
+
+            minDoseRate:
+                doseRange.min,
+
+            maxDoseRate:
+                doseRange.max,
+
+            minMg:
+                doseRange.min,
+
+            maxMg:
+                doseRange.max,
+
+            dailyMinMg,
+
+            dailyMaxMg,
+
+            frequency:
+                String(
+                    frequencyText
+                ),
+
+            dosesPerDay:
+                frequencyValue,
+
+            intervalHours:
+                Number.isFinite(
+                    intervalHours
+                )
+                    ? intervalHours
+                    : getFrequencyHours(
+                        ageRegimen,
+                        frequencyValue
+                    ),
+
+            unit:
+                "mg/dose",
+
+            duration:
+                ageRegimen.duration ||
+                dosing.duration ||
+                "",
+
+            maxPerDose:
+                Number.isFinite(
+                    Number(
+                        ageRegimen.maximumDoseMg
+                    )
+                )
+                    ? Number(
+                        ageRegimen.maximumDoseMg
+                    )
+                    : null,
+
+            maxDailyDose:
+                Number.isFinite(
+                    Number(
+                        ageRegimen.maximumDailyDoseMg
+                    )
+                )
+                    ? Number(
+                        ageRegimen.maximumDailyDoseMg
+                    )
+                    : null,
+
+            matchedRegimen:
+                ageRegimen
+        };
+    }
+
+
+    /* =====================================
+       FIXED WEIGHT-BASED DOSE
+    ===================================== */
+
+    if (
+        type ===
+        "weight_based_fixed_dose"
+    ) {
+
+        const weightRegimen =
+            findWeightRegimen();
+
+
+        if (!weightRegimen) {
+
+            return {
+                success: false,
+
+                message:
+                    "No pediatric dose regimen matches the patient's weight for this medicine."
+            };
+        }
+
+
+        const doseRange =
+            parseDoseRange(
+                weightRegimen.doseMg ??
+                weightRegimen.doseRangeMg
+            );
+
+
+        if (!doseRange) {
+
+            return {
+                success: false,
+
+                message:
+                    "The weight-specific dose is incomplete or invalid for this medicine."
+            };
+        }
+
+
+        const frequency =
+            Number(
+                weightRegimen.frequencyPerDay ??
+                weightRegimen.dosesPerDay ??
+                dosing.frequencyPerDay ??
+                dosing.frequency
+            );
+
+
+        const frequencyValue =
+            Number.isFinite(frequency) &&
+            frequency > 0
+                ? frequency
+                : 1;
+
+
+        const frequencyText =
+            weightRegimen.frequencyText ||
+            dosing.frequencyText ||
+            dosing.frequency ||
+            "As directed";
+
+
+        const intervalHours =
+            Number(
+                weightRegimen.intervalHours ??
+                weightRegimen.minimumIntervalHours ??
+                dosing.intervalHours
+            );
+
+
+        const dailyMinMg =
+            doseRange.min *
+            frequencyValue;
+
+
+        const dailyMaxMg =
+            doseRange.max *
+            frequencyValue;
+
+
+        return {
+
+            success: true,
+
+            type:
+                "fixed_dose",
+
+            originalType:
+                type,
+
+            minDoseRate:
+                doseRange.min,
+
+            maxDoseRate:
+                doseRange.max,
+
+            minMg:
+                doseRange.min,
+
+            maxMg:
+                doseRange.max,
+
+            dailyMinMg,
+
+            dailyMaxMg,
+
+            frequency:
+                String(
+                    frequencyText
+                ),
+
+            dosesPerDay:
+                frequencyValue,
+
+            intervalHours:
+                Number.isFinite(
+                    intervalHours
+                )
+                    ? intervalHours
+                    : getFrequencyHours(
+                        weightRegimen,
+                        frequencyValue
+                    ),
+
+            unit:
+                "mg/dose",
+
+            duration:
+                weightRegimen.duration ||
+                dosing.duration ||
+                "",
+
+            maxPerDose:
+                Number.isFinite(
+                    Number(
+                        weightRegimen.maximumDoseMg
+                    )
+                )
+                    ? Number(
+                        weightRegimen.maximumDoseMg
+                    )
+                    : null,
+
+            maxDailyDose:
+                Number.isFinite(
+                    Number(
+                        weightRegimen.maximumDailyDoseMg
+                    )
+                )
+                    ? Number(
+                        weightRegimen.maximumDailyDoseMg
+                    )
+                    : null,
+
+            matchedRegimen:
+                weightRegimen
+        };
+    }
+
+
+    /* =====================================
+       FIXED DAILY DOSE
+    ===================================== */
+
+    if (
+        type ===
+        "fixed_daily_dose"
+    ) {
+
+        const dailyMin =
+            Number(
+                dosing.totalDailyDoseMg ??
+                dosing.minDailyDoseMg
+            );
+
+
+        const dailyMax =
+            Number(
+                dosing.maximumDailyDoseMg ??
+                dosing.totalDailyDoseMg ??
+                dosing.maxDailyDoseMg ??
+                dosing.minDailyDoseMg
+            );
+
+
+        if (
+            !Number.isFinite(dailyMin) ||
+            !Number.isFinite(dailyMax) ||
+            dailyMin < 0 ||
+            dailyMax < dailyMin
+        ) {
+
+            return {
+                success: false,
+
+                message:
+                    "The fixed daily dose is incomplete or invalid for this medicine."
+            };
+        }
+
+
+        const frequency =
+            Number(
+                dosing.frequencyPerDay ??
+                dosing.dosesPerDay ??
+                dosing.frequency
+            );
+
+
+        /*
+           Do NOT guess how a daily dose should
+           be divided. A product must provide a
+           valid frequency before DoseCare can
+           calculate a per-dose amount.
+        */
+
+        if (
+            !Number.isFinite(frequency) ||
+            frequency <= 0
+        ) {
+
+            return {
+                success: false,
+
+                message:
+                    "The medicine provides a daily dose but does not provide a valid number of doses per day. DoseCare will not guess the division."
+            };
+        }
+
+
+        const minMg =
+            dailyMin /
+            frequency;
+
+
+        const maxMg =
+            dailyMax /
+            frequency;
+
+
+        return {
+
+            success: true,
+
+            type:
+                "fixed_daily_dose",
+
+            originalType:
+                type,
+
+            minDoseRate:
+                null,
+
+            maxDoseRate:
+                null,
+
+            minMg,
+
+            maxMg,
+
+            dailyMinMg:
+                dailyMin,
+
+            dailyMaxMg:
+                dailyMax,
+
+            frequency:
+                dosing.frequencyText ||
+                dosing.frequency ||
+                `Every ${24 / frequency} hours`,
+
+            dosesPerDay:
+                frequency,
+
+            intervalHours:
+                getFrequencyHours(
+                    dosing,
+                    frequency
+                ),
+
+            unit:
+                "mg/dose",
+
+            duration:
+                dosing.duration ||
+                "",
+
+            maxPerDose:
+                null,
+
+            maxDailyDose:
+                dailyMax
+        };
+    }
+
+
+    /* =====================================
+       MG/KG/DOSE
+    ===================================== */
+
+    if (
+        type ===
+        "mg_per_kg_per_dose"
+    ) {
+
+        if (
+            !Number.isFinite(weight) ||
+            weight <= 0
+        ) {
+
+            return {
+                success: false,
+
+                message:
+                    "Weight is required for this dosing regimen."
+            };
+        }
+
+
+        const minDose =
+            Number(
+                dosing.minDose ??
+                dosing.dose
+            );
+
+
+        const maxDose =
+            Number(
+                dosing.maxDose ??
+                dosing.dose
+            );
+
+
+        if (
+            !Number.isFinite(minDose) ||
+            !Number.isFinite(maxDose) ||
+            minDose < 0 ||
+            maxDose < minDose
+        ) {
+
+            return {
+                success: false,
+
+                message:
+                    "The selected dosing regimen is incomplete or invalid."
+            };
+        }
+
+
+        const frequency =
+            getFrequencyNumber(
+                dosing
+            );
+
+
+        let minMg =
+            weight *
+            minDose;
+
+
+        let maxMg =
+            weight *
+            maxDose;
+
+
+        let appliedMaxPerDose =
+            null;
+
+
+        const configuredMaxPerDose =
+            Number(
+                dosing.maxPerDose
+            );
+
+
+        if (
+            Number.isFinite(
+                configuredMaxPerDose
+            ) &&
+            configuredMaxPerDose > 0
+        ) {
+
+            appliedMaxPerDose =
+                configuredMaxPerDose;
+
+            maxMg =
+                Math.min(
+                    maxMg,
+                    configuredMaxPerDose
+                );
+        }
+
+
+        let dailyMinMg =
+            minMg *
+            frequency;
+
+
+        let dailyMaxMg =
+            maxMg *
+            frequency;
+
+
+        let appliedMaxDailyDose =
+            null;
+
+
+        const configuredMaxDailyDose =
+            Number(
+                dosing.maxDailyDose
+            );
+
+
+        if (
+            Number.isFinite(
+                configuredMaxDailyDose
+            ) &&
+            configuredMaxDailyDose > 0
+        ) {
+
+            appliedMaxDailyDose =
+                configuredMaxDailyDose;
+
+
+            dailyMaxMg =
+                Math.min(
+                    dailyMaxMg,
+                    configuredMaxDailyDose
+                );
+
+
+            maxMg =
+                Math.min(
+                    maxMg,
+                    configuredMaxDailyDose /
+                    frequency
+                );
+        }
+
+
+        return {
+
+            success: true,
+
+            type,
+
+            minDoseRate:
+                minDose,
+
+            maxDoseRate:
+                maxDose,
+
+            minMg,
+
+            maxMg,
+
+            dailyMinMg,
+
+            dailyMaxMg,
+
+            frequency:
+                getFrequencyText(
+                    dosing,
+                    frequency
+                ),
+
+            dosesPerDay:
+                frequency,
+
+            intervalHours:
+                getFrequencyHours(
+                    dosing,
+                    frequency
+                ),
+
+            unit:
+                "mg/kg/dose",
+
+            duration:
+                dosing.duration ||
+                "",
+
+            maxPerDose:
+                appliedMaxPerDose,
+
+            maxDailyDose:
+                appliedMaxDailyDose
+        };
+    }
+
+
+    /* =====================================
+       MG/KG/DAY
+    ===================================== */
+
+    if (
+        type ===
+            "mg_per_kg_per_day" ||
+        type ===
+            "weight_based"
+    ) {
+
+        if (
+            !Number.isFinite(weight) ||
+            weight <= 0
+        ) {
+
+            return {
+                success: false,
+
+                message:
+                    "Weight is required for this dosing regimen."
+            };
+        }
+
+
+        const minDailyDose =
+            Number(
+                dosing.minDose ??
+                dosing.dose
+            );
+
+
+        const maxDailyDoseRate =
+            Number(
+                dosing.maxDose ??
+                dosing.dose
+            );
+
+
+        if (
+            !Number.isFinite(
+                minDailyDose
+            ) ||
+            !Number.isFinite(
+                maxDailyDoseRate
+            ) ||
+            minDailyDose < 0 ||
+            maxDailyDoseRate < minDailyDose
+        ) {
+
+            return {
+                success: false,
+
+                message:
+                    "The selected dosing regimen is incomplete or invalid."
+            };
+        }
+
+
+        const frequency =
+            getFrequencyNumber(
+                dosing
+            );
+
+
+        let dailyMinMg =
+            weight *
+            minDailyDose;
+
+
+        let dailyMaxMg =
+            weight *
+            maxDailyDoseRate;
+
+
+        let appliedMaxDailyDose =
+            null;
+
+
+        const configuredMaxDailyDose =
+            Number(
+                dosing.maxDailyDose
+            );
+
+
+        if (
+            Number.isFinite(
+                configuredMaxDailyDose
+            ) &&
+            configuredMaxDailyDose > 0
+        ) {
+
+            appliedMaxDailyDose =
+                configuredMaxDailyDose;
+
+
+            dailyMaxMg =
+                Math.min(
+                    dailyMaxMg,
+                    configuredMaxDailyDose
+                );
+        }
+
+
+        let minMg =
+            dailyMinMg /
+            frequency;
+
+
+        let maxMg =
+            dailyMaxMg /
+            frequency;
+
+
+        let appliedMaxPerDose =
+            null;
+
+
+        const configuredMaxPerDose =
+            Number(
+                dosing.maxPerDose
+            );
+
+
+        if (
+            Number.isFinite(
+                configuredMaxPerDose
+            ) &&
+            configuredMaxPerDose > 0
+        ) {
+
+            appliedMaxPerDose =
+                configuredMaxPerDose;
+
+            maxMg =
+                Math.min(
+                    maxMg,
+                    configuredMaxPerDose
+                );
+        }
+
+
+        return {
+
+            success: true,
+
+            type,
+
+            minDoseRate:
+                minDailyDose,
+
+            maxDoseRate:
+                maxDailyDoseRate,
+
+            minMg,
+
+            maxMg,
+
+            dailyMinMg,
+
+            dailyMaxMg,
+
+            frequency:
+                getFrequencyText(
+                    dosing,
+                    frequency
+                ),
+
+            dosesPerDay:
+                frequency,
+
+            intervalHours:
+                getFrequencyHours(
+                    dosing,
+                    frequency
+                ),
+
+            unit:
+                "mg/kg/day",
+
+            duration:
+                dosing.duration ||
+                "",
+
+            maxPerDose:
+                appliedMaxPerDose,
+
+            maxDailyDose:
+                appliedMaxDailyDose
+        };
+    }
+
+
+    /* =====================================
+       CONDITION BASED
+    ===================================== */
+
+    if (
+        type ===
+        "condition_based"
+    ) {
+
+        if (
+            !Number.isFinite(weight) ||
+            weight <= 0
+        ) {
+
+            return {
+                success: false,
+
+                message:
+                    "Weight is required for this condition-based dosing regimen."
+            };
+        }
+
+
+        const minDose =
+            Number(
+                dosing.minDose ??
+                dosing.dose
+            );
+
+
+        const maxDose =
+            Number(
+                dosing.maxDose ??
+                dosing.dose
+            );
+
+
+        if (
+            !Number.isFinite(minDose) ||
+            !Number.isFinite(maxDose) ||
+            minDose < 0 ||
+            maxDose < minDose
+        ) {
+
+            return {
+                success: false,
+
+                message:
+                    "The selected dosing regimen is incomplete or invalid."
+            };
+        }
+
+
+        const frequency =
+            getFrequencyNumber(
+                dosing
+            );
+
+
+        const dailyMinMg =
+            weight *
+            minDose;
+
+
+        const dailyMaxMg =
+            weight *
+            maxDose;
+
+
+        const minMg =
+            dailyMinMg /
+            frequency;
+
+
+        const maxMg =
+            dailyMaxMg /
+            frequency;
+
+
+        return {
+
+            success: true,
+
+            type,
+
+            minDoseRate:
+                minDose,
+
+            maxDoseRate:
+                maxDose,
+
+            minMg,
+
+            maxMg,
+
+            dailyMinMg,
+
+            dailyMaxMg,
+
+            frequency:
+                getFrequencyText(
+                    dosing,
+                    frequency
+                ),
+
+            dosesPerDay:
+                frequency,
+
+            intervalHours:
+                getFrequencyHours(
+                    dosing,
+                    frequency
+                ),
+
+            unit:
+                "mg/kg/day",
+
+            duration:
+                dosing.duration ||
+                "",
+
+            maxPerDose:
+                null,
+
+            maxDailyDose:
+                Number.isFinite(
+                    Number(
+                        dosing.maxDailyDose
+                    )
+                )
+                    ? Number(
+                        dosing.maxDailyDose
+                    )
+                    : null
+        };
+    }
+
+
+    /* =====================================
+       SEVERITY BASED
+    ===================================== */
+
+    if (
+        type ===
+        "severity_based"
+    ) {
+
+        if (
+            !Number.isFinite(weight) ||
+            weight <= 0
+        ) {
+
+            return {
+                success: false,
+
+                message:
+                    "Weight is required for this dosing regimen."
+            };
+        }
+
+
+        const minDailyDose =
+            Number(
+                dosing.minDose
+            );
+
+
+        const maxDailyDoseRate =
+            Number(
+                dosing.maxDose
+            );
+
+
+        if (
+            !Number.isFinite(
+                minDailyDose
+            ) ||
+            !Number.isFinite(
+                maxDailyDoseRate
+            ) ||
+            minDailyDose < 0 ||
+            maxDailyDoseRate < minDailyDose
+        ) {
+
+            return {
+                success: false,
+
+                message:
+                    "The selected dosing regimen is incomplete or invalid."
+            };
+        }
+
+
+        const frequency =
+            getFrequencyNumber(
+                dosing
+            );
+
+
+        const dailyMinMg =
+            weight *
+            minDailyDose;
+
+
+        const dailyMaxMg =
+            weight *
+            maxDailyDoseRate;
+
+
+        const minMg =
+            dailyMinMg /
+            frequency;
+
+
+        const maxMg =
+            dailyMaxMg /
+            frequency;
+
+
+        return {
+
+            success: true,
+
+            type,
+
+            minDoseRate:
+                minDailyDose,
+
+            maxDoseRate:
+                maxDailyDoseRate,
+
+            minMg,
+
+            maxMg,
+
+            dailyMinMg,
+
+            dailyMaxMg,
+
+            frequency:
+                getFrequencyText(
+                    dosing,
+                    frequency
+                ),
+
+            dosesPerDay:
+                frequency,
+
+            intervalHours:
+                getFrequencyHours(
+                    dosing,
+                    frequency
+                ),
+
+            unit:
+                "mg/kg/day",
+
+            duration:
+                dosing.duration ||
+                "",
+
+            maxPerDose:
+                null,
+
+            maxDailyDose:
+                Number.isFinite(
+                    Number(
+                        dosing.maxDailyDose
+                    )
+                )
+                    ? Number(
+                        dosing.maxDailyDose
+                    )
+                    : null
+        };
+    }
+
+
+    return {
+
+        success: false,
+
+        message:
+            "The selected dosing regimen has an unsupported dosing type."
+    };
+}
 
 
     const type =
