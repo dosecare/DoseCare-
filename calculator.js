@@ -3006,193 +3006,171 @@ function showResult() {
     }
 }
 
+/* =====================================
+   3. AGE
+===================================== */
 
-/* =========================================
-   AGE
-========================================= */
-
-function getAgeInMonths() {
-
-    const age =
-        ageInput
-            ? parseFloat(
-                ageInput.value
-            )
-            : NaN;
-
-
-    if (!Number.isFinite(age)) {
-        return null;
-    }
-
-
-    const unit =
-        ageUnit
-            ? normalizeText(
-                ageUnit.value
-            )
-            : "years";
-
-
-    if (
-        unit === "month" ||
-        unit === "months" ||
-        unit === "mo"
-    ) {
-
-        return age;
-    }
-
-
-    return age * 12;
-}
-
-
-function formatAgeFromMonths(months) {
-
-    if (!Number.isFinite(months)) {
-        return "—";
-    }
-
-
-    if (months < 12) {
-
-        return (
-            `${formatNumber(months, 0)} month(s)`
-        );
-    }
-
-
-    const years =
-        months / 12;
-
-
-    if (
-        Number.isInteger(
-            years
+const age =
+    ageInput
+        ? parseFloat(
+            ageInput.value
         )
-    ) {
-
-        return (
-            `${years} year(s)`
-        );
-    }
+        : NaN;
 
 
-    return (
-        `${formatNumber(years, 1)} year(s)`
+const ageUnitValue =
+    ageUnit
+        ? normalizeText(
+            ageUnit.value
+        )
+        : "years";
+
+
+const ageMonths =
+    Number.isFinite(age)
+        ? (
+            ageUnitValue === "month" ||
+            ageUnitValue === "months" ||
+            ageUnitValue === "mo"
+                ? age
+                : age * 12
+        )
+        : NaN;
+
+
+/* =====================================
+   4. WEIGHT
+===================================== */
+
+const weight =
+    weightInput &&
+    weightInput.value !== ""
+        ? parseFloat(
+            weightInput.value
+        )
+        : NaN;
+
+
+/* =====================================
+   5. DETERMINE REQUIRED PATIENT DATA
+===================================== */
+
+const baseDosing =
+    selectedMedicine &&
+    selectedMedicine.dosing
+        ? selectedMedicine.dosing
+        : null;
+
+
+const dosingType =
+    selectedRegimen &&
+    selectedRegimen.type
+        ? normalizeText(
+            selectedRegimen.type
+        )
+        : baseDosing &&
+          baseDosing.type
+            ? normalizeText(
+                baseDosing.type
+            )
+            : "";
+
+
+/*
+   Age is required for:
+   - fixed_age_dose
+
+   Weight is required for:
+   - mg/kg/dose
+   - mg/kg/day
+   - weight_based
+   - weight_based_fixed_dose
+   - condition_based
+   - severity_based
+
+   fixed_daily_dose does not automatically
+   require age or weight unless its database
+   regimen specifically requires them.
+*/
+
+const requiresAge =
+    dosingType ===
+    "fixed_age_dose";
+
+
+const requiresWeight =
+    dosingType ===
+        "mg_per_kg_per_dose" ||
+    dosingType ===
+        "mg_per_kg_per_day" ||
+    dosingType ===
+        "weight_based" ||
+    dosingType ===
+        "weight_based_fixed_dose" ||
+    dosingType ===
+        "condition_based" ||
+    dosingType ===
+        "severity_based";
+
+
+if (
+    requiresAge &&
+    (
+        !Number.isFinite(age) ||
+        age < 0
+    )
+) {
+
+    showValidation(
+        "Please enter the patient's age."
     );
+
+    return;
 }
 
 
-/* =========================================
-   AGE VALIDATION
-========================================= */
+if (
+    requiresWeight &&
+    (
+        !Number.isFinite(weight) ||
+        weight <= 0
+    )
+) {
 
-function validateMedicineAge(medicine) {
+    showValidation(
+        "Please enter the patient's weight."
+    );
 
-    const ageMonths =
-        getAgeInMonths();
-
-
-    if (!Number.isFinite(ageMonths)) {
-
-        return {
-            valid: true
-        };
-    }
-
-
-    const dosing =
-        medicine &&
-        medicine.dosing;
-
-
-    if (!dosing) {
-
-        return {
-            valid: true
-        };
-    }
-
-
-    const minimumMonths =
-        Number(
-            dosing.minimumAgeMonths
-        );
-
-
-    const minimumYears =
-        Number(
-            dosing.minimumAgeYears
-        );
-
-
-    const maximumYears =
-        Number(
-            dosing.maximumAgeYears
-        );
-
-
-    if (
-        Number.isFinite(
-            minimumMonths
-        ) &&
-        ageMonths <
-            minimumMonths
-    ) {
-
-        return {
-
-            valid: false,
-
-            message:
-                `${getMedicineName(medicine)} is not configured for use below ${formatAgeFromMonths(minimumMonths)}.`
-        };
-    }
-
-
-    if (
-        Number.isFinite(
-            minimumYears
-        ) &&
-        ageMonths <
-            minimumYears * 12
-    ) {
-
-        return {
-
-            valid: false,
-
-            message:
-                `${getMedicineName(medicine)} is not configured for use below ${minimumYears} year(s).`
-        };
-    }
-
-
-    if (
-        Number.isFinite(
-            maximumYears
-        ) &&
-        ageMonths >
-            maximumYears * 12
-    ) {
-
-        return {
-
-            valid: false,
-
-            message:
-                `${getMedicineName(medicine)} is not configured for pediatric dosing above ${maximumYears} years.`
-        };
-    }
-
-
-    return {
-        valid: true
-    };
+    return;
 }
 
+
+/* =====================================
+   6. AGE VALIDATION
+===================================== */
+
+if (
+    requiresAge ||
+    Number.isFinite(ageMonths)
+) {
+
+    const ageValidation =
+        validateMedicineAge(
+            selectedMedicine
+        );
+
+
+    if (
+        !ageValidation.valid
+    ) {
+
+        showValidation(
+            ageValidation.message
+        );
+
+        return;
+    }
+}
 /* =========================================
    DOSING CALCULATION
    Supports:
