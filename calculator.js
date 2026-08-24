@@ -7218,11 +7218,12 @@ function calculateDose() {
     ===================================== */
 
     const result =
-        calculateDosingRule(
-            selectedMedicine,
-            weight,
-            selectedRegimen
-        );
+    calculateDosingRule(
+        selectedMedicine,
+        weight,
+        selectedRegimen,
+        ageMonths
+    );
 
 
     if (
