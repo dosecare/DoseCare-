@@ -511,48 +511,96 @@ function isLiquidMedicine(medicine) {
         return false;
     }
 
+
+    /* -----------------------------------------
+       COLLECT DOSAGE FORMS
+       Supports both:
+       dosageForm
+       dosageForms
+    ----------------------------------------- */
+
     const possibleForms = [
+
         medicine.dosageForm,
+        medicine.dosageForms,
+
         medicine.dosage_form,
         medicine.form,
         medicine.routeForm,
         medicine.preparation,
         medicine.pharmaceuticalForm
+
     ];
 
-    const forms =
-        possibleForms
-            .filter(Boolean)
-            .map(normalizeText);
 
+    const forms = possibleForms
+        .flatMap(value => {
+
+            if (Array.isArray(value)) {
+                return value;
+            }
+
+            return value
+                ? [value]
+                : [];
+
+        })
+        .filter(Boolean)
+        .map(normalizeText);
+
+
+    /* -----------------------------------------
+       FORBIDDEN DOSAGE FORMS
+
+       DoseCare supports ONLY:
+       Syrups
+       Oral Solutions
+       Oral Suspensions
+       Oral Liquids
+    ----------------------------------------- */
 
     const forbiddenForms = [
+
         "tablet",
         "tablets",
         "tab",
+
         "capsule",
         "capsules",
         "cap",
+
         "chewable",
         "chewables",
+
         "injection",
         "injectable",
+
         "iv",
         "iv injection",
         "intravenous",
+
         "im",
         "intramuscular",
+
         "suppository",
         "suppositories",
+
         "cream",
         "ointment",
         "gel",
         "patch",
+
         "powder",
         "granules",
+
         "lozenge"
+
     ];
 
+
+    /* -----------------------------------------
+       REJECT IF ANY FORBIDDEN FORM EXISTS
+    ----------------------------------------- */
 
     if (
         forms.some(
@@ -560,36 +608,70 @@ function isLiquidMedicine(medicine) {
                 forbiddenForms.includes(form)
         )
     ) {
+
         return false;
+
     }
 
 
-    const isAcceptedLiquidForm =
+    /* -----------------------------------------
+       ACCEPTED ORAL LIQUID FORMS
+    ----------------------------------------- */
+
+    const acceptedLiquidForms = [
+
+        "syrup",
+        "syrups",
+
+        "oral syrup",
+
+        "oral solution",
+        "oral solutions",
+
+        "oral suspension",
+        "oral suspensions",
+
+        "oral liquid",
+        "oral liquids",
+
+        "solution",
+        "suspension"
+
+    ];
+
+
+    const hasAcceptedLiquidForm =
         forms.some(
             form =>
-                form === "syrup" ||
-                form === "syrups" ||
-                form === "oral syrup" ||
-                form === "oral solution" ||
-                form === "oral solutions" ||
-                form === "oral suspension" ||
-                form === "oral suspensions" ||
-                form === "oral liquid" ||
-                form === "oral liquids" ||
-                form === "solution" ||
-                form === "suspension"
+                acceptedLiquidForms.includes(form)
         );
 
 
-    if (isAcceptedLiquidForm) {
+    if (hasAcceptedLiquidForm) {
+
         return true;
+
     }
 
+
+    /* -----------------------------------------
+       IF A FORM WAS PROVIDED BUT IT IS NOT
+       AN ACCEPTED ORAL LIQUID, REJECT IT.
+    ----------------------------------------- */
 
     if (forms.length > 0) {
+
         return false;
+
     }
 
+
+    /* -----------------------------------------
+       FALLBACK
+
+       Only allow medicines that are explicitly
+       oral AND have a valid liquid concentration.
+    ----------------------------------------- */
 
     const route =
         normalizeText(
@@ -601,10 +683,15 @@ function isLiquidMedicine(medicine) {
             medicine.administrationRoute
         );
 
+
     const isOral =
+
         route === "oral" ||
+
         administrationRoute === "oral" ||
+
         route.includes("oral") ||
+
         administrationRoute.includes("oral");
 
 
@@ -612,14 +699,15 @@ function isLiquidMedicine(medicine) {
         isOral &&
         getAvailableConcentrations(medicine).length > 0
     ) {
+
         return true;
+
     }
 
 
     return false;
+
 }
-
-
 /* =========================================
    CONCENTRATION PARSER
 ========================================= */
@@ -732,6 +820,15 @@ function getAvailableConcentrations(medicine) {
                         )
                 )
                 .filter(Boolean);
+
+      } else if (
+        Array.isArray(
+            medicine.commonPediatricConcentrations
+        )
+    ) {
+
+        raw =
+            medicine.commonPediatricConcentrations;
 
     } else if (
         medicine.concentration
