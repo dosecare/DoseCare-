@@ -5934,11 +5934,6 @@ if (isFixedDose) {
 }
 
 
-/* -------------------------------------
-   MG/KG/DOSE
-------------------------------------- */
-
-else if (isPerDose) {
     /* -------------------------------------
        MG/KG/DOSE
     ------------------------------------- */
@@ -7106,59 +7101,137 @@ function calculateDose() {
     }
 
 
-    /* =====================================
-       3. AGE
-    ===================================== */
+ /* =====================================
+   3. AGE
+===================================== */
 
-    const age =
-        ageInput
-            ? parseFloat(
-                ageInput.value
-            )
-            : NaN;
+const age =
+    ageInput
+        ? parseFloat(
+            ageInput.value
+        )
+        : NaN;
 
 
-    if (
+const ageUnitValue =
+    ageUnit
+        ? normalizeText(
+            ageUnit.value
+        )
+        : "years";
+
+
+const ageMonths =
+    Number.isFinite(age)
+        ? (
+            ageUnitValue === "month" ||
+            ageUnitValue === "months" ||
+            ageUnitValue === "mo"
+                ? age
+                : age * 12
+        )
+        : NaN;
+
+
+/* =====================================
+   4. WEIGHT
+===================================== */
+
+const weight =
+    weightInput &&
+    weightInput.value !== ""
+        ? parseFloat(
+            weightInput.value
+        )
+        : NaN;
+
+
+/* =====================================
+   5. DETERMINE REQUIRED PATIENT DATA
+===================================== */
+
+const dosing =
+    selectedRegimen ||
+    selectedMedicine.dosing ||
+    null;
+
+
+const dosingType =
+    dosing &&
+    dosing.type
+        ? normalizeText(
+            dosing.type
+        )
+        : "";
+
+
+const requiresAge =
+    dosingType ===
+    "fixed_age_dose";
+
+
+const requiresWeight =
+    dosingType ===
+        "mg_per_kg_per_dose" ||
+    dosingType ===
+        "mg_per_kg_per_day" ||
+    dosingType ===
+        "weight_based" ||
+    dosingType ===
+        "weight_based_fixed_dose" ||
+    dosingType ===
+        "condition_based" ||
+    dosingType ===
+        "severity_based";
+
+
+/* =====================================
+   AGE VALIDATION
+===================================== */
+
+if (
+    requiresAge &&
+    (
         !Number.isFinite(age) ||
         age < 0
-    ) {
+    )
+) {
 
-        showValidation(
-            "Please enter the patient's age."
-        );
+    showValidation(
+        "Please enter the patient's age."
+    );
 
-        return;
-    }
-
-
-    /* =====================================
-       4. WEIGHT
-    ===================================== */
-
-    const weight =
-        weightInput
-            ? parseFloat(
-                weightInput.value
-            )
-            : NaN;
+    return;
+}
 
 
-    if (
+/* =====================================
+   WEIGHT VALIDATION
+===================================== */
+
+if (
+    requiresWeight &&
+    (
         !Number.isFinite(weight) ||
         weight <= 0
-    ) {
+    )
+) {
 
-        showValidation(
-            "Please enter the patient's weight."
-        );
+    showValidation(
+        "Please enter the patient's weight."
+    );
 
-        return;
-    }
+    return;
+}
 
 
-    /* =====================================
-       5. AGE VALIDATION
-    ===================================== */
+/* =====================================
+   MEDICINE AGE VALIDATION
+===================================== */
+
+if (
+    Number.isFinite(ageMonths)
+) {
 
     const ageValidation =
         validateMedicineAge(
@@ -7176,7 +7249,7 @@ function calculateDose() {
 
         return;
     }
-
+}
 
     /* =====================================
        6. CONCENTRATION
