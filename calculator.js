@@ -7418,7 +7418,8 @@ if (backButton) {
     );
 }
 
-
+console.log("DoseCare medicines:", medicines);
+console.log("DoseCare medicine count:", medicines.length);
 /* =========================================
    INITIALIZE
 ========================================= */
