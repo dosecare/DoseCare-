@@ -598,20 +598,7 @@ function isLiquidMedicine(medicine) {
     ];
 
 
-    /* -----------------------------------------
-       REJECT IF ANY FORBIDDEN FORM EXISTS
-    ----------------------------------------- */
-
-    if (
-        forms.some(
-            form =>
-                forbiddenForms.includes(form)
-        )
-    ) {
-
-        return false;
-
-    }
+ 
 
 
     /* -----------------------------------------
