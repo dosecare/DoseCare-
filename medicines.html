@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -39,6 +40,8 @@
 
         <div id="stars"></div>
 
+        <div id="particles"></div>
+
     </div>
 
 
@@ -48,6 +51,7 @@
     ========================================= -->
 
     <main class="medicine-page">
+
 
         <!-- =====================================
              HEADER
@@ -59,6 +63,7 @@
                 class="back-button"
                 id="back-button"
                 aria-label="Back"
+                type="button"
             >
                 ←
             </button>
@@ -117,17 +122,20 @@
                     ⌕
                 </span>
 
+
                 <input
                     type="text"
-                    id="medicine-search"
+                    id="medicine-library-search"
                     placeholder="Search medicine..."
                     autocomplete="off"
                 >
+
 
                 <button
                     id="clear-search"
                     class="clear-search"
                     type="button"
+                    aria-label="Clear search"
                 >
                     ×
                 </button>
@@ -140,11 +148,11 @@
 
 
                 <select
-                    id="class-filter"
+                    id="medicine-class-filter"
                     class="filter-select"
                 >
 
-                    <option value="all">
+                    <option value="">
                         All drug classes
                     </option>
 
@@ -153,11 +161,11 @@
 
 
                 <select
-                    id="condition-filter"
+                    id="medicine-condition-filter"
                     class="filter-select"
                 >
 
-                    <option value="all">
+                    <option value="">
                         All conditions
                     </option>
 
@@ -189,7 +197,7 @@
         ===================================== -->
 
         <section
-            id="medicine-list"
+            id="medicine-grid"
             class="medicine-list"
         >
 
@@ -204,6 +212,7 @@
         <section
             id="empty-state"
             class="empty-state"
+            style="display: none;"
         >
 
             <div class="empty-icon">
@@ -236,7 +245,10 @@
         class="medicine-modal"
     >
 
-        <div class="modal-overlay"></div>
+        <div
+            id="modal-overlay"
+            class="modal-overlay"
+        ></div>
 
 
         <article class="modal-card">
@@ -244,83 +256,17 @@
             <button
                 id="close-modal"
                 class="modal-close"
+                type="button"
+                aria-label="Close"
             >
                 ×
             </button>
 
 
-            <div class="modal-top">
-
-                <div class="medicine-symbol">
-                    +
-                </div>
-
-                <div>
-
-                    <span
-                        id="modal-class"
-                        class="modal-class"
-                    >
-                    </span>
-
-                    <h2 id="modal-name">
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="modal-tags">
-
-                <span id="modal-condition">
-                </span>
-
-                <span id="modal-route">
-                </span>
-
-            </div>
-
-
-
-            <div class="modal-content">
-
-                <div class="info-block">
-
-                    <span>
-                        INDICATIONS
-                    </span>
-
-                    <p id="modal-indications">
-                    </p>
-
-                </div>
-
-
-                <div class="info-block">
-
-                    <span>
-                        MECHANISM OF ACTION
-                    </span>
-
-                    <p id="modal-moa">
-                    </p>
-
-                </div>
-
-
-                <div class="info-block">
-
-                    <span>
-                        PEDIATRIC NOTE
-                    </span>
-
-                    <p id="modal-pediatric">
-                    </p>
-
-                </div>
-
+            <div
+                id="medicine-details-content"
+                class="modal-content"
+            >
             </div>
 
         </article>
@@ -329,8 +275,16 @@
 
 
 
- <script src="theme.js"></script>
-<script src="medicines.js"></script>
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================= -->
+
+    <script src="theme.js"></script>
+
+    <script src="medicines.js"></script>
+
+    <script src="medicines-page.js"></script>
+
 
 </body>
 
