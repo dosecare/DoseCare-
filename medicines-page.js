@@ -120,10 +120,88 @@ if (particles) {
 
 
 /* =========================================
+   SAFE ARRAY HELPER
+========================================= */
+
+function toArray(value) {
+
+    if (Array.isArray(value)) {
+
+        return value;
+
+    }
+
+
+    if (
+        typeof value ===
+        "string"
+    ) {
+
+        return value
+            .split("·")
+            .map(
+                item =>
+                    item.trim()
+            )
+            .filter(Boolean);
+
+    }
+
+
+    return [];
+
+}
+
+
+/* =========================================
+   SAFE TEXT HELPER
+========================================= */
+
+function getText(
+    value,
+    fallback = ""
+) {
+
+    if (
+        value === undefined ||
+        value === null
+    ) {
+
+        return fallback;
+
+    }
+
+
+    if (
+        Array.isArray(value)
+    ) {
+
+        return value
+            .join(" · ");
+
+    }
+
+
+    return String(value);
+
+}
+
+
+/* =========================================
    FILTER DATA
 ========================================= */
 
 function initializeFilters() {
+
+    if (
+        !classFilter ||
+        !conditionFilter
+    ) {
+
+        return;
+
+    }
+
 
     const classes =
         new Set();
@@ -133,37 +211,52 @@ function initializeFilters() {
         new Set();
 
 
+    if (
+        !Array.isArray(
+            medicines
+        )
+    ) {
+
+        return;
+
+    }
+
+
     medicines.forEach(
         (medicine) => {
 
-            if (medicine.drugClass) {
-
-                medicine.drugClass.forEach(
-                    (drugClass) => {
-
-                        classes.add(
-                            drugClass
-                        );
-
-                    }
+            const drugClasses =
+                toArray(
+                    medicine.drugClass
                 );
 
-            }
+
+            drugClasses.forEach(
+                (drugClass) => {
+
+                    classes.add(
+                        drugClass
+                    );
+
+                }
+            );
 
 
-            if (medicine.conditions) {
-
-                medicine.conditions.forEach(
-                    (condition) => {
-
-                        conditions.add(
-                            condition
-                        );
-
-                    }
+            const medicineConditions =
+                toArray(
+                    medicine.conditions
                 );
 
-            }
+
+            medicineConditions.forEach(
+                (condition) => {
+
+                    conditions.add(
+                        condition
+                    );
+
+                }
+            );
 
         }
     );
@@ -235,7 +328,7 @@ function formatName(
     text
 ) {
 
-    return text
+    return String(text)
         .split(" ")
         .map(
             word =>
@@ -254,29 +347,50 @@ function formatName(
 function getFilteredMedicines() {
 
     const search =
-        searchInput.value
-            .trim()
-            .toLowerCase();
+        searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
 
 
     const selectedClass =
-        classFilter.value;
+        classFilter
+            ? classFilter.value
+            : "";
 
 
     const selectedCondition =
-        conditionFilter.value;
+        conditionFilter
+            ? conditionFilter.value
+            : "";
+
+
+    if (
+        !Array.isArray(
+            medicines
+        )
+    ) {
+
+        return [];
+
+    }
 
 
     return medicines.filter(
         (medicine) => {
 
             const name =
-                medicine.genericName
-                    .toLowerCase();
+                getText(
+                    medicine.genericName ||
+                    medicine.name
+                ).toLowerCase();
 
 
             const brands =
-                medicine.brandNames || [];
+                toArray(
+                    medicine.brandNames
+                );
 
 
             const brandMatch =
@@ -284,33 +398,43 @@ function getFilteredMedicines() {
                     brand =>
                         brand
                             .toLowerCase()
-                            .includes(search)
+                            .includes(
+                                search
+                            )
                 );
 
 
             const matchesSearch =
                 !search ||
-                name.includes(search) ||
+                name.includes(
+                    search
+                ) ||
                 brandMatch;
+
+
+            const drugClasses =
+                toArray(
+                    medicine.drugClass
+                );
 
 
             const matchesClass =
                 !selectedClass ||
-                (
-                    medicine.drugClass &&
-                    medicine.drugClass.includes(
-                        selectedClass
-                    )
+                drugClasses.includes(
+                    selectedClass
+                );
+
+
+            const conditions =
+                toArray(
+                    medicine.conditions
                 );
 
 
             const matchesCondition =
                 !selectedCondition ||
-                (
-                    medicine.conditions &&
-                    medicine.conditions.includes(
-                        selectedCondition
-                    )
+                conditions.includes(
+                    selectedCondition
                 );
 
 
@@ -332,33 +456,63 @@ function getFilteredMedicines() {
 
 function renderMedicines() {
 
-    const filtered =
-        getFilteredMedicines();
-
-
-    medicineGrid.innerHTML = "";
-
-
-    medicineCount.textContent =
-        `${filtered.length} medicine${
-            filtered.length === 1
-                ? ""
-                : "s"
-        }`;
-
-
-    if (!filtered.length) {
-
-        emptyState.style.display =
-            "block";
+    if (
+        !medicineGrid
+    ) {
 
         return;
 
     }
 
 
-    emptyState.style.display =
-        "none";
+    const filtered =
+        getFilteredMedicines();
+
+
+    medicineGrid.innerHTML =
+        "";
+
+
+    if (
+        medicineCount
+    ) {
+
+        medicineCount.textContent =
+            `${filtered.length} medicine${
+                filtered.length === 1
+                    ? ""
+                    : "s"
+            }`;
+
+    }
+
+
+    if (
+        !filtered.length
+    ) {
+
+        if (
+            emptyState
+        ) {
+
+            emptyState.style.display =
+                "block";
+
+        }
+
+        return;
+
+    }
+
+
+    if (
+        emptyState
+    ) {
+
+        emptyState.style.display =
+            "none";
+
+    }
 
 
     filtered.forEach(
@@ -375,11 +529,27 @@ function renderMedicines() {
 
 
             const classes =
-                (
-                    medicine.drugClass || []
+                toArray(
+                    medicine.drugClass
                 )
                 .slice(0, 2)
                 .join(" · ");
+
+
+            const medicineName =
+                getText(
+                    medicine.genericName ||
+                    medicine.name,
+                    "Unknown Medicine"
+                );
+
+
+            const indicationText =
+                getText(
+                    medicine.indications ||
+                    medicine.condition,
+                    "Medicine information"
+                );
 
 
             card.innerHTML = `
@@ -391,28 +561,22 @@ function renderMedicines() {
                     </div>
 
                     <span class="medicine-category">
-                        ${classes}
+                        ${
+                            classes ||
+                            "Medicine"
+                        }
                     </span>
 
                 </div>
 
 
                 <h3>
-                    ${medicine.genericName}
+                    ${medicineName}
                 </h3>
 
 
                 <p class="medicine-indication">
-
-                    ${
-                        medicine.indications &&
-                        medicine.indications.length
-                            ? medicine.indications
-                                .slice(0, 2)
-                                .join(" · ")
-                            : "Medicine information"
-                    }
-
+                    ${indicationText}
                 </p>
 
 
@@ -427,18 +591,28 @@ function renderMedicines() {
             `;
 
 
-            card.querySelector(
-                ".view-medicine"
-            ).addEventListener(
-                "click",
-                () => {
+            const viewButton =
+                card.querySelector(
+                    ".view-medicine"
+                );
 
-                    openMedicineDetails(
-                        medicine
-                    );
 
-                }
-            );
+            if (
+                viewButton
+            ) {
+
+                viewButton.addEventListener(
+                    "click",
+                    () => {
+
+                        openMedicineDetails(
+                            medicine
+                        );
+
+                    }
+                );
+
+            }
 
 
             medicineGrid.appendChild(
@@ -459,6 +633,204 @@ function openMedicineDetails(
     medicine
 ) {
 
+    if (
+        !detailsContent ||
+        !modal
+    ) {
+
+        return;
+
+    }
+
+
+    const medicineName =
+        getText(
+            medicine.genericName ||
+            medicine.name,
+            "Unknown Medicine"
+        );
+
+
+    const drugClasses =
+        toArray(
+            medicine.drugClass
+        );
+
+
+    const indications =
+        toArray(
+            medicine.indications
+        );
+
+
+    if (
+        !indications.length &&
+        medicine.condition
+    ) {
+
+        indications.push(
+            medicine.condition
+        );
+
+    }
+
+
+    const dosageForms =
+        toArray(
+            medicine.dosageForms
+        );
+
+
+    const routes =
+        toArray(
+            medicine.routes ||
+            medicine.route
+        );
+
+
+    const contraindications =
+        toArray(
+            medicine.contraindications
+        );
+
+
+    const precautions =
+        toArray(
+            medicine.precautions
+        );
+
+
+    const adverseEffects =
+        toArray(
+            medicine.adverseEffects ||
+            medicine.sideEffects
+        );
+
+
+    const interactions =
+        toArray(
+            medicine.interactions
+        );
+
+
+    const references =
+        toArray(
+            medicine.references
+        );
+
+
+    const mechanism =
+        getText(
+            medicine.mechanismOfAction ||
+            medicine.moa,
+            "Information not available yet."
+        );
+
+
+    const pediatricNotes =
+        getText(
+            medicine.pediatricNotes ||
+            medicine.pediatric,
+            "Pediatric information will be added after verification."
+        );
+
+
+    const referenceHTML =
+        references.length
+            ? references
+                .map(
+                    (reference) => {
+
+                        if (
+                            typeof reference ===
+                            "object"
+                        ) {
+
+                            const organization =
+                                reference.organization ||
+                                "";
+
+
+                            const title =
+                                reference.title ||
+                                "";
+
+
+                            const year =
+                                reference.year
+                                    ? ` (${reference.year})`
+                                    : "";
+
+
+                            const url =
+                                reference.url ||
+                                "";
+
+
+                            if (url) {
+
+                                return `
+                                    <li>
+                                        ${
+                                            organization
+                                                ? `<strong>${organization}</strong> — `
+                                                : ""
+                                        }
+                                        ${
+                                            title ||
+                                            "Reference"
+                                        }
+                                        ${year}
+
+                                        <br>
+
+                                        <a
+                                            href="${url}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            View source
+                                        </a>
+                                    </li>
+                                `;
+
+                            }
+
+
+                            return `
+                                <li>
+                                    ${
+                                        organization
+                                            ? `<strong>${organization}</strong> — `
+                                            : ""
+                                    }
+                                    ${
+                                        title ||
+                                        "Reference"
+                                    }
+                                    ${year}
+                                </li>
+                            `;
+
+                        }
+
+
+                        return `
+                            <li>
+                                ${reference}
+                            </li>
+                        `;
+
+                    }
+                )
+                .join("")
+            : `
+                <li>
+                    Verified references will be added.
+                </li>
+            `;
+
+
     detailsContent.innerHTML = `
 
         <div class="details-header">
@@ -468,14 +840,14 @@ function openMedicineDetails(
             </span>
 
             <h2>
-                ${medicine.genericName}
+                ${medicineName}
             </h2>
 
             <p>
                 ${
-                    medicine.drugClass
-                        ? medicine.drugClass.join(" · ")
-                        : ""
+                    drugClasses.length
+                        ? drugClasses.join(" · ")
+                        : "Medicine"
                 }
             </p>
 
@@ -489,10 +861,7 @@ function openMedicineDetails(
             </h3>
 
             <p>
-                ${
-                    medicine.mechanismOfAction ||
-                    "Information not available yet."
-                }
+                ${mechanism}
             </p>
 
         </div>
@@ -504,18 +873,26 @@ function openMedicineDetails(
                 Indications
             </h3>
 
-            <ul>
-
-                ${
-                    (medicine.indications || [])
-                    .map(
-                        item =>
-                            `<li>${item}</li>`
-                    )
-                    .join("")
-                }
-
-            </ul>
+            ${
+                indications.length
+                    ? `
+                        <ul>
+                            ${
+                                indications
+                                    .map(
+                                        item =>
+                                            `<li>${item}</li>`
+                                    )
+                                    .join("")
+                            }
+                        </ul>
+                    `
+                    : `
+                        <p>
+                            Information not available yet.
+                        </p>
+                    `
+            }
 
         </div>
 
@@ -528,9 +905,8 @@ function openMedicineDetails(
 
             <p>
                 ${
-                    medicine.dosageForms &&
-                    medicine.dosageForms.length
-                        ? medicine.dosageForms.join(" · ")
+                    dosageForms.length
+                        ? dosageForms.join(" · ")
                         : "Not available yet."
                 }
             </p>
@@ -546,9 +922,8 @@ function openMedicineDetails(
 
             <p>
                 ${
-                    medicine.routes &&
-                    medicine.routes.length
-                        ? medicine.routes.join(" · ")
+                    routes.length
+                        ? routes.join(" · ")
                         : "Not available yet."
                 }
             </p>
@@ -562,18 +937,26 @@ function openMedicineDetails(
                 Contraindications
             </h3>
 
-            <ul>
-
-                ${
-                    (medicine.contraindications || [])
-                    .map(
-                        item =>
-                            `<li>${item}</li>`
-                    )
-                    .join("")
-                }
-
-            </ul>
+            ${
+                contraindications.length
+                    ? `
+                        <ul>
+                            ${
+                                contraindications
+                                    .map(
+                                        item =>
+                                            `<li>${item}</li>`
+                                    )
+                                    .join("")
+                            }
+                        </ul>
+                    `
+                    : `
+                        <p>
+                            Not available yet.
+                        </p>
+                    `
+            }
 
         </div>
 
@@ -584,18 +967,26 @@ function openMedicineDetails(
                 Precautions
             </h3>
 
-            <ul>
-
-                ${
-                    (medicine.precautions || [])
-                    .map(
-                        item =>
-                            `<li>${item}</li>`
-                    )
-                    .join("")
-                }
-
-            </ul>
+            ${
+                precautions.length
+                    ? `
+                        <ul>
+                            ${
+                                precautions
+                                    .map(
+                                        item =>
+                                            `<li>${item}</li>`
+                                    )
+                                    .join("")
+                            }
+                        </ul>
+                    `
+                    : `
+                        <p>
+                            Not available yet.
+                        </p>
+                    `
+            }
 
         </div>
 
@@ -606,18 +997,26 @@ function openMedicineDetails(
                 Side Effects
             </h3>
 
-            <ul>
-
-                ${
-                    (medicine.sideEffects || [])
-                    .map(
-                        item =>
-                            `<li>${item}</li>`
-                    )
-                    .join("")
-                }
-
-            </ul>
+            ${
+                adverseEffects.length
+                    ? `
+                        <ul>
+                            ${
+                                adverseEffects
+                                    .map(
+                                        item =>
+                                            `<li>${item}</li>`
+                                    )
+                                    .join("")
+                            }
+                        </ul>
+                    `
+                    : `
+                        <p>
+                            Not available yet.
+                        </p>
+                    `
+            }
 
         </div>
 
@@ -628,18 +1027,26 @@ function openMedicineDetails(
                 Drug Interactions
             </h3>
 
-            <ul>
-
-                ${
-                    (medicine.interactions || [])
-                    .map(
-                        item =>
-                            `<li>${item}</li>`
-                    )
-                    .join("")
-                }
-
-            </ul>
+            ${
+                interactions.length
+                    ? `
+                        <ul>
+                            ${
+                                interactions
+                                    .map(
+                                        item =>
+                                            `<li>${item}</li>`
+                                    )
+                                    .join("")
+                            }
+                        </ul>
+                    `
+                    : `
+                        <p>
+                            Not available yet.
+                        </p>
+                    `
+            }
 
         </div>
 
@@ -651,10 +1058,7 @@ function openMedicineDetails(
             </h3>
 
             <p>
-                ${
-                    medicine.pediatricNotes ||
-                    "Pediatric information will be added after verification."
-                }
+                ${pediatricNotes}
             </p>
 
         </div>
@@ -666,14 +1070,9 @@ function openMedicineDetails(
                 References
             </h3>
 
-            <p>
-                ${
-                    medicine.references &&
-                    medicine.references.length
-                        ? medicine.references.join(" · ")
-                        : "Verified references will be added."
-                }
-            </p>
+            <ul>
+                ${referenceHTML}
+            </ul>
 
         </div>
 
@@ -693,60 +1092,102 @@ function openMedicineDetails(
 
 function closeMedicineModal() {
 
-    modal.classList.remove(
-        "open"
+    if (
+        modal
+    ) {
+
+        modal.classList.remove(
+            "open"
+        );
+
+    }
+
+}
+
+
+if (
+    closeModal
+) {
+
+    closeModal.addEventListener(
+        "click",
+        closeMedicineModal
     );
 
 }
 
 
-closeModal.addEventListener(
-    "click",
-    closeMedicineModal
-);
+if (
+    modalOverlay
+) {
 
+    modalOverlay.addEventListener(
+        "click",
+        closeMedicineModal
+    );
 
-modalOverlay.addEventListener(
-    "click",
-    closeMedicineModal
-);
+}
 
 
 /* =========================================
    SEARCH & FILTER EVENTS
 ========================================= */
 
-searchInput.addEventListener(
-    "input",
-    renderMedicines
-);
+if (
+    searchInput
+) {
+
+    searchInput.addEventListener(
+        "input",
+        renderMedicines
+    );
+
+}
 
 
-classFilter.addEventListener(
-    "change",
-    renderMedicines
-);
+if (
+    classFilter
+) {
+
+    classFilter.addEventListener(
+        "change",
+        renderMedicines
+    );
+
+}
 
 
-conditionFilter.addEventListener(
-    "change",
-    renderMedicines
-);
+if (
+    conditionFilter
+) {
+
+    conditionFilter.addEventListener(
+        "change",
+        renderMedicines
+    );
+
+}
 
 
 /* =========================================
    BACK TO HOME
 ========================================= */
 
-backButton.addEventListener(
-    "click",
-    () => {
+if (
+    backButton
+) {
 
-        window.location.href =
-            "index.html";
+    backButton.addEventListener(
+        "click",
+        () => {
 
-    }
-);
+            window.location.href =
+                "index.html";
+
+        }
+    );
+
+}
 
 
 /* =========================================
