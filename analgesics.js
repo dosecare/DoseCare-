@@ -868,9 +868,6 @@ const analgesicMedicines = [
 
     }
 
-];
-
-
 /* =========================================
    ADD ANALGESICS TO DOSECARE DATABASE
 ========================================= */
