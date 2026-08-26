@@ -894,42 +894,6 @@ analgesicMedicines.forEach(
 
     }
 );
-/* =========================================
-   DoseCare
-   ANALGESICS / ANTIPYRETICS DATABASE
-
-   Pediatric Oral-Liquid Medicines ONLY
-========================================= */
-
-/*
-    System:
-    Analgesics · Antipyretics · NSAIDs
-
-    Scope:
-    Pediatric oral liquid medicines only.
-
-    Allowed dosage forms:
-    - Syrup
-    - Oral solution
-    - Oral suspension
-
-    NOT included:
-    - Tablets
-    - Capsules
-    - Chewables
-    - Suppositories
-    - Injections
-    - IV / IM
-    - Other non-oral dosage forms
-
-    IMPORTANT:
-    Do not add these medicines to medicine.js.
-
-    Medicines are added automatically to the
-    central DoseCare database below.
-*/
-
-
 
 
     /* =========================================
