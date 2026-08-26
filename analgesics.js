@@ -2470,3 +2470,30 @@ analgesicMedicines.forEach(
     ]
 
 }
+
+];
+
+
+/* =========================================
+   ADD ANALGESICS TO DOSECARE DATABASE
+========================================= */
+
+analgesicMedicines.forEach(
+    medicine => {
+
+        if (
+            !medicines.some(
+                existingMedicine =>
+                    existingMedicine.id ===
+                    medicine.id
+            )
+        ) {
+
+            medicines.push(
+                medicine
+            );
+
+        }
+
+    }
+);
