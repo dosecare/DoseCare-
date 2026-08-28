@@ -6833,6 +6833,8 @@ if (
     window.DoseCareCalculator =
         DoseCareCalculator;
 
+}
+
    /* =========================================
    DATABASE STATUS HELPERS
 ========================================= */
@@ -8266,7 +8268,7 @@ if (
    Part 5 will contain the final database
    initialization / compatibility section.
 */
-}
+
 /* =========================================
    DOSECARE DATABASE COMPATIBILITY LAYER
 ========================================= */
