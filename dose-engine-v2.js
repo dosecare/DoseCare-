@@ -1,10 +1,4 @@
-/*
- * DoseCare Dosing Engine V2
- *
- * The engine deliberately does NOT impose one dosing schema on all medicines.
- * Each medicine/regimen remains authoritative in its own source structure.
- * This layer only interprets supported dosing patterns at calculation time.
- */
+/* DoseCare Dosing Engine V2 — medicine-specific regimen interpreter. */
 (function (global) {
     "use strict";
 
@@ -24,6 +18,7 @@
 
     function frequencyCount(frequency) {
         if (frequency == null) return null;
+        if (typeof frequency === "number" && Number.isFinite(frequency)) return frequency;
         const raw = String(frequency).trim().toLowerCase();
         if (/^once daily$|^qd$|^od$|^once$/.test(raw)) return 1;
         if (/^twice daily$|^bid$/.test(raw)) return 2;
@@ -35,7 +30,6 @@
 
     function concentrationToMl(mg, concentration) {
         if (mg == null || !concentration) return null;
-
         if (Array.isArray(concentration)) {
             for (const item of concentration) {
                 const result = concentrationToMl(mg, item);
@@ -43,7 +37,8 @@
             }
             return null;
         }
-
+        const nested = concentration.concentration;
+        if (nested && nested !== concentration) return concentrationToMl(mg, nested);
         const strength = firstNumber(concentration, ["mg", "amount", "strength"]);
         const volume = firstNumber(concentration, ["ml", "volume"]);
         if (strength == null || volume == null || strength <= 0 || volume <= 0) return null;
@@ -70,17 +65,25 @@
         const results = [];
 
         for (const regimen of regimens) {
-            const type = String(
-                regimen.type || regimen.dosingType || regimen.calculationType || ""
-            ).toLowerCase();
-
+            const type = String(regimen.type || regimen.dosingType || regimen.calculationType || "").toLowerCase();
             let totalMg = null;
             let perDoseMg = null;
-            let frequency = regimen.frequency || regimen.freq || null;
+            let frequency = regimen.frequency ?? regimen.freq ?? null;
 
-            const mgPerKgDose = firstNumber(regimen, ["mgPerKgPerDose", "mg_per_kg_per_dose", "mgKgDose"]);
-            const mgPerKgDay = firstNumber(regimen, ["mgPerKgPerDay", "mg_per_kg_per_day", "mgKgDay"]);
-            const fixedDose = firstNumber(regimen, ["doseMg", "mg", "dose"]);
+            let mgPerKgDose = firstNumber(regimen, ["mgPerKgPerDose", "mg_per_kg_per_dose", "mgKgDose"]);
+            let mgPerKgDay = firstNumber(regimen, ["mgPerKgPerDay", "mg_per_kg_per_day", "mgKgDay"]);
+            let fixedDose = firstNumber(regimen, ["doseMg", "mg", "dose"]);
+
+            const minDose = firstNumber(regimen, ["minDose", "minimumDose"]);
+            const maxDose = firstNumber(regimen, ["maxDose", "maximumDose"]);
+            const doseUnit = String(regimen.doseUnit || "").toLowerCase();
+
+            if (mgPerKgDose == null && minDose != null && /mg\/kg\/dose|mg_per_kg_per_dose/.test(doseUnit)) {
+                mgPerKgDose = minDose;
+            }
+            if (mgPerKgDay == null && minDose != null && /mg\/kg\/day|mg_per_kg_per_day/.test(doseUnit)) {
+                mgPerKgDay = minDose;
+            }
 
             if (type.includes("mg_per_kg_per_dose") || type.includes("mg/kg/dose") || mgPerKgDose != null) {
                 if (weight == null || mgPerKgDose == null) continue;
@@ -95,8 +98,6 @@
                 perDoseMg = fixedDose;
                 totalMg = fixedDose * (frequencyCount(frequency) || 1);
             } else {
-                // Condition/age-specific and medicine-specific regimens are preserved;
-                // unsupported shapes are not guessed or silently converted.
                 continue;
             }
 
@@ -110,17 +111,12 @@
                 perDoseMg,
                 totalMgPerDay: totalMg,
                 volumeMlPerDose: ml,
-                concentration
+                concentration,
+                doseRange: minDose != null && maxDose != null && minDose !== maxDose ? { minDose, maxDose } : null
             });
         }
-
         return results;
     }
 
-    global.DoseCareDosingEngineV2 = Object.freeze({
-        calculate,
-        concentrationToMl,
-        frequencyCount,
-        resolveRegimens
-    });
+    global.DoseCareDosingEngineV2 = Object.freeze({ calculate, concentrationToMl, frequencyCount, resolveRegimens });
 })(typeof window !== "undefined" ? window : globalThis);
