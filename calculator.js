@@ -8478,27 +8478,27 @@ if (
 ) {
 
     window.addEventListener(
-        "load",
-        () => {
+    "load",
+    () => {
 
-            try {
+        try {
 
-                finalizeDoseCareDatabase();
+            finalizeDoseCareDatabase();
 
-            }
-            catch (error) {
-
-                console.error(
-                    "DoseCare final database check error:",
-                    error
-                );
-
-            }
+            populateMedicineSelect();
 
         }
-    );
+        catch (error) {
 
-}
+            console.error(
+                "DoseCare calculator initialization error:",
+                error
+            );
+
+        }
+
+    }
+);
 
 
 /* =========================================
