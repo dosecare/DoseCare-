@@ -1,47 +1,29 @@
 /*
  * DoseCare Database Loader V2
- *
- * Purpose:
- * - Keep medicine records flexible: each medicine may have its own dosing model.
- * - Do not force every medicine into one rigid schema.
- * - Normalize only what the calculator needs at runtime.
- * - Never modify or discard the source medicine records.
- *
- * This loader is intentionally read-only with respect to the medicine database.
+ * Read-only adapter for the existing database.
+ * Does not impose one medicine schema.
  */
 (function (global) {
     "use strict";
 
     const ORAL_LIQUID_FORMS = new Set([
-        "syrup",
-        "syrups",
-        "oral syrup",
-        "oral solution",
-        "oral solutions",
-        "oral suspension",
-        "oral suspensions",
-        "oral liquid",
-        "oral liquids",
-        "solution",
-        "suspension"
+        "syrup", "syrups", "oral syrup",
+        "oral solution", "oral solutions",
+        "oral suspension", "oral suspensions",
+        "oral liquid", "oral liquids",
+        "solution", "suspension"
     ]);
 
     const FORBIDDEN_FORMS = new Set([
-        "tablet", "tablets", "tab",
-        "capsule", "capsules", "cap",
-        "chewable", "chewables",
-        "injection", "injectable", "iv", "iv injection", "intravenous",
-        "im", "intramuscular",
-        "suppository", "suppositories",
-        "cream", "ointment", "gel", "patch",
-        "powder", "granules", "lozenge"
+        "tablet", "tablets", "tab", "capsule", "capsules", "cap",
+        "chewable", "chewables", "injection", "injectable", "iv",
+        "iv injection", "intravenous", "im", "intramuscular",
+        "suppository", "suppositories", "cream", "ointment", "gel",
+        "patch", "powder", "granules", "lozenge"
     ]);
 
     function text(value) {
-        return String(value == null ? "" : value)
-            .trim()
-            .toLowerCase()
-            .replace(/\s+/g, " ");
+        return String(value == null ? "" : value).trim().toLowerCase().replace(/\s+/g, " ");
     }
 
     function valuesFromMedicine(medicine, keys) {
@@ -56,31 +38,29 @@
 
     function isOralLiquid(medicine) {
         if (!medicine || typeof medicine !== "object") return false;
-
         const forms = valuesFromMedicine(medicine, [
-            "dosageForm",
-            "dosageForms",
-            "dosage_form",
-            "form",
-            "routeForm",
-            "preparation",
-            "pharmaceuticalForm"
+            "dosageForm", "dosageForms", "dosage_form", "form",
+            "routeForm", "preparation", "pharmaceuticalForm"
         ]).map(text).filter(Boolean);
 
         if (forms.some((form) => FORBIDDEN_FORMS.has(form))) return false;
         if (forms.some((form) => ORAL_LIQUID_FORMS.has(form))) return true;
         if (forms.length > 0) return false;
 
-        const routes = valuesFromMedicine(medicine, [
-            "route",
-            "administrationRoute"
-        ]).map(text);
-
+        const routes = valuesFromMedicine(medicine, ["route", "administrationRoute"]).map(text);
         return routes.some((route) => route === "oral" || route.includes("oral"));
     }
 
     function getSourceMedicines() {
-        // Support the current project database without requiring a global rewrite.
+        /*
+         * medicines.js declares `const medicines`, so it is intentionally
+         * not a window property. Its public getAllMedicines() function IS
+         * available to later classic scripts, so use that first.
+         */
+        if (typeof global.getAllMedicines === "function") {
+            const database = global.getAllMedicines();
+            if (Array.isArray(database)) return database;
+        }
         if (Array.isArray(global.medicines)) return global.medicines;
         if (Array.isArray(global.medicineDatabase)) return global.medicineDatabase;
         if (Array.isArray(global.DoseCareMedicines)) return global.DoseCareMedicines;
@@ -105,7 +85,6 @@
     }
 
     function normalizeMedicine(medicine, index) {
-        // Preserve the original object. The calculator receives a wrapper, not a mutation.
         return {
             id: getId(medicine, index),
             name: getName(medicine),
@@ -118,13 +97,10 @@
         };
     }
 
-    function getCalculatorMedicines(options) {
-        const settings = options || {};
-        const includeNotReady = settings.includeNotReady === true;
+    function getCalculatorMedicines() {
         return getSourceMedicines()
             .filter(isOralLiquid)
-            .map(normalizeMedicine)
-            .filter((medicine) => includeNotReady || medicine.source);
+            .map(normalizeMedicine);
     }
 
     global.DoseCareDatabaseV2 = Object.freeze({
