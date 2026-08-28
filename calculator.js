@@ -397,109 +397,362 @@ function getMedicineWarnings(medicine) {
 }
 
 
-function getContraindications(medicine) {
+/* =========================================
+   CONDITION REGIMENS
+   -----------------------------------------
+   A medicine requires condition selection
+   when its dosing contains condition-specific
+   regimens OR when the medicine is explicitly
+   marked as indication-specific.
 
-    const value =
-        getMedicineField(
-            medicine,
-            [
-                "contraindications",
-                "contraindication"
-            ],
-            ""
-        );
+   IMPORTANT:
+   medicine.conditions[] is informational only.
+   It must NOT automatically become a dosing
+   condition.
+========================================= */
 
+function medicineRequiresCondition(medicine) {
 
-    if (Array.isArray(value)) {
-
-        return value
-            .filter(Boolean)
-            .join(", ");
+    if (!medicine) {
+        return false;
     }
 
+    const dosing =
+        medicine.dosing || {};
 
-    return String(value || "");
+    return (
+        Array.isArray(dosing.conditionBased) &&
+        dosing.conditionBased.length > 0
+    ) ||
+    (
+        dosing.conditions &&
+        typeof dosing.conditions === "object" &&
+        !Array.isArray(dosing.conditions) &&
+        Object.keys(dosing.conditions).length > 0
+    ) ||
+    (
+        medicine.indicationSpecific === true
+    );
 }
 
 
-function getCommonAdverseEffects(medicine) {
+function getConditionRegimens(medicine) {
 
-    const value =
-        getMedicineField(
-            medicine,
-            [
-                "commonAdverseEffects",
-                "adverseEffects",
-                "sideEffects",
-                "commonSideEffects"
-            ],
-            ""
+    if (
+        !medicine ||
+        !medicine.dosing
+    ) {
+        return [];
+    }
+
+    const dosing =
+        medicine.dosing;
+
+    const conditions = [];
+
+
+    /* -----------------------------------------
+       1. dosing.conditionBased[]
+    ----------------------------------------- */
+
+    if (
+        Array.isArray(
+            dosing.conditionBased
+        )
+    ) {
+
+        dosing.conditionBased.forEach(
+            (item, index) => {
+
+                const regimen =
+                    normalizeRegimen(
+                        item,
+                        `Condition ${index + 1}`
+                    );
+
+                if (!regimen) {
+                    return;
+                }
+
+                const condition =
+                    regimen.condition ||
+                    regimen.indication ||
+                    regimen.label ||
+                    regimen.name;
+
+                if (condition) {
+
+                    regimen.condition =
+                        String(condition);
+
+                    conditions.push(
+                        regimen
+                    );
+                }
+            }
         );
-
-
-    if (Array.isArray(value)) {
-
-        return value
-            .filter(Boolean)
-            .join(", ");
     }
 
 
-    return String(value || "");
-}
+    /* -----------------------------------------
+       2. dosing.conditions{}
+    ----------------------------------------- */
 
+    if (
+        conditions.length === 0 &&
+        dosing.conditions &&
+        typeof dosing.conditions === "object" &&
+        !Array.isArray(
+            dosing.conditions
+        )
+    ) {
 
-function getMonitoringInformation(medicine) {
+        Object.entries(
+            dosing.conditions
+        ).forEach(
+            ([condition, regimen]) => {
 
-    const value =
-        getMedicineField(
-            medicine,
-            [
-                "monitoring",
-                "monitoringParameters",
-                "clinicalMonitoring"
-            ],
-            ""
+                const normalized =
+                    normalizeRegimen(
+                        regimen,
+                        condition
+                    );
+
+                if (!normalized) {
+                    return;
+                }
+
+                normalized.condition =
+                    normalized.condition ||
+                    condition;
+
+                normalized.label =
+                    normalized.label ||
+                    condition;
+
+                conditions.push(
+                    normalized
+                );
+            }
         );
-
-
-    if (Array.isArray(value)) {
-
-        return value
-            .filter(Boolean)
-            .join(", ");
     }
 
 
-    return String(value || "");
-}
+    /* -----------------------------------------
+       3. dosing.indications[]
+    ----------------------------------------- */
 
+    if (
+        conditions.length === 0 &&
+        Array.isArray(
+            dosing.indications
+        )
+    ) {
 
-function getStorageInformation(medicine) {
+        dosing.indications.forEach(
+            (item, index) => {
 
-    const value =
-        getMedicineField(
-            medicine,
-            [
-                "storage",
-                "storageInformation"
-            ],
-            ""
+                const regimen =
+                    normalizeRegimen(
+                        item,
+                        `Condition ${index + 1}`
+                    );
+
+                if (!regimen) {
+                    return;
+                }
+
+                const condition =
+                    regimen.condition ||
+                    regimen.indication ||
+                    regimen.label ||
+                    regimen.name;
+
+                if (condition) {
+
+                    regimen.condition =
+                        String(condition);
+
+                    conditions.push(
+                        regimen
+                    );
+                }
+            }
         );
-
-
-    if (Array.isArray(value)) {
-
-        return value
-            .filter(Boolean)
-            .join(" ");
     }
 
 
-    return String(value || "");
+    /* -----------------------------------------
+       4. INDICATION-SPECIFIC MEDICINES
+       -----------------------------------------
+       Example:
+       Meloxicam:
+       indicationSpecific: true
+       dosing.indication: "Juvenile Rheumatoid Arthritis"
+
+       Naproxen:
+       conditionBased[] already handled above.
+
+       We create a condition regimen from the
+       medicine's own dosing rule only when the
+       medicine is explicitly indication-specific.
+    ----------------------------------------- */
+
+    if (
+        conditions.length === 0 &&
+        medicine.indicationSpecific === true
+    ) {
+
+        const condition =
+            dosing.condition ||
+            dosing.indication ||
+            medicine.condition;
+
+        if (condition) {
+
+            const regimen =
+                normalizeRegimen(
+                    dosing,
+                    String(condition)
+                );
+
+            if (regimen) {
+
+                regimen.condition =
+                    String(condition);
+
+                regimen.label =
+                    String(condition);
+
+                conditions.push(
+                    regimen
+                );
+            }
+        }
+    }
+
+
+    /* -----------------------------------------
+       REMOVE DUPLICATES
+    ----------------------------------------- */
+
+    const unique = [];
+
+    const seen = new Set();
+
+    conditions.forEach(
+        regimen => {
+
+            const key =
+                normalizeText(
+                    regimen.condition
+                );
+
+            if (
+                key &&
+                !seen.has(key)
+            ) {
+
+                seen.add(key);
+
+                unique.push(
+                    regimen
+                );
+            }
+        }
+    );
+
+
+    return unique;
 }
 
 
+/* =========================================
+   CONDITION SELECTOR UI
+========================================= */
+
+function createConditionSelector(medicine) {
+
+    if (
+        !conditionGroup ||
+        !conditionSelect
+    ) {
+        return;
+    }
+
+
+    const conditions =
+        getConditionRegimens(
+            medicine
+        );
+
+
+    conditionSelect.innerHTML = `
+        <option value="">
+            Select a condition
+        </option>
+    `;
+
+
+    /*
+       Reset condition state every time
+       a new medicine is selected.
+    */
+
+    if (selectedConditionInfo) {
+
+        selectedConditionInfo.innerHTML =
+            "";
+    }
+
+
+    /*
+       IMPORTANT:
+       A condition selector is shown even
+       when there is only ONE condition.
+
+       The user must explicitly select it
+       because the condition determines the
+       dosing regimen.
+    */
+
+    if (
+        conditions.length === 0
+    ) {
+
+        conditionGroup.style.display =
+            "none";
+
+        return;
+    }
+
+
+    conditions.forEach(
+        (regimen, index) => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                String(index);
+
+            option.textContent =
+                getConditionLabel(
+                    regimen
+                );
+
+            conditionSelect.appendChild(
+                option
+            );
+        }
+    );
+
+
+    conditionGroup.style.display =
+        "block";
+}
 /* =========================================
    MEDICINE FORM
    STRICTLY ORAL LIQUIDS
