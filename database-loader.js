@@ -2,14 +2,17 @@
    DoseCare — CENTRAL DATABASE LOADER
 =========================================
 
-   ONE RULE FOR FUTURE MEDICINES
-   -----------------------------------------
-   Medicine-system files are registered here.
-   The calculator does NOT need to be edited
-   when a medicine is added.
+   SINGLE RESPONSIBILITY
+   ---------------------
+   1. Load every medicine-system module.
+   2. Wait until the database is complete.
+   3. Only then start the application scripts.
 
-   The loader also protects the central array
-   against duplicate/invalid registrations.
+   FUTURE MEDICINE RULE
+   --------------------
+   Add the medicine data file and add its path
+   to MEDICINE_MODULES. The calculator does not
+   need to be edited just because a medicine is added.
 ========================================= */
 
 (function () {
@@ -21,26 +24,31 @@
         "respiratory.js"
     ];
 
+    const APP_MODULES = [
+        "app.js",
+        "script.js"
+    ];
+
     window.DoseCareDatabase = {
-        version: "1.2.0",
+        version: "1.3.0",
         core: "medicines.js",
         modules: Object.freeze([...MEDICINE_MODULES]),
-        loaded: []
+        loaded: [],
+        appLoaded: []
     };
 
-    window.DOSECARE_MEDICINE_MODULES =
-        Object.freeze(["medicines.js", ...MEDICINE_MODULES]);
+    window.DOSECARE_MEDICINE_MODULES = Object.freeze([
+        "medicines.js",
+        ...MEDICINE_MODULES
+    ]);
 
     /* -----------------------------------------
-       SAFE REGISTRATION BRIDGE
+       LEGACY REGISTRATION SAFETY
        -----------------------------------------
-       Legacy medicine files currently use
+       Existing medicine modules may still use
            medicines.push(...)
-       while the migration is in progress.
-
-       We intercept that operation centrally so
-       duplicate IDs and invalid entries cannot
-       silently corrupt the database.
+       during migration. Keep them working while
+       rejecting invalid objects and duplicate IDs.
     ----------------------------------------- */
 
     if (Array.isArray(window.medicines)) {
@@ -81,24 +89,20 @@
     }
 
     /* -----------------------------------------
-       DYNAMIC MODULE LOADER
+       SEQUENTIAL SCRIPT LOADER
        -----------------------------------------
-       index.html loads only the core database and
-       this loader. Medicine-system files are loaded
-       from this single manifest.
+       App scripts must NOT execute until all medicine
+       modules have finished loading. This removes the
+       race condition that can make medicines disappear.
     ----------------------------------------- */
 
-    function loadModule(src) {
+    function loadScript(src) {
         return new Promise((resolve, reject) => {
             const script = document.createElement("script");
             script.src = src;
             script.async = false;
 
-            script.onload = () => {
-                window.DoseCareDatabase.loaded.push(src);
-                resolve(src);
-            };
-
+            script.onload = () => resolve(src);
             script.onerror = () => {
                 console.error(`DoseCare: failed to load ${src}`);
                 reject(new Error(`Failed to load ${src}`));
@@ -108,22 +112,38 @@
         });
     }
 
-    window.DoseCareDatabase.ready = (async function () {
+    async function loadAll() {
         for (const module of MEDICINE_MODULES) {
-            await loadModule(module);
+            const loaded = await loadScript(module);
+            window.DoseCareDatabase.loaded.push(loaded);
         }
 
-        window.dispatchEvent(
-            new CustomEvent("dosecare:database-ready", {
-                detail: {
-                    count: Array.isArray(window.medicines)
-                        ? window.medicines.length
-                        : 0,
-                    modules: [...window.DoseCareDatabase.loaded]
-                }
-            })
-        );
+        window.dispatchEvent(new CustomEvent("dosecare:database-ready", {
+            detail: {
+                count: Array.isArray(window.medicines)
+                    ? window.medicines.length
+                    : 0,
+                modules: [...window.DoseCareDatabase.loaded]
+            }
+        }));
+
+        for (const appModule of APP_MODULES) {
+            const loaded = await loadScript(appModule);
+            window.DoseCareDatabase.appLoaded.push(loaded);
+        }
+
+        window.dispatchEvent(new CustomEvent("dosecare:ready", {
+            detail: {
+                medicineCount: Array.isArray(window.medicines)
+                    ? window.medicines.length
+                    : 0,
+                medicineModules: [...window.DoseCareDatabase.loaded],
+                appModules: [...window.DoseCareDatabase.appLoaded]
+            }
+        }));
 
         return window.medicines;
-    })();
+    }
+
+    window.DoseCareDatabase.ready = loadAll();
 })();
