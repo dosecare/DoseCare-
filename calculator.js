@@ -752,13 +752,14 @@ function isLiquidMedicine(
 
 
     const hasAcceptedLiquidForm =
-        forms.some(
-            form =>
-                acceptedLiquidForms.includes(
-                    form
-                )
-        );
-
+    forms.some(
+        form =>
+            acceptedLiquidForms.some(
+                acceptedForm =>
+                    form === acceptedForm ||
+                    form.includes(acceptedForm)
+            )
+    );
 
     if (
         hasAcceptedLiquidForm
