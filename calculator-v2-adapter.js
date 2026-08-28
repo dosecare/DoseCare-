@@ -1,63 +1,28 @@
-/* DoseCare Calculator V2 UI adapter.
- * V2 owns the UI when present. This file is only a compatibility fallback.
+/*
+ * DoseCare Calculator V2 UI Adapter
+ *
+ * Compatibility guard for the rebuilt calculator.
+ * V2 owns the calculator state and DOM events. This file must not
+ * populate or overwrite the medicine select when V2 is active.
  */
 (function (global) {
     "use strict";
 
-    function getMedicines() {
-        if (typeof global.getAllMedicines === "function") {
-            const list = global.getAllMedicines();
-            return Array.isArray(list) ? list : [];
+    function handoff() {
+        if (global.DoseCareCalculatorV2) {
+            // Calculator V2 is the single owner of the calculator UI.
+            return;
         }
-        if (Array.isArray(global.medicines)) return global.medicines;
-        return [];
-    }
-
-    function isOralLiquid(medicine) {
-        if (!medicine) return false;
-        const values = [];
-        [medicine.dosageForm, medicine.dosageForms, medicine.dosage_form,
-         medicine.form, medicine.routeForm, medicine.preparation,
-         medicine.pharmaceuticalForm].forEach(value => {
-            if (Array.isArray(value)) values.push(...value);
-            else if (value != null) values.push(value);
-        });
-        const forms = values.map(value => String(value).trim().toLowerCase());
-        const forbidden = new Set([
-            "tablet", "tablets", "tab", "capsule", "capsules", "cap",
-            "chewable", "chewables", "injection", "injectable", "iv",
-            "iv injection", "intravenous", "im", "intramuscular",
-            "suppository", "suppositories", "cream", "ointment", "gel",
-            "patch", "powder", "granules", "lozenge"
-        ]);
-        const accepted = new Set([
-            "syrup", "syrups", "oral syrup", "oral solution", "oral solutions",
-            "oral suspension", "oral suspensions", "oral liquid", "oral liquids",
-            "solution", "suspension"
-        ]);
-        if (forms.some(form => forbidden.has(form))) return false;
-        if (forms.some(form => accepted.has(form))) return true;
-        return forms.length === 0 && String(medicine.route || medicine.administrationRoute || "").toLowerCase().includes("oral");
-    }
-
-    function initFallback() {
-        // Never compete with the V2 calculator, which owns state and listeners.
-        if (global.DoseCareCalculatorV2) return;
-        const select = document.getElementById("medicine-select");
-        if (!select) return;
-        const medicines = getMedicines().filter(isOralLiquid);
-        select.innerHTML = '<option value="">Select a medicine</option>';
-        medicines.forEach((medicine, index) => {
-            const option = document.createElement("option");
-            option.value = medicine.id || String(index);
-            option.textContent = medicine.genericName || medicine.name || medicine.brandName || "Unnamed medicine";
-            select.appendChild(option);
-        });
+        console.warn("DoseCare V2 adapter: Calculator V2 is not available.");
     }
 
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initFallback, { once: true });
+        document.addEventListener("DOMContentLoaded", handoff, { once: true });
     } else {
-        initFallback();
+        handoff();
     }
+
+    global.DoseCareCalculatorV2Adapter = Object.freeze({
+        active: () => Boolean(global.DoseCareCalculatorV2)
+    });
 })(window);
