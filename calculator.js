@@ -2680,7 +2680,23 @@ function createRegimenSelector(medicine) {
         getMedicineRegimens(
             medicine
         );
+const alternativeRegimen =
+    getAlternativeRegimen(
+        medicine
+    );
 
+
+if (
+    alternativeRegimen &&
+    !getConditionRegimens(
+        medicine
+    ).length
+) {
+
+    regimens.push(
+        alternativeRegimen
+    );
+}
 
     selectedRegimen =
         null;
