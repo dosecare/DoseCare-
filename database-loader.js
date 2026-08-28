@@ -1,18 +1,11 @@
 /* =========================================
    DoseCare — CENTRAL DATABASE LOADER
-=========================================
+   =========================================
+   Single entry point for medicine-system loading.
 
-   SINGLE RESPONSIBILITY
-   ---------------------
-   1. Load every medicine-system module.
-   2. Wait until the database is complete.
-   3. Only then start the application scripts.
-
-   FUTURE MEDICINE RULE
-   --------------------
-   Add the medicine data file and add its path
-   to MEDICINE_MODULES. The calculator does not
-   need to be edited just because a medicine is added.
+   FUTURE MEDICINE RULE:
+   Add the medicine data file to MEDICINE_MODULES.
+   Do not edit calculator.js just to add a medicine.
 ========================================= */
 
 (function () {
@@ -24,17 +17,15 @@
         "respiratory.js"
     ];
 
-    const APP_MODULES = [
-        "app.js",
-        "script.js"
-    ];
+    const APP_MODULES = ["app.js", "script.js"];
 
     window.DoseCareDatabase = {
-        version: "1.3.0",
+        version: "1.4.0",
         core: "medicines.js",
         modules: Object.freeze([...MEDICINE_MODULES]),
         loaded: [],
-        appLoaded: []
+        appLoaded: [],
+        ready: null
     };
 
     window.DOSECARE_MEDICINE_MODULES = Object.freeze([
@@ -42,101 +33,110 @@
         ...MEDICINE_MODULES
     ]);
 
-    /* -----------------------------------------
-       LEGACY REGISTRATION SAFETY
-       -----------------------------------------
-       Existing medicine modules may still use
-           medicines.push(...)
-       during migration. Keep them working while
-       rejecting invalid objects and duplicate IDs.
-    ----------------------------------------- */
+    function installLegacyPushGuard() {
+        if (!Array.isArray(window.medicines) || window.medicines.__doseCareGuarded) return;
 
-    if (Array.isArray(window.medicines)) {
         const nativePush = window.medicines.push.bind(window.medicines);
+        const registry = window.medicines;
 
-        window.medicines.push = function (...items) {
-            const existingIds = new Set(
-                this
-                    .filter(item => item && typeof item === "object")
-                    .map(item => item.id)
-                    .filter(Boolean)
+        registry.push = function (...items) {
+            const ids = new Set(
+                registry.map(item => item && item.id).filter(Boolean)
             );
-
             const accepted = [];
 
-            items.forEach(item => {
-                if (!item || typeof item !== "object") {
-                    console.warn("DoseCare: invalid medicine skipped.", item);
-                    return;
+            for (const item of items) {
+                if (!item || typeof item !== "object" || typeof item.id !== "string") {
+                    console.warn("DoseCare: skipped invalid medicine record.");
+                    continue;
                 }
-
-                if (!item.id || typeof item.id !== "string") {
-                    console.warn("DoseCare: medicine without valid ID skipped.", item);
-                    return;
+                if (ids.has(item.id)) {
+                    console.warn(`DoseCare: skipped duplicate medicine ID: ${item.id}`);
+                    continue;
                 }
-
-                if (existingIds.has(item.id)) {
-                    console.warn(`DoseCare: duplicate medicine ID skipped: ${item.id}`);
-                    return;
-                }
-
-                existingIds.add(item.id);
+                ids.add(item.id);
                 accepted.push(item);
-            });
+            }
 
             return nativePush(...accepted);
         };
-    }
 
-    /* -----------------------------------------
-       SEQUENTIAL SCRIPT LOADER
-       -----------------------------------------
-       App scripts must NOT execute until all medicine
-       modules have finished loading. This removes the
-       race condition that can make medicines disappear.
-    ----------------------------------------- */
+        Object.defineProperty(registry, "__doseCareGuarded", {
+            value: true,
+            enumerable: false,
+            configurable: false
+        });
+    }
 
     function loadScript(src) {
         return new Promise((resolve, reject) => {
+            const existing = document.querySelector(`script[data-dosecare-module="${src}"]`);
+            if (existing) {
+                resolve(src);
+                return;
+            }
+
             const script = document.createElement("script");
             script.src = src;
             script.async = false;
-
+            script.dataset.dosecareModule = src;
             script.onload = () => resolve(src);
-            script.onerror = () => {
-                console.error(`DoseCare: failed to load ${src}`);
-                reject(new Error(`Failed to load ${src}`));
-            };
-
+            script.onerror = () => reject(new Error(`DoseCare failed to load ${src}`));
             document.head.appendChild(script);
         });
     }
 
+    function validateDatabase() {
+        const list = Array.isArray(window.medicines) ? window.medicines : [];
+        const seen = new Set();
+        const errors = [];
+
+        list.forEach((medicine, index) => {
+            if (!medicine || typeof medicine !== "object") {
+                errors.push(`Record ${index + 1}: invalid object`);
+                return;
+            }
+            if (!medicine.id) errors.push(`Record ${index + 1}: missing id`);
+            else if (seen.has(medicine.id)) errors.push(`${medicine.id}: duplicate id`);
+            else seen.add(medicine.id);
+            if (!medicine.genericName) errors.push(`${medicine.id || index + 1}: missing genericName`);
+            if (medicine.route !== "oral") errors.push(`${medicine.id || index + 1}: route must be oral`);
+            if (!Array.isArray(medicine.formulations) || medicine.formulations.length === 0) {
+                errors.push(`${medicine.id || index + 1}: missing formulations`);
+            }
+            if (!medicine.dosing || !Array.isArray(medicine.dosing.regimens)) {
+                errors.push(`${medicine.id || index + 1}: missing dosing.regimens`);
+            }
+        });
+
+        return { valid: errors.length === 0, errors, count: list.length };
+    }
+
     async function loadAll() {
+        installLegacyPushGuard();
+
         for (const module of MEDICINE_MODULES) {
             const loaded = await loadScript(module);
             window.DoseCareDatabase.loaded.push(loaded);
         }
 
+        const validation = validateDatabase();
+        window.DoseCareDatabase.validation = validation;
+        window.DoseCareDatabase.medicines = window.medicines;
+
         window.dispatchEvent(new CustomEvent("dosecare:database-ready", {
-            detail: {
-                count: Array.isArray(window.medicines)
-                    ? window.medicines.length
-                    : 0,
-                modules: [...window.DoseCareDatabase.loaded]
-            }
+            detail: { medicines: window.medicines, validation }
         }));
 
-        for (const appModule of APP_MODULES) {
-            const loaded = await loadScript(appModule);
+        for (const module of APP_MODULES) {
+            const loaded = await loadScript(module);
             window.DoseCareDatabase.appLoaded.push(loaded);
         }
 
         window.dispatchEvent(new CustomEvent("dosecare:ready", {
             detail: {
-                medicineCount: Array.isArray(window.medicines)
-                    ? window.medicines.length
-                    : 0,
+                medicineCount: window.medicines.length,
+                validation,
                 medicineModules: [...window.DoseCareDatabase.loaded],
                 appModules: [...window.DoseCareDatabase.appLoaded]
             }
@@ -145,5 +145,15 @@
         return window.medicines;
     }
 
-    window.DoseCareDatabase.ready = loadAll();
+    window.DoseCareDatabaseLoader = Object.freeze({
+        getModules: () => [...MEDICINE_MODULES],
+        getMedicines: () => Array.isArray(window.medicines) ? [...window.medicines] : [],
+        validate: validateDatabase
+    });
+
+    window.DoseCareDatabase.ready = loadAll().catch(error => {
+        console.error("DoseCare database initialization failed:", error);
+        window.DoseCareDatabase.error = error;
+        throw error;
+    });
 })();
