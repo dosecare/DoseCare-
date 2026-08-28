@@ -2086,6 +2086,10 @@ function displaySelectedCondition(
 
     `;
 }
+/* =========================================
+   REGIMEN LABEL
+========================================= */
+
 function getRegimenLabel(regimen) {
 
     if (!regimen) {
@@ -2094,6 +2098,7 @@ function getRegimenLabel(regimen) {
 
 
     if (regimen.label) {
+
         return String(
             regimen.label
         );
@@ -2101,12 +2106,102 @@ function getRegimenLabel(regimen) {
 
 
     if (regimen.condition) {
+
         return String(
             regimen.condition
         );
     }
+
+
+    if (regimen.indication) {
+
+        return String(
+            regimen.indication
+        );
+    }
+
+
+    const type =
+        normalizeText(
+            regimen.type
+        );
+
+
+    const min =
+        regimen.minDose ??
+        regimen.dose;
+
+    const max =
+        regimen.maxDose ??
+        regimen.dose;
+
+
+    const doseText =
+        min !== undefined
+            ? (
+                min === max
+                    ? `${min}`
+                    : `${min}–${max}`
+            )
+            : "";
+
+
+    if (
+        type ===
+        "mg_per_kg_per_dose"
+    ) {
+
+        return `${doseText} mg/kg/dose`;
+    }
+
+
+    if (
+        type ===
+        "mg_per_kg_per_day"
+    ) {
+
+        return `${doseText} mg/kg/day`;
+    }
+
+
+    if (
+        type ===
+        "condition_based"
+    ) {
+
+        return (
+            doseText
+                ? `${doseText} mg/kg`
+                : "Condition-based dose"
+        );
+    }
+
+
+    if (
+        type ===
+        "severity_based"
+    ) {
+
+        return (
+            doseText
+                ? `${doseText} mg/kg/day`
+                : "Severity-based dose"
+        );
+    }
+
+
+    return (
+        doseText
+            ? `${doseText} mg/kg`
+            : "Dose option"
+    );
+}
+
+
 /* =========================================
    CONDITION CHANGE
+   -----------------------------------------
+   This MUST be outside getRegimenLabel().
 ========================================= */
 
 if (conditionSelect) {
@@ -2145,9 +2240,20 @@ if (conditionSelect) {
 
 
             /*
-               The selected condition becomes
+               Selected condition becomes
                the active dosing regimen.
             */
+
+            displaySelectedRegimenInfo(
+                regimen
+            );
+
+
+            hideValidation();
+            hideResult();
+        }
+    );
+}
 
             displaySelectedRegimenInfo(
                 regimen
