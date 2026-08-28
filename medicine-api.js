@@ -1,8 +1,5 @@
 /* =========================================
    DoseCare — MEDICINE API
-   =========================================
-   The calculator talks to this API instead of
-   depending on individual medicine files.
 ========================================= */
 (function () {
     "use strict";
@@ -42,9 +39,7 @@
         if (!medicine) return [];
         if (Array.isArray(medicine.concentrations)) return medicine.concentrations;
         if (Array.isArray(medicine.formulations)) {
-            return medicine.formulations
-                .map(item => item && item.concentration)
-                .filter(Boolean);
+            return medicine.formulations.map(item => item && item.concentration).filter(Boolean);
         }
         return medicine.concentration ? [medicine.concentration] : [];
     }
@@ -72,20 +67,16 @@
         isReady
     });
 
-    /*
-       Compatibility bridge for the existing calculator.
-       The calculator contains legacy helper declarations that
-       accept slightly different argument shapes. We normalize
-       those calls after every page script has loaded, without
-       rewriting the large calculator file.
-    */
-    window.addEventListener("load", function () {
+    /* Compatibility bridge for legacy helper signatures in calculator.js. */
+    function installCalculatorBridge() {
         const originalGetMedicineById = window.getMedicineById;
-        if (typeof originalGetMedicineById === "function") {
-            window.getMedicineById = function (id) {
+        if (typeof originalGetMedicineById === "function" && !originalGetMedicineById.__doseCareCompat) {
+            const compatibleGetMedicineById = function (id) {
                 if (id && typeof id === "object") return id;
                 return originalGetMedicineById(id) || get(id);
             };
+            Object.defineProperty(compatibleGetMedicineById, "__doseCareCompat", { value: true });
+            window.getMedicineById = compatibleGetMedicineById;
         }
 
         window.getMedicineRegimens = function (medicineOrId) {
@@ -99,5 +90,11 @@
                 (Array.isArray(medicine.dosing.conditionBased) && medicine.dosing.conditionBased.length > 0) ||
                 medicine.indicationSpecific === true;
         };
-    });
+    }
+
+    /* calculator.js is loaded later in the HTML. A zero-delay task runs
+       after the synchronous script stack, so the legacy declarations have
+       been created before we install the bridge. */
+    setTimeout(installCalculatorBridge, 0);
+    window.addEventListener("load", installCalculatorBridge, { once: true });
 })();
