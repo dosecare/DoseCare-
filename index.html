@@ -68,13 +68,10 @@
         </section>
     </main>
 
-    <!-- Central database is loaded first; medicine files remain data-only during migration. -->
+    <!-- Core database + one central loader. Medicine modules are loaded by database-loader.js. -->
     <script src="theme.js"></script>
     <script src="medicines.js"></script>
     <script src="database-loader.js"></script>
-    <script src="antibiotics.js"></script>
-    <script src="analgesics.js"></script>
-    <script src="respiratory.js"></script>
     <script src="app.js"></script>
     <script src="script.js"></script>
 </body>
