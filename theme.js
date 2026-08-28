@@ -5,17 +5,9 @@
 ========================================= */
 
 
-/* =========================================
-   THEME STORAGE
-========================================= */
-
 const THEME_STORAGE_KEY =
     "dosecare-theme";
 
-
-/* =========================================
-   GET SAVED THEME
-========================================= */
 
 function getSavedTheme() {
 
@@ -24,49 +16,26 @@ function getSavedTheme() {
             THEME_STORAGE_KEY
         );
 
-    /*
-       Dark is always the default.
-    */
-
     return savedTheme === "light"
         ? "light"
         : "dark";
 }
 
 
-/* =========================================
-   APPLY THEME
-========================================= */
-
 function applyTheme(theme) {
 
     const isLight =
         theme === "light";
-
-
-    /* -------------------------------------
-       BODY
-    ------------------------------------- */
 
     document.body.classList.toggle(
         "light-mode",
         isLight
     );
 
-
-    /* -------------------------------------
-       HTML
-    ------------------------------------- */
-
     document.documentElement.classList.toggle(
         "light-mode",
         isLight
     );
-
-
-    /* -------------------------------------
-       SAVE
-    ------------------------------------- */
 
     localStorage.setItem(
         THEME_STORAGE_KEY,
@@ -75,23 +44,13 @@ function applyTheme(theme) {
             : "dark"
     );
 
-
-    /* -------------------------------------
-       UPDATE UI
-    ------------------------------------- */
-
     updateThemeUI(
         isLight
             ? "light"
             : "dark"
     );
-
 }
 
-
-/* =========================================
-   UPDATE THEME UI
-========================================= */
 
 function updateThemeUI(theme) {
 
@@ -105,14 +64,8 @@ function updateThemeUI(theme) {
             "theme-status"
         );
 
-
     const isLight =
         theme === "light";
-
-
-    /* -------------------------------------
-       TOGGLE
-    ------------------------------------- */
 
     if (themeToggle) {
 
@@ -128,53 +81,32 @@ function updateThemeUI(theme) {
                 : "false"
         );
 
-
         const icon =
             themeToggle.querySelector(
                 ".theme-toggle-icon"
             );
 
-
         if (icon) {
-
             icon.textContent =
                 isLight
                     ? "☀"
                     : "☾";
-
         }
-
     }
 
-
-    /* -------------------------------------
-       STATUS
-    ------------------------------------- */
-
     if (themeStatus) {
-
         themeStatus.textContent =
             isLight
                 ? "Light Mode"
                 : "Dark Mode";
-
     }
-
 }
 
-
-/* =========================================
-   INITIALIZE THEME
-========================================= */
 
 applyTheme(
     getSavedTheme()
 );
 
-
-/* =========================================
-   THEME TOGGLE
-========================================= */
 
 document.addEventListener(
     "click",
@@ -185,95 +117,95 @@ document.addEventListener(
                 "#theme-toggle"
             );
 
-
         if (!toggle) return;
-
 
         const currentTheme =
             getSavedTheme();
 
-
-        const newTheme =
+        applyTheme(
             currentTheme === "light"
                 ? "dark"
-                : "light";
-
-
-        applyTheme(
-            newTheme
+                : "light"
         );
-
     }
 );
 
 
 /* =========================================
    CALCULATOR READINESS COMPATIBILITY
-========================================= */
-/*
-   Medicine records may use either:
+=========================================
+
+   The database currently contains two readiness
+   conventions:
+
        dosing.calculatorReady === true
-   or the older:
        dosing.configured === true
 
-   The old readiness check required configured === true
-   even when calculatorReady was explicitly true. That caused
-   valid medicines to disappear from the calculator.
+   A medicine is ready when calculatorReady is true
+   OR the legacy configured flag is true.
 
-   This compatibility layer runs after medicine registration
-   and before calculator.js, because theme.js is loaded between
-   the medicine files and calculator.js.
-*/
+   Explicit calculatorReady === false always wins.
 
-if (
-    typeof window.getAllMedicines === "function"
-) {
+   This prevents valid medicines from disappearing
+   merely because they do not carry the old
+   `configured` property.
+========================================= */
 
-    window.isMedicineCalculatorReady =
-        function (id) {
+function doseCareIsCalculatorReady(medicine) {
 
-            const medicine =
-                window.getMedicineById
-                    ? window.getMedicineById(id)
-                    : null;
+    if (
+        !medicine ||
+        !medicine.dosing
+    ) {
+        return false;
+    }
 
-            if (
-                !medicine ||
-                !medicine.dosing
-            ) {
-                return false;
-            }
+    const dosing =
+        medicine.dosing;
 
-            const dosing =
-                medicine.dosing;
+    if (
+        dosing.calculatorReady === false
+    ) {
+        return false;
+    }
 
-            /* Explicit opt-out always wins. */
-            if (
-                dosing.calculatorReady === false
-            ) {
-                return false;
-            }
-
-            /*
-               Accept the current database flag.
-               Keep configured === true for backward compatibility.
-            */
-            return (
-                dosing.calculatorReady === true ||
-                dosing.configured === true
-            );
-        };
-
-    window.getCalculatorReadyMedicines =
-        function () {
-
-            return window
-                .getAllMedicines()
-                .filter(
-                    medicine =>
-                        window.isMedicineCalculatorReady(
-                            medicine.id
-                        )
-                );
-        };
+    return (
+        dosing.calculatorReady === true ||
+        dosing.configured === true
+    );
 }
+
+
+window.isMedicineCalculatorReady =
+    function (id) {
+
+        if (
+            typeof window.getMedicineById !==
+            "function"
+        ) {
+            return false;
+        }
+
+        return doseCareIsCalculatorReady(
+            window.getMedicineById(id)
+        );
+    };
+
+
+window.getCalculatorReadyMedicines =
+    function () {
+
+        if (
+            typeof window.getAllMedicines !==
+            "function"
+        ) {
+            return [];
+        }
+
+        return window
+            .getAllMedicines()
+            .filter(
+                doseCareIsCalculatorReady
+            );
+    };
+
