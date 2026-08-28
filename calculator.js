@@ -2502,6 +2502,13 @@ function getFrequencyText(
 
 /* =========================================
    REGIMEN SELECT UI
+   -----------------------------------------
+   Normal medicines:
+       Medicine → Dose Regimen
+
+   Condition-based medicines:
+       Medicine → Condition
+       Condition becomes active regimen
 ========================================= */
 
 function createRegimenSelector(medicine) {
@@ -2511,22 +2518,78 @@ function createRegimenSelector(medicine) {
     }
 
 
+    const conditionRegimens =
+        getConditionRegimens(
+            medicine
+        );
+
+
+    /*
+       If this medicine requires a condition,
+       DO NOT show the generic regimen selector.
+
+       The selected condition becomes the
+       active dosing regimen.
+    */
+
+    if (
+        conditionRegimens.length > 0
+    ) {
+
+        selectedRegimen =
+            null;
+
+        regimenSelect.innerHTML = `
+            <option value="">
+                Select a condition first
+            </option>
+        `;
+
+        regimenSelect.disabled =
+            true;
+
+        regimenSelect.style.display =
+            "none";
+
+        if (selectedRegimenInfo) {
+
+            selectedRegimenInfo.innerHTML =
+                "";
+        }
+
+        return;
+    }
+
+
+    /*
+       Normal medicine:
+       restore the standard regimen selector.
+    */
+
+    regimenSelect.style.display =
+        "";
+
+
     const regimens =
         getMedicineRegimens(
             medicine
         );
 
 
-    selectedRegimen = null;
+    selectedRegimen =
+        null;
 
-
-    regimenSelect.innerHTML = "";
+    regimenSelect.innerHTML =
+        "";
 
 
     const defaultOption =
-        document.createElement("option");
+        document.createElement(
+            "option"
+        );
 
-    defaultOption.value = "";
+    defaultOption.value =
+        "";
 
     defaultOption.textContent =
         regimens.length
@@ -2565,7 +2628,9 @@ function createRegimenSelector(medicine) {
         regimens.length === 0;
 
 
-    if (regimens.length === 1) {
+    if (
+        regimens.length === 1
+    ) {
 
         selectedRegimen =
             regimens[0];
@@ -2594,8 +2659,6 @@ function createRegimenSelector(medicine) {
                 `;
     }
 }
-
-
 function displaySelectedRegimenInfo(regimen) {
 
     if (!selectedRegimenInfo) {
