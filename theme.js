@@ -205,3 +205,75 @@ document.addEventListener(
 
     }
 );
+
+
+/* =========================================
+   CALCULATOR READINESS COMPATIBILITY
+========================================= */
+/*
+   Medicine records may use either:
+       dosing.calculatorReady === true
+   or the older:
+       dosing.configured === true
+
+   The old readiness check required configured === true
+   even when calculatorReady was explicitly true. That caused
+   valid medicines to disappear from the calculator.
+
+   This compatibility layer runs after medicine registration
+   and before calculator.js, because theme.js is loaded between
+   the medicine files and calculator.js.
+*/
+
+if (
+    typeof window.getAllMedicines === "function"
+) {
+
+    window.isMedicineCalculatorReady =
+        function (id) {
+
+            const medicine =
+                window.getMedicineById
+                    ? window.getMedicineById(id)
+                    : null;
+
+            if (
+                !medicine ||
+                !medicine.dosing
+            ) {
+                return false;
+            }
+
+            const dosing =
+                medicine.dosing;
+
+            /* Explicit opt-out always wins. */
+            if (
+                dosing.calculatorReady === false
+            ) {
+                return false;
+            }
+
+            /*
+               Accept the current database flag.
+               Keep configured === true for backward compatibility.
+            */
+            return (
+                dosing.calculatorReady === true ||
+                dosing.configured === true
+            );
+        };
+
+    window.getCalculatorReadyMedicines =
+        function () {
+
+            return window
+                .getAllMedicines()
+                .filter(
+                    medicine =>
+                        window.isMedicineCalculatorReady(
+                            medicine.id
+                        )
+                );
+        };
+}
