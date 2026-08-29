@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DoseCare — Calculator</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main class="page calculator-page">
+  <header class="topbar"><a href="index.html" class="brand">DoseCare</a><span>Clinical pediatric dose calculator</span></header>
+  <section class="glass-card calculator-card">
+    <div class="section-heading"><p class="eyebrow">DOSE CALCULATOR</p><h1>Calculate a pediatric oral-liquid dose</h1><p>Select the medicine first. Only supported oral-liquid formulations are included.</p></div>
+    <form id="dose-form" novalidate>
+      <label class="field"><span>Treatment</span><select id="medicine-select" required><option value="">Select treatment</option></select></label>
+      <div id="condition-field" class="field" hidden><label for="condition-select">Condition</label><select id="condition-select"></select></div>
+      <div class="dose-preview glass-field"><span>Recommended pediatric dose</span><strong id="recommended-dose">Select a treatment first</strong></div>
+      <div class="grid-2">
+        <label class="field"><span>Age</span><div class="inline-input"><input id="age-value" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Age"><select id="age-unit"><option value="months">Months</option><option value="years">Years</option></select></div></label>
+        <label class="field"><span>Weight</span><div class="unit-input"><input id="weight-value" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Weight"><span>kg</span></div></label>
+      </div>
+      <div id="concentration-field" class="field" hidden><label for="concentration-select">Oral-liquid concentration</label><select id="concentration-select"></select></div>
+      <p id="form-message" class="form-message" role="alert"></p>
+      <button class="primary-button" type="submit">CALCULATE DOSE</button>
+    </form>
+  </section>
+</main>
+<script src="js/database.js"></script><script src="data/paracetamol.js"></script><script src="js/dosing-engine.js"></script><script src="js/calculator.js"></script>
+</body></html>
