@@ -10,7 +10,8 @@
   const form = $('dose-form');
   const message = $('form-message');
 
-  const allMedicines = Array.isArray(window.medicines) ? window.medicines : [];
+  // medicines.js declares a global lexical `const medicines`, not window.medicines.
+  const allMedicines = typeof medicines !== 'undefined' && Array.isArray(medicines) ? medicines : [];
 
   function getReadyMedicines() {
     return allMedicines.filter(m => {
@@ -175,18 +176,16 @@
     if (minDose == null) throw new Error('This regimen does not contain a calculable dose yet.');
 
     const frequency = numberOrNull(regimen.frequency ?? regimen.frequencyPerDay);
-    let lowMg, highMg, perDoseUnit;
+    let lowMg, highMg;
     if (type === 'mg_per_kg_per_day') {
       if (weight == null) throw new Error('This regimen requires the child’s weight.');
       if (!frequency || frequency <= 0) throw new Error('The regimen is missing a valid frequency.');
       lowMg = weight * minDose / frequency;
       highMg = weight * maxDose / frequency;
-      perDoseUnit = 'mg/dose';
     } else if (type === 'mg_per_kg_per_dose') {
       if (weight == null) throw new Error('This regimen requires the child’s weight.');
       lowMg = weight * minDose;
       highMg = weight * maxDose;
-      perDoseUnit = 'mg/dose';
     } else {
       throw new Error('This dosing type is not supported by the V2 calculator yet.');
     }
@@ -206,21 +205,7 @@
     const lowMl = mgPer5mL ? lowMg * 5 / mgPer5mL : null;
     const highMl = mgPer5mL ? highMg * 5 / mgPer5mL : null;
 
-    const result = {
-      medicine,
-      regimen,
-      condition: labelled.length > 1 ? conditionSelect.value : null,
-      ageValue: numberOrNull($('age-value').value),
-      ageUnit: $('age-unit').value,
-      ageMonths: months,
-      weight,
-      formulation,
-      mgPer5mL,
-      lowMg, highMg, lowMl, highMl,
-      frequency,
-      perDoseUnit,
-      generatedAt: new Date().toISOString()
-    };
+    const result = { medicine, regimen, condition: labelled.length > 1 ? conditionSelect.value : null, ageValue: numberOrNull($('age-value').value), ageUnit: $('age-unit').value, ageMonths: months, weight, formulation, mgPer5mL, lowMg, highMg, lowMl, highMl, frequency, generatedAt: new Date().toISOString() };
     sessionStorage.setItem('dosecareV2Result', JSON.stringify(result));
     location.href = 'result.html';
   }
@@ -228,11 +213,6 @@
   medicineSelect.addEventListener('change', renderMedicine);
   conditionSelect.addEventListener('change', renderCondition);
   $('back-welcome').addEventListener('click', () => location.href = 'index.html');
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    message.textContent = '';
-    try { calculate(); } catch (error) { message.textContent = error.message || 'Unable to calculate this dose.'; }
-  });
-
+  form.addEventListener('submit', e => { e.preventDefault(); message.textContent = ''; try { calculate(); } catch (error) { message.textContent = error.message || 'Unable to calculate this dose.'; } });
   renderMedicines();
 })();
