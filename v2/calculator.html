@@ -28,16 +28,12 @@
     <form id="dose-form" class="v2-form" novalidate>
       <div class="glass-field">
         <label for="medicine-select">Treatment</label>
-        <select id="medicine-select" required>
-          <option value="">Select treatment</option>
-        </select>
+        <select id="medicine-select" required><option value="">Select treatment</option></select>
       </div>
 
       <div class="glass-field conditional-field" id="condition-field" hidden>
         <label for="condition-select">Condition</label>
-        <select id="condition-select">
-          <option value="">Select condition</option>
-        </select>
+        <select id="condition-select"><option value="">Select condition</option></select>
       </div>
 
       <div class="glass-field">
@@ -46,7 +42,7 @@
       </div>
 
       <div class="glass-field" id="concentration-field" hidden>
-        <label for="concentration-select">Concentration</label>
+        <label for="concentration-select">Oral-liquid concentration</label>
         <select id="concentration-select"></select>
       </div>
 
@@ -70,6 +66,8 @@
   <script src="../antibiotics.js"></script>
   <script src="../analgesics.js"></script>
   <script src="../respiratory.js"></script>
+  <script src="medicine-adapter.js"></script>
+  <script src="dosing-engine.js"></script>
   <script src="calculator-v2.js"></script>
 </body>
 </html>
