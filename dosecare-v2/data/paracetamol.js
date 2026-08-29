@@ -1,44 +1,44 @@
-/* DoseCare V2 — Paracetamol
-   Independent V2 medicine record. Do not import legacy medicine files.
-   Source basis: FDA pediatric oral-liquid acetaminophen guidance + current DailyMed labels.
+/* DoseCare V2 — Paracetamol (acetaminophen)
+   Independent V2 medicine record. No legacy database dependency.
+   Pediatric oral-liquid source basis: current DailyMed labeling + FDA pediatric oral-liquid guidance.
 */
 window.DOSECARE_V2_MEDICINES = window.DOSECARE_V2_MEDICINES || [];
 window.DOSECARE_V2_MEDICINES.push({
   id: 'paracetamol',
+  name: 'Paracetamol (Acetaminophen)',
   genericName: 'Paracetamol (Acetaminophen)',
   activeIngredient: 'Acetaminophen',
   dosageForm: 'Oral suspension',
   route: 'Oral',
-  formulations: [
-    {
-      concentration: { amount: 160, unit: 'mg', volume: 5, volumeUnit: 'mL' },
-      label: '160 mg/5 mL'
-    }
-  ],
-  dosing: {
+  formulations: [{
+    display: '160 mg/5 mL',
+    mgPer5mL: 160,
+    concentration: { amount: 160, unit: 'mg', volume: 5, volumeUnit: 'mL' }
+  }],
+  regimens: [{
+    id: 'label-weight-age-chart',
     type: 'label_weight_age_based',
-    frequency: 'every 4 hours as needed',
+    frequencyText: 'Every 4 hours as needed',
     maximumDosesPer24Hours: 5,
-    requiresWeightOrAge: true,
-    regimenSource: 'DailyMed label'
-  },
+    table: [
+      { minLb: 24, maxLb: 35, minAgeYears: 2, maxAgeYears: 3, doseMl: 5 },
+      { minLb: 36, maxLb: 47, minAgeYears: 4, maxAgeYears: 5, doseMl: 7.5 },
+      { minLb: 48, maxLb: 59, minAgeYears: 6, maxAgeYears: 8, doseMl: 10 },
+      { minLb: 60, maxLb: 71, minAgeYears: 9, maxAgeYears: 10, doseMl: 12.5 },
+      { minLb: 72, maxLb: 95, minAgeYears: 11, maxAgeYears: 11, doseMl: 15 }
+    ],
+    under24LbMessage: 'For a child under 24 lb or under 2 years, the product label directs the user to ask a doctor.'
+  }],
   information: {
     class: 'Analgesic / antipyretic',
-    indications: ['Temporary reduction of fever', 'Relief of minor aches and pains'],
-    mechanism: 'Analgesic and antipyretic; the precise mechanism is not fully established.',
-    precautions: ['Do not combine with another medicine containing acetaminophen.', 'Use caution in children with liver disease.'],
-    adverseEffects: ['Serious liver injury can occur with overdose.', 'Serious skin reactions are possible.']
+    indications: ['Temporary reduction of fever', 'Temporary relief of minor aches and pains'],
+    mechanism: 'Analgesic and antipyretic; the precise mechanism of action is not fully established.',
+    precautions: ['Do not use with another medicine containing acetaminophen.', 'Ask a doctor before use if the child has liver disease.', 'Ask a doctor or pharmacist before use if the child is taking warfarin.'],
+    adverseEffects: ['Severe liver damage can occur with overdose.', 'Severe skin reactions can occur.'],
+    notes: 'Shake well before use. The referenced product label instructs users to dose by weight when possible, otherwise by age, repeat every 4 hours while symptoms last, and not exceed 5 doses in 24 hours.'
   },
   sources: [
-    {
-      organization: 'U.S. FDA',
-      title: 'Over-the-Counter Pediatric Oral Liquid Drug Products Containing Acetaminophen',
-      url: 'https://www.fda.gov/files/drugs/published/Over-the-Counter-Pediatric-Oral-Liquid-Drug-Products-Containing-Acetaminophen.pdf'
-    },
-    {
-      organization: 'DailyMed',
-      title: "Children's Acetaminophen Oral Suspension — 160 mg/5 mL",
-      url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=38b839b6-de7d-4f33-a19a-efc92cdad92c'
-    }
+    { organization: 'DailyMed', title: "Children's Acetaminophen Oral Suspension — 160 mg/5 mL (label updated 2026)", url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=44de6f5a-0b5c-6c28-e063-6394a90a7e0b' },
+    { organization: 'U.S. FDA', title: 'Over-the-Counter Pediatric Oral Liquid Drug Products Containing Acetaminophen — Guidance for Industry', url: 'https://www.fda.gov/files/drugs/published/Over-the-Counter-Pediatric-Oral-Liquid-Drug-Products-Containing-Acetaminophen.pdf' }
   ]
 });
