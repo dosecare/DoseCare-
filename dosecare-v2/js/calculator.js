@@ -1,12 +1,37 @@
 /* DoseCare V2 — calculator UI controller. */
 (function () {
   'use strict';
-  const $=id=>document.getElementById(id), medicineSelect=$('medicine-select'), conditionField=$('condition-field'), conditionSelect=$('condition-select'), concentrationField=$('concentration-field'), concentrationSelect=$('concentration-select'), recommendedDose=$('recommended-dose'), form=$('dose-form'), message=$('form-message');
-  const medicines=Array.isArray(window.DoseCareV2Medicines)?window.DoseCareV2Medicines:[];
+  const $=id=>document.getElementById(id);
+  const medicineSelect=$('medicine-select'), conditionField=$('condition-field'), conditionSelect=$('condition-select'), concentrationField=$('concentration-field'), concentrationSelect=$('concentration-select'), recommendedDose=$('recommended-dose'), form=$('dose-form'), message=$('form-message');
+  const medicines=Array.isArray(window.DOSECARE_V2_MEDICINES)?window.DOSECARE_V2_MEDICINES:[];
   const byId=id=>medicines.find(m=>m.id===id)||null;
-  function doseText(r){const a=r.minDose??r.dose,b=r.maxDose??a;return `${a===b?a:`${a}–${b}`} ${r.unit|| (r.type==='mg_per_kg_per_day'?'mg/kg/day':'mg/kg/dose')}`;}
-  function render(){const m=byId(medicineSelect.value); conditionSelect.innerHTML='<option value="">Select condition</option>'; concentrationSelect.innerHTML=''; conditionField.hidden=true; concentrationField.hidden=true; if(!m){recommendedDose.textContent='Select a treatment first';return;} const rs=m.regimens||[]; const conditions=rs.filter(r=>r.condition); if(conditions.length>1){conditionField.hidden=false;conditions.forEach(r=>{const o=document.createElement('option');o.value=r.id;o.textContent=r.condition;conditionSelect.appendChild(o);});recommendedDose.textContent='Select a condition to view the dose';} else {recommendedDose.textContent=rs[0]?doseText(rs[0]):'Dose not configured';} (m.formulations||[]).forEach((f,i)=>{const o=document.createElement('option');o.value=i;o.textContent=f.display||f.concentration||`${f.mgPer5mL} mg/5 mL`;concentrationSelect.appendChild(o);}); if((m.formulations||[]).length>1) concentrationField.hidden=false;}
-  function selectedRegimen(m){const rs=m.regimens||[];if(rs.length===1)return rs[0];return rs.find(r=>r.id===conditionSelect.value)||null;}
-  medicineSelect.innerHTML='<option value="">Select treatment</option>'; medicines.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=m.name;medicineSelect.appendChild(o);}); medicineSelect.addEventListener('change',render);conditionSelect.addEventListener('change',()=>{const m=byId(medicineSelect.value),r=selectedRegimen(m);recommendedDose.textContent=r?doseText(r):'Select a condition to view the dose';});
-  form.addEventListener('submit',e=>{e.preventDefault();message.textContent='';const m=byId(medicineSelect.value);const r=selectedRegimen(m);if(!m||!r){message.textContent='Select a treatment and required condition.';return;}const f=(m.formulations||[])[Number(concentrationSelect.value)||0];const result=window.DoseCareDosingEngine.calculate({medicine:m,regimen:r,weight:$('weight-value').value,age:$('age-value').value,ageUnit:$('age-unit').value,formulation:f});if(!result.ok){message.textContent=result.error;return;}sessionStorage.setItem('dosecareV2Result',JSON.stringify(result));window.location.href='result.html';});render();
+  function doseText(r){
+    if(r.type==='label_weight_age_based') return 'Weight/age-based labeled dose';
+    const a=r.minDose??r.dose,b=r.maxDose??a;
+    return `${a===b?a:`${a}–${b}`} ${r.unit||(r.type==='mg_per_kg_per_day'?'mg/kg/day':'mg/kg/dose')}`;
+  }
+  function render(){
+    const m=byId(medicineSelect.value); conditionSelect.innerHTML='<option value="">Select condition</option>'; concentrationSelect.innerHTML=''; conditionField.hidden=true; concentrationField.hidden=true;
+    if(!m){recommendedDose.textContent='Select a treatment first';return;}
+    const rs=m.regimens||[]; const conditions=rs.filter(r=>r.condition);
+    if(conditions.length>1){conditionField.hidden=false;conditions.forEach(r=>{const o=document.createElement('option');o.value=r.id;o.textContent=r.condition;conditionSelect.appendChild(o);});recommendedDose.textContent='Select a condition to view the dose';}
+    else recommendedDose.textContent=rs[0]?doseText(rs[0]):'Dose not configured';
+    (m.formulations||[]).forEach((f,i)=>{const o=document.createElement('option');o.value=i;o.textContent=f.display||f.label||`${f.mgPer5mL} mg/5 mL`;concentrationSelect.appendChild(o);});
+    if((m.formulations||[]).length>1) concentrationField.hidden=false;
+  }
+  function selectedRegimen(m){const rs=m?.regimens||[];if(rs.length===1)return rs[0];return rs.find(r=>r.id===conditionSelect.value)||null;}
+  medicineSelect.innerHTML='<option value="">Select treatment</option>';
+  medicines.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=m.name;medicineSelect.appendChild(o);});
+  medicineSelect.addEventListener('change',render);
+  conditionSelect.addEventListener('change',()=>{const r=selectedRegimen(byId(medicineSelect.value));recommendedDose.textContent=r?doseText(r):'Select a condition to view the dose';});
+  form.addEventListener('submit',e=>{
+    e.preventDefault(); message.textContent='';
+    const m=byId(medicineSelect.value), r=selectedRegimen(m);
+    if(!m||!r){message.textContent='Select a treatment and required condition.';return;}
+    const f=(m.formulations||[])[Number(concentrationSelect.value)||0];
+    const result=window.DoseCareDosingEngine.calculate({medicine:m,regimen:r,weight:$('weight-value').value,age:$('age-value').value,ageUnit:$('age-unit').value,formulation:f});
+    if(!result.ok){message.textContent=result.error;return;}
+    sessionStorage.setItem('dosecareV2Result',JSON.stringify({medicine:m,formulation:f,...result})); window.location.href='result.html';
+  });
+  render();
 })();
