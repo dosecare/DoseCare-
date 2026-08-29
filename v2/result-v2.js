@@ -1,5 +1,6 @@
-/* DoseCare V2 result renderer. */
+/* DoseCare V2 — result renderer. */
 (function () {
+  'use strict';
   const root = document.getElementById('result-stack');
   const raw = sessionStorage.getItem('dosecareV2Result');
   document.getElementById('back-calculator').addEventListener('click', () => location.href = 'calculator.html');
@@ -18,30 +19,36 @@
 
   const m = data.medicine;
   const r = data.regimen;
-  const esc = value => String(value ?? '').replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
+  const esc = value => String(value ?? '').replace(/[&<>\"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '\"':'&quot;' }[c]));
   const fmt = n => Number.isFinite(Number(n)) ? Number(n).toFixed(2).replace(/\.00$/, '').replace(/(\.\d)0$/, '$1') : '—';
   const range = (low, high, unit) => `${fmt(low)}${Math.abs(Number(low)-Number(high)) < 1e-9 ? '' : `–${fmt(high)}`} ${unit}`;
+  const listText = value => Array.isArray(value) ? value.join(' • ') : (value || 'Not provided');
 
   const frequencyText = r.frequencyText || r.interval || (data.frequency ? `${data.frequency} times daily` : 'As specified by the regimen');
-  const doseText = `${range(data.lowMg, data.highMg, 'mg/dose')}`;
-  const volumeText = data.lowMl != null ? `${range(data.lowMl, data.highMl, 'mL/dose')}` : 'Verify the oral-liquid concentration to obtain mL.';
-
+  const doseText = range(data.lowMg, data.highMg, 'mg/dose');
+  const volumeText = data.lowMl != null ? range(data.lowMl, data.highMl, 'mL/dose') : 'Verify the oral-liquid concentration to obtain mL.';
   const condition = data.condition ? `<div class="result-meta"><span>Condition</span><strong>${esc(data.condition)}</strong></div>` : '';
   const concentration = data.formulation ? (data.formulation.concentration || data.formulation.display || data.formulation.form || '') : '';
 
-  const stepDose = r.type === 'mg_per_kg_per_day' ?
-    `${fmt(data.weight)} kg × ${fmt(r.minDose)}–${fmt(r.maxDose)} mg/kg/day ÷ ${fmt(data.frequency)} doses/day` :
-    `${fmt(data.weight)} kg × ${fmt(r.minDose)}–${fmt(r.maxDose)} mg/kg/dose`;
+  const type = r.type || r.dosingType || '';
+  const stepDose = type === 'mg_per_kg_per_day'
+    ? `${fmt(data.weight)} kg × ${fmt(r.minDose)}–${fmt(r.maxDose)} mg/kg/day ÷ ${fmt(data.frequency)} doses/day`
+    : `${fmt(data.weight)} kg × ${fmt(r.minDose)}–${fmt(r.maxDose)} mg/kg/dose`;
 
-  let calculation = `<div class="calc-step"><span>01</span><div><strong>Weight-based dose</strong><p>${esc(stepDose)} = <b>${esc(doseText)}</b></p></div></div>`;
-  if (r.maxDailyDose != null) calculation += `<div class="calc-step"><span>02</span><div><strong>Maximum daily dose check</strong><p>Configured maximum: <b>${esc(r.maxDailyDose)} mg/day</b>.</p></div></div>`;
-  if (data.mgPer5mL) {
-    const stepNo = r.maxDailyDose != null ? '03' : '02';
-    calculation += `<div class="calc-step"><span>${stepNo}</span><div><strong>Convert mg to mL</strong><p>${esc(concentration || `${data.mgPer5mL} mg/5 mL`)} → <b>${esc(volumeText)}</b></p></div></div>`;
+  let calculation = `<div class="calc-step"><span>01</span><div><strong>Calculate the dose</strong><p>${esc(stepDose)} = <b>${esc(doseText)}</b></p></div></div>`;
+  let step = 2;
+  if (data.maximumApplied != null) {
+    calculation += `<div class="calc-step"><span>${String(step).padStart(2,'0')}</span><div><strong>Maximum-dose check</strong><p>The calculated per-dose amount was limited to <b>${fmt(data.maximumApplied)} mg/dose</b> based on the configured maximum daily dose and frequency.</p></div></div>`;
+    step++;
+  }
+  if (data.formulation && data.lowMl != null) {
+    calculation += `<div class="calc-step"><span>${String(step).padStart(2,'0')}</span><div><strong>Convert mg to mL</strong><p>${esc(concentration || data.concentrationText || 'Oral-liquid concentration')} → <b>${esc(volumeText)}</b></p></div></div>`;
   }
 
   const refs = Array.isArray(m.references) ? m.references : [];
   const referencesHtml = refs.length ? refs.map(ref => `<a class="reference-item" href="${esc(ref.url || '#')}" target="_blank" rel="noopener noreferrer"><span>${esc(ref.organization || 'Source')}</span><strong>${esc(ref.title || ref.id || 'Reference')}</strong></a>`).join('') : '<p class="muted">No reference record is attached to this medicine yet.</p>';
+  const maxDose = r.maxDailyDose ?? m.dosing?.maxDailyDose;
+  const duration = r.duration || m.duration || '';
 
   root.innerHTML = `
     <article class="result-card result-hero glass-panel">
@@ -63,12 +70,17 @@
       <h2 class="medicine-heading">${esc(m.genericName || m.name)}</h2>
       <div class="info-grid">
         <div><span>Active ingredient</span><strong>${esc(m.activeIngredient || m.genericName || m.name)}</strong></div>
-        <div><span>Drug class</span><strong>${esc(Array.isArray(m.drugClass) ? m.drugClass.join(' · ') : (m.class || '—'))}</strong></div>
+        <div><span>Drug class</span><strong>${esc(listText(m.drugClass))}</strong></div>
         <div><span>Frequency</span><strong>${esc(frequencyText)}</strong></div>
-        <div><span>Maximum dose</span><strong>${esc(r.maxDailyDose != null ? `${r.maxDailyDose} mg/day` : (m.dosing?.maxDailyDose != null ? `${m.dosing.maxDailyDose} mg/day` : 'Not specified in this regimen'))}</strong></div>
+        <div><span>Maximum dose</span><strong>${esc(maxDose != null ? `${maxDose} mg/day` : 'Not specified in this regimen')}</strong></div>
+        ${duration ? `<div><span>Duration</span><strong>${esc(duration)}</strong></div>` : ''}
+        <div><span>Route</span><strong>${esc(m.route || 'Oral')}</strong></div>
       </div>
       <div class="info-block"><span>Mechanism of action</span><p>${esc(m.moa || 'Not provided')}</p></div>
-      <div class="info-block"><span>Indications</span><p>${esc(m.indications || 'Not provided')}</p></div>
+      <div class="info-block"><span>Indications</span><p>${esc(listText(m.indications))}</p></div>
+      ${Array.isArray(m.precautions) && m.precautions.length ? `<div class="info-block"><span>Precautions</span><p>${esc(m.precautions.join(' • '))}</p></div>` : ''}
+      ${Array.isArray(m.contraindications) && m.contraindications.length ? `<div class="info-block"><span>Contraindications</span><p>${esc(m.contraindications.join(' • '))}</p></div>` : ''}
+      ${Array.isArray(m.adverseEffects) && m.adverseEffects.length ? `<div class="info-block"><span>Adverse effects</span><p>${esc(m.adverseEffects.join(' • '))}</p></div>` : ''}
       <div class="info-block"><span>Clinical notes</span><p>${esc(m.notes || 'Follow the selected regimen and verify patient-specific clinical factors.')}</p></div>
       <div class="sources"><p class="card-label">SOURCES &amp; REFERENCES</p>${referencesHtml}</div>
     </article>
