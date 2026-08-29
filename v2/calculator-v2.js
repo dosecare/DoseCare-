@@ -10,12 +10,15 @@
   const concentrationSelect = $('concentration-select');
   const form = $('dose-form');
   const message = $('form-message');
+  const calculateButton = form.querySelector('button[type="submit"]');
 
   const rawMedicines = typeof medicines !== 'undefined' && Array.isArray(medicines) ? medicines : [];
   const allMedicines = globalThis.DoseCareMedicineAdapter.getCalculatorMedicines(rawMedicines);
 
   const getMedicine = () => allMedicines.find(m => m.id === medicineSelect.value) || null;
   const getSelectedRegimen = medicine => {
+    if (!medicine) return null;
+    if (medicine.regimenSelectionRequired) return null;
     const options = medicine.conditionOptions;
     if (options.length > 1) return options.find(x => x.label === conditionSelect.value)?.regimen || null;
     return medicine.regimens[0] || null;
@@ -34,6 +37,7 @@
     if (f?.display) return f.display;
     if (f?.concentration?.amount != null) return `${f.concentration.amount} ${f.concentration.unit || 'mg'}/${f.concentration.volume} ${f.concentration.volumeUnit || 'mL'}`;
     if (f?.mgPer5mL != null) return `${f.mgPer5mL} mg/5 mL`;
+    if (f?.mgPerMl != null) return `${f.mgPerMl} mg/mL`;
     return 'Concentration';
   }
 
@@ -54,6 +58,8 @@
     message.textContent = '';
     conditionField.hidden = true;
     concentrationField.hidden = true;
+    calculateButton.disabled = false;
+
     if (!medicine) {
       recommendedDose.textContent = 'Select a treatment first';
       return;
@@ -69,6 +75,9 @@
         conditionSelect.appendChild(option);
       });
       recommendedDose.textContent = 'Select a condition to view the dose';
+    } else if (medicine.regimenSelectionRequired) {
+      recommendedDose.textContent = 'Multiple clinical regimens require an indication-specific selection.';
+      calculateButton.disabled = true;
     } else {
       recommendedDose.textContent = formatDose(medicine.regimens[0]);
     }
@@ -93,6 +102,7 @@
   function calculate() {
     const medicine = getMedicine();
     if (!medicine) throw new Error('Please select a treatment.');
+    if (medicine.regimenSelectionRequired) throw new Error('This treatment has multiple clinical regimens, but no indication-specific selection is configured. It cannot be calculated safely yet.');
     const regimen = getSelectedRegimen(medicine);
     if (!regimen) throw new Error('Please select a condition.');
 
