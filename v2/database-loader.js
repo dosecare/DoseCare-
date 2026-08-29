@@ -1,6 +1,6 @@
 /* DoseCare V2 — deterministic database loader
-   medicines.js must be loaded first because it owns the central array.
-   System files are then loaded in a fixed order before the calculator starts.
+   Central database is loaded first, then system files in a fixed order.
+   The V2 adapter/engine/UI are loaded only after the database is ready.
 */
 (function () {
   'use strict';
@@ -30,12 +30,20 @@
 
   async function start() {
     try {
+      if (!Array.isArray(window.medicines)) {
+        throw new Error('DoseCare central medicine database is unavailable.');
+      }
+
       for (const src of systemFiles) await loadScript(src);
       for (const src of v2Modules) await loadScript(src);
+
+      window.dispatchEvent(new CustomEvent('dosecare:v2-ready'));
     } catch (error) {
       console.error(error);
       const message = document.getElementById('form-message');
-      if (message) message.textContent = 'The medicine database could not be loaded. Please refresh and try again.';
+      if (message) {
+        message.textContent = 'The medicine database could not be loaded. Please refresh and try again.';
+      }
     }
   }
 
