@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DoseCare | Result</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="v2.css">
+</head>
+<body class="v2-app">
+  <div class="background" aria-hidden="true">
+    <div class="glow glow-one"></div><div class="glow glow-two"></div><div class="glow glow-three"></div>
+    <div class="bubble bubble-one"></div><div class="bubble bubble-two"></div><div class="bubble bubble-three"></div><div class="bubble bubble-four"></div><div class="bubble bubble-five"></div>
+    <div id="particles"></div>
+  </div>
+
+  <main class="v2-page result-v2-page">
+    <header class="v2-header">
+      <button class="icon-button" id="back-calculator" type="button" aria-label="Back to Calculator">←</button>
+      <div class="mini-brand">Dose<span>Care</span></div>
+    </header>
+
+    <section class="calculator-intro result-intro">
+      <p class="eyebrow">CALCULATION RESULT</p>
+      <h1>Your pediatric dose<br><span>calculated step by step.</span></h1>
+    </section>
+
+    <section class="result-stack" id="result-stack" aria-live="polite"></section>
+  </main>
+
+  <script src="result-v2.js"></script>
+</body>
+</html>
