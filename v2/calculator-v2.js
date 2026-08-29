@@ -13,7 +13,12 @@
   const calculateButton = form.querySelector('button[type="submit"]');
 
   const rawMedicines = typeof medicines !== 'undefined' && Array.isArray(medicines) ? medicines : [];
-  const allMedicines = globalThis.DoseCareMedicineAdapter.getCalculatorMedicines(rawMedicines);
+  const normalizedMedicines = globalThis.DoseCareMedicineAdapter.getCalculatorMedicines(rawMedicines);
+  const allMedicines = normalizedMedicines.filter(medicine => {
+    const errors = globalThis.DoseCareDataValidator?.validateMedicine(medicine) || [];
+    if (errors.length) console.warn(`[DoseCare] ${medicine.name} excluded from V2 calculator:`, errors);
+    return errors.length === 0;
+  });
 
   const getMedicine = () => allMedicines.find(m => m.id === medicineSelect.value) || null;
   const getSelectedRegimen = medicine => {
@@ -111,6 +116,7 @@
     const formulation = forms[index] || forms[0] || null;
     const result = globalThis.DoseCareDosingEngine.calculate({
       regimen,
+      medicine,
       weight: $('weight-value').value,
       ageValue: $('age-value').value,
       ageUnit: $('age-unit').value,
