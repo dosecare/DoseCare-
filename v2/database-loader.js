@@ -1,6 +1,6 @@
 /* DoseCare V2 — deterministic database loader
-   Central database is loaded first, then system files in a fixed order.
-   The V2 adapter/engine/UI are loaded only after the database is ready.
+   medicines.js owns the central database and registration API.
+   System files are loaded in a fixed order, then V2 modules start.
 */
 (function () {
   'use strict';
@@ -30,8 +30,8 @@
 
   async function start() {
     try {
-      if (!Array.isArray(window.medicines)) {
-        throw new Error('DoseCare central medicine database is unavailable.');
+      if (typeof registerMedicines !== 'function') {
+        throw new Error('DoseCare medicine registration API is unavailable.');
       }
 
       for (const src of systemFiles) await loadScript(src);
