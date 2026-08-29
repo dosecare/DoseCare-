@@ -1,0 +1,76 @@
+/* DoseCare V2 — same medical identity, reduced interface. */
+.v2-app { min-height:100vh; color:#fff; }
+.v2-page { width:min(760px, calc(100% - 32px)); margin:0 auto; padding:48px 0 72px; }
+.welcome-page { min-height:100vh; display:grid; place-items:center; padding:32px 0; }
+.glass-panel, .glass-field { background:rgba(12,35,70,.48); border:1px solid rgba(132,202,255,.18); box-shadow:0 20px 60px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); }
+.welcome-shell { width:min(600px,100%); padding:58px 42px; border-radius:32px; text-align:center; }
+.welcome-word { margin:0 0 10px; letter-spacing:.38em; font-size:clamp(18px,3vw,25px); font-weight:700; color:#9edcff; }
+.brand-name { margin:0; font-size:clamp(58px,11vw,92px); line-height:1; letter-spacing:-.04em; font-weight:800; }
+.brand-name span,.mini-brand span { color:#5cc4ff; }
+.brand-description { max-width:500px; margin:24px auto 20px; color:rgba(235,248,255,.78); font-size:16px; line-height:1.75; }
+.developer { color:rgba(235,248,255,.6); font-size:13px; margin-bottom:32px; }
+.developer strong { color:#fff; display:block; margin-top:5px; font-size:15px; }
+.v2-primary { width:100%; border:0; border-radius:16px; padding:17px 22px; background:linear-gradient(135deg,#178bd7,#43bce9); color:#fff; font-weight:800; letter-spacing:.08em; cursor:pointer; box-shadow:0 12px 30px rgba(23,139,215,.28); transition:transform .2s ease,box-shadow .2s ease; }
+.v2-primary:hover { transform:translateY(-2px); box-shadow:0 16px 34px rgba(23,139,215,.34); }
+.v2-primary span { float:right; font-size:20px; line-height:14px; }
+.support-link { display:inline-block; margin-top:20px; color:rgba(205,237,255,.7); font-size:13px; text-decoration:none; }
+.support-link:hover { color:#fff; }
+.v2-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:48px; }
+.icon-button { width:44px; height:44px; border-radius:14px; border:1px solid rgba(132,202,255,.18); background:rgba(12,35,70,.5); color:#fff; font-size:24px; cursor:pointer; backdrop-filter:blur(14px); }
+.mini-brand { font-size:20px; font-weight:800; letter-spacing:-.02em; }
+.calculator-intro { margin-bottom:30px; }
+.eyebrow,.card-label { color:#83d4ff; font-size:11px; letter-spacing:.16em; font-weight:800; }
+.calculator-intro h1 { margin:10px 0 0; font-size:clamp(32px,6vw,52px); line-height:1.05; letter-spacing:-.035em; }
+.calculator-intro h1 span { color:#74cef7; }
+.v2-form { display:grid; gap:14px; }
+.glass-field { border-radius:20px; padding:16px 18px; }
+.glass-field label { display:block; margin-bottom:9px; color:rgba(218,242,255,.65); font-size:11px; letter-spacing:.09em; text-transform:uppercase; font-weight:700; }
+.glass-field select,.glass-field input { width:100%; border:0; outline:0; background:transparent; color:#fff; font:inherit; font-size:16px; }
+.glass-field select option { background:#0b2448; color:#fff; }
+.glass-field input::placeholder { color:rgba(220,243,255,.35); }
+.inline-control { display:flex; align-items:center; gap:10px; }
+.inline-control select { max-width:120px; color:#9edcff; }
+.unit-label { color:#8fd8ff; font-weight:700; }
+.readonly-dose { min-height:24px; font-size:16px; font-weight:700; color:#fff; }
+.conditional-field[hidden],#concentration-field[hidden] { display:none; }
+.input-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.form-message { min-height:20px; margin:0 4px; color:#ffb4b4; font-size:13px; }
+.calculate-button { margin-top:2px; }
+.result-stack { display:grid; gap:18px; }
+.result-card { border-radius:26px; padding:28px; }
+.result-title-row { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin:8px 0 18px; }
+.result-title-row h2 { margin:0; font-size:22px; font-weight:700; }
+.result-title-row span { color:#91dbff; font-size:13px; }
+.dose-output { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0 20px; }
+.dose-output strong { display:block; text-align:center; padding:22px 12px; border-radius:18px; background:rgba(84,184,239,.1); border:1px solid rgba(132,202,255,.16); font-size:clamp(25px,5vw,38px); color:#fff; }
+.result-meta { display:flex; justify-content:space-between; gap:20px; padding:12px 0; border-top:1px solid rgba(170,220,255,.1); font-size:13px; }
+.result-meta span { color:rgba(218,242,255,.55); }
+.result-meta strong { color:#e9f8ff; text-align:right; }
+.calculation-list { margin-top:20px; display:grid; gap:16px; }
+.calc-step { display:grid; grid-template-columns:38px 1fr; gap:14px; align-items:start; }
+.calc-step > span { width:32px; height:32px; display:grid; place-items:center; border-radius:11px; background:rgba(73,182,237,.12); color:#84d5ff; font-size:11px; font-weight:800; }
+.calc-step strong { display:block; margin-bottom:5px; font-size:14px; }
+.calc-step p { margin:0; color:rgba(232,247,255,.68); font-size:13px; line-height:1.7; }
+.medicine-heading { margin:9px 0 24px; font-size:clamp(30px,6vw,44px); letter-spacing:-.03em; }
+.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.info-grid > div { padding:15px; border-radius:16px; background:rgba(255,255,255,.035); border:1px solid rgba(170,220,255,.08); }
+.info-grid span,.info-block > span { display:block; color:rgba(218,242,255,.48); font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
+.info-grid strong { font-size:14px; line-height:1.5; }
+.info-block { margin-top:20px; }
+.info-block p { margin:0; color:rgba(232,247,255,.7); line-height:1.75; font-size:13px; }
+.sources { margin-top:26px; padding-top:20px; border-top:1px solid rgba(170,220,255,.1); }
+.reference-item { display:flex; flex-direction:column; gap:4px; padding:13px 0; color:#fff; text-decoration:none; border-bottom:1px solid rgba(170,220,255,.08); }
+.reference-item span { color:#81d3ff; font-size:11px; text-transform:uppercase; letter-spacing:.08em; }
+.reference-item strong { font-size:13px; }
+.muted { color:rgba(232,247,255,.5); font-size:13px; }
+.empty-result { padding:32px; text-align:center; }
+.empty-result h2 { margin:0 0 10px; }
+.empty-result p { color:rgba(232,247,255,.65); line-height:1.6; margin-bottom:20px; }
+@media (max-width:600px) {
+  .v2-page { width:min(100% - 22px,760px); padding-top:26px; }
+  .welcome-shell { padding:46px 24px; border-radius:26px; }
+  .input-row,.info-grid,.dose-output { grid-template-columns:1fr; }
+  .result-card { padding:22px 18px; }
+  .result-title-row { display:block; }
+  .result-title-row span { display:block; margin-top:5px; }
+}
