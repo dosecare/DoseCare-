@@ -57,6 +57,7 @@
     const regimens = getRegimens(medicine);
     const conditionOptions = getConditionOptions(medicine);
     const allRegimensHaveDistinctConditions = regimens.length > 1 && conditionOptions.length === regimens.length;
+    const pediatric = medicine.pediatric || {};
     return {
       raw: medicine,
       id: String(medicine.id || ''),
@@ -71,11 +72,11 @@
       notes: medicine.notes || '',
       references: asArray(medicine.references),
       formulations: getFormulations(medicine),
+      pediatric,
       regimens,
       conditionOptions,
       calculatorReady: medicine.calculatorReady === true || medicine.dosing?.calculatorReady === true || medicine.dosing?.configured === true,
       oralLiquid: isOralLiquid(medicine),
-      // Never silently choose the first regimen when multiple clinical regimens are ambiguous.
       regimenSelectionRequired: regimens.length > 1 && !allRegimensHaveDistinctConditions
     };
   }
