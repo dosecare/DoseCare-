@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DoseCare | Calculator</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="v2.css">
+</head>
+<body class="v2-app">
+  <div class="background" aria-hidden="true">
+    <div class="glow glow-one"></div><div class="glow glow-two"></div><div class="glow glow-three"></div>
+    <div class="bubble bubble-one"></div><div class="bubble bubble-two"></div><div class="bubble bubble-three"></div><div class="bubble bubble-four"></div><div class="bubble bubble-five"></div>
+    <div id="particles"></div>
+  </div>
+
+  <main class="v2-page calculator-v2-page">
+    <header class="v2-header">
+      <button class="icon-button" id="back-welcome" type="button" aria-label="Back to Welcome">←</button>
+      <div class="mini-brand">Dose<span>Care</span></div>
+    </header>
+
+    <section class="calculator-intro">
+      <p class="eyebrow">PEDIATRIC DOSE CALCULATOR</p>
+      <h1>Calculate the dose<br><span>clearly and safely.</span></h1>
+    </section>
+
+    <form id="dose-form" class="v2-form" novalidate>
+      <div class="glass-field">
+        <label for="medicine-select">Treatment</label>
+        <select id="medicine-select" required>
+          <option value="">Select treatment</option>
+        </select>
+      </div>
+
+      <div class="glass-field conditional-field" id="condition-field" hidden>
+        <label for="condition-select">Condition</label>
+        <select id="condition-select">
+          <option value="">Select condition</option>
+        </select>
+      </div>
+
+      <div class="glass-field">
+        <label>Recommended pediatric dose</label>
+        <div class="readonly-dose" id="recommended-dose">Select a treatment first</div>
+      </div>
+
+      <div class="glass-field" id="concentration-field" hidden>
+        <label for="concentration-select">Concentration</label>
+        <select id="concentration-select"></select>
+      </div>
+
+      <div class="input-row">
+        <div class="glass-field">
+          <label for="age-value">Age</label>
+          <div class="inline-control"><input id="age-value" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Age"><select id="age-unit"><option value="months">Months</option><option value="years">Years</option></select></div>
+        </div>
+        <div class="glass-field">
+          <label for="weight-value">Weight</label>
+          <div class="inline-control"><input id="weight-value" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Weight"><span class="unit-label">kg</span></div>
+        </div>
+      </div>
+
+      <p class="form-message" id="form-message" role="alert"></p>
+      <button class="v2-primary calculate-button" type="submit">CALCULATE DOSE <span>→</span></button>
+    </form>
+  </main>
+
+  <script src="../medicines.js"></script>
+  <script src="../antibiotics.js"></script>
+  <script src="../analgesics.js"></script>
+  <script src="../respiratory.js"></script>
+  <script src="calculator-v2.js"></script>
+</body>
+</html>
