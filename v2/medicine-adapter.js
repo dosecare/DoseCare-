@@ -56,6 +56,7 @@
     if (!medicine || typeof medicine !== 'object') return null;
     const regimens = getRegimens(medicine);
     const conditionOptions = getConditionOptions(medicine);
+    const allRegimensHaveDistinctConditions = regimens.length > 1 && conditionOptions.length === regimens.length;
     return {
       raw: medicine,
       id: String(medicine.id || ''),
@@ -74,9 +75,8 @@
       conditionOptions,
       calculatorReady: medicine.calculatorReady === true || medicine.dosing?.calculatorReady === true || medicine.dosing?.configured === true,
       oralLiquid: isOralLiquid(medicine),
-      // A medicine with several regimens but no explicit clinical selector is ambiguous.
-      // V2 must never silently choose the first regimen.
-      regimenSelectionRequired: regimens.length > 1 && conditionOptions.length === 0
+      // Never silently choose the first regimen when multiple clinical regimens are ambiguous.
+      regimenSelectionRequired: regimens.length > 1 && !allRegimensHaveDistinctConditions
     };
   }
 
