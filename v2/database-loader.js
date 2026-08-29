@@ -13,6 +13,7 @@
 
   const v2Modules = [
     'medicine-adapter.js',
+    'data-validator.js',
     'dosing-engine.js',
     'calculator-v2.js'
   ];
