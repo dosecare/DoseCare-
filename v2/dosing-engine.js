@@ -24,6 +24,18 @@
     return true;
   }
 
+  function supportsWeight(regimen, medicine, weight) {
+    if (weight == null) return true;
+    const limits = [regimen?.weight || {}, medicine?.pediatric?.weight || {}];
+    for (const limit of limits) {
+      const min = num(limit.minimumKg ?? limit.minKg ?? limit.minimum);
+      const max = num(limit.maximumKg ?? limit.maxKg ?? limit.maximum);
+      if (min != null && weight < min) return false;
+      if (max != null && weight > max) return false;
+    }
+    return true;
+  }
+
   function ageIsRequired(regimen) {
     const age = regimen?.age || {};
     return num(age.minimumMonths ?? regimen?.minimumAgeMonths) != null ||
@@ -44,6 +56,7 @@
     const regimen = options?.regimen;
     if (!regimen) throw new Error('A dosing regimen is required.');
 
+    const medicine = options.medicine || null;
     const weight = num(options.weight);
     const ageValue = num(options.ageValue);
     const months = ageMonths(ageValue, options.ageUnit);
@@ -55,6 +68,7 @@
     if (weight == null || weight <= 0) throw new Error('Enter a valid child weight in kg.');
     if (ageIsRequired(regimen) && months == null) throw new Error('Enter the child age for this regimen.');
     if (!supportsAge(regimen, months)) throw new Error('The selected age is outside the configured pediatric range for this regimen.');
+    if (!supportsWeight(regimen, medicine, weight)) throw new Error('The child weight is outside the configured pediatric range for this regimen.');
     if (minDose == null || maxDose == null || minDose < 0 || maxDose < minDose) throw new Error('This regimen does not contain a valid calculable dose.');
 
     let lowMg;
@@ -78,7 +92,7 @@
     const maxDailyDose = num(regimen.maxDailyDose);
     if (maxDailyDose != null && maxDailyDose > 0 && frequency != null && frequency > 0) {
       const perDoseMaximum = maxDailyDose / frequency;
-      if (highMg > perDoseMaximum || lowMg > perDoseMaximum) {
+      if (highMg > perDoseMaximum) {
         lowMg = Math.min(lowMg, perDoseMaximum);
         highMg = Math.min(highMg, perDoseMaximum);
         maximumApplied = perDoseMaximum;
@@ -117,5 +131,5 @@
     };
   }
 
-  global.DoseCareDosingEngine = { calculate, ageMonths, supportsAge, ageIsRequired };
+  global.DoseCareDosingEngine = { calculate, ageMonths, supportsAge, supportsWeight, ageIsRequired };
 })(window);
