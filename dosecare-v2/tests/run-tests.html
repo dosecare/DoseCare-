@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>DoseCare V2 Regression Tests</title></head>
+<body>
+<pre id="output">Running tests…</pre>
+<script src="../js/database.js"></script>
+<script src="../data/paracetamol.js"></script>
+<script src="../data/ibuprofen.js"></script>
+<script src="../data/amoxicillin.js"></script>
+<script src="../js/dosing-engine.js"></script>
+<script src="./dosing-engine.test.js"></script>
+<script>
+(function(){
+  const out=document.getElementById('output');
+  const result=window.DoseCareV2DosingTests.run();
+  out.textContent=JSON.stringify(result,null,2);
+  document.title=result.passed?'PASS':'FAIL';
+})();
+</script>
+</body>
+</html>
