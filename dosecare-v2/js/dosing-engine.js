@@ -14,24 +14,29 @@
   }
   function calculateLabelWeightAge({medicine, regimen, weight, age, ageUnit, formulation}) {
     const w=num(weight), a=num(age), years=ageYears(a, ageUnit);
-    if(w===null || w<=0) return fail('Enter a valid child weight in kg.','INVALID_WEIGHT');
-    if(years===null || years<0) return fail('Enter a valid child age.','INVALID_AGE');
-    const lb=kgToLb(w);
-    if(lb<24 || years<2) return {ok:false, code:'CLINICIAN_REVIEW', error:regimen.under24LbMessage, weightKg:w, weightLb:lb, age:a, ageUnit};
-    const row=regimen.table.find(item => lb>=item.minLb && lb<=item.maxLb && years>=item.minAgeYears && years<=item.maxAgeYears);
-    if(!row) return fail('The entered age and weight do not match a configured labeled dose band. Verify the product label or consult a clinician.','NO_MATCHING_BAND');
+    const hasWeight=w!==null && w>0;
+    const hasAge=years!==null && years>=0;
+    if(!hasWeight && !hasAge) return fail('Enter a valid child weight or age.','MISSING_AGE_OR_WEIGHT');
+    if(hasAge && years<2) return {ok:false, code:'CLINICIAN_REVIEW', error:regimen.under24LbMessage, age:a, ageUnit};
+    if(hasWeight && kgToLb(w)<24) return {ok:false, code:'CLINICIAN_REVIEW', error:regimen.under24LbMessage, weightKg:w, weightLb:kgToLb(w), age:a, ageUnit};
+
+    const lb=hasWeight?kgToLb(w):null;
+    const row=regimen.table.find(item => {
+      const weightMatch=!hasWeight || (lb>=item.minLb && lb<=item.maxLb);
+      const ageMatch=!hasAge || (years>=item.minAgeYears && years<=item.maxAgeYears);
+      return weightMatch && ageMatch;
+    });
+    if(!row) return fail('The entered age and/or weight do not match a configured labeled dose band. Verify the product label or consult a clinician.','NO_MATCHING_BAND');
     const mgPerMl=concentrationToMgPerMl(formulation);
     if(!mgPerMl) return fail('The selected oral-liquid concentration is not configured safely.','INVALID_CONCENTRATION');
     const lowMl=row.doseMl, highMl=row.doseMl;
     const lowMg=lowMl*mgPerMl, highMg=highMl*mgPerMl;
-    return {ok:true, medicineId:medicine.id, regimen, weight:w, weightLb:lb, age:a, ageUnit, frequencyText:regimen.frequencyText, frequency:null, lowMg, highMg, lowMl, highMl, dailyLowMg:null, dailyHighMg:null, mgPerMl, maximumDosesPer24Hours:regimen.maximumDosesPer24Hours, maximumApplied:null, calculationType:'label_weight_age_based', concentrationText:formulation.display};
+    return {ok:true, medicineId:medicine.id, regimen, weight:hasWeight?w:null, weightLb:lb, age:hasAge?a:null, ageUnit:hasAge?ageUnit:null, frequencyText:regimen.frequencyText, frequency:null, lowMg, highMg, lowMl, highMl, dailyLowMg:null, dailyHighMg:null, mgPerMl, maximumDosesPer24Hours:regimen.maximumDosesPer24Hours, maximumApplied:null, calculationType:'label_weight_age_based', concentrationText:formulation.display};
   }
   function calculate({medicine, regimen, age, ageUnit, weight, formulation}) {
     if(!medicine || !regimen) return fail('A medicine and a valid regimen are required.','MISSING_REGIMEN');
     if(regimen.type==='label_weight_age_based') return calculateLabelWeightAge({medicine, regimen, weight, age, ageUnit, formulation});
 
-    // Requirements are determined by the dosing rule, not by a global form template.
-    // Medical data can override these explicitly with requiresAge/requiresWeight.
     const needsWeight = regimen.requiresWeight ?? ['mg_per_kg_per_day','mg_per_kg_per_dose','weight_based'].includes(regimen.type);
     const needsAge = regimen.requiresAge ?? ['age_based','label_age_based'].includes(regimen.type);
     const w=num(weight), a=num(age);
