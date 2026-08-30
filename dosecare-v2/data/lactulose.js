@@ -14,7 +14,21 @@ window.DoseCareV2Database?.register({
   ],
   regimens: [
     {
-      id: 'functional-constipation',
+      id: 'functional-constipation-neonate-7m',
+      condition: 'Functional constipation — maintenance therapy',
+      type: 'mg_per_kg_per_day',
+      minDose: 350,
+      maxDose: 700,
+      unit: 'mg/kg/day',
+      frequency: 1,
+      frequencyText: 'Once daily or divided into 2 doses',
+      requiresAge: true,
+      requiresWeight: true,
+      minAgeMonths: 0,
+      maxAgeMonths: 6
+    },
+    {
+      id: 'functional-constipation-7m-18y',
       condition: 'Functional constipation — maintenance therapy',
       type: 'mg_per_kg_per_day',
       minDose: 600,
@@ -24,7 +38,8 @@ window.DoseCareV2Database?.register({
       frequencyText: 'Once daily or divided into 2 doses',
       requiresAge: true,
       requiresWeight: true,
-      minAgeMonths: 0
+      minAgeMonths: 7,
+      maxAgeYears: 18
     }
   ],
   information: {
@@ -36,7 +51,7 @@ window.DoseCareV2Database?.register({
     warningsPrecautions: ['Dose should be adjusted according to stool consistency and clinical response.', 'Reduce or discontinue if significant diarrhea develops.', 'Use cautiously in patients with electrolyte disturbances or conditions requiring strict electrolyte control.'],
     interactions: ['Other laxatives may increase the risk of diarrhea and electrolyte disturbance.', 'Antacids may theoretically alter the laxative effect; clinical significance is uncertain.'],
     administration: 'Administer orally using an accurate measuring device. The solution may be mixed with water, milk, or fruit juice when appropriate.',
-    pediatricUse: 'The 2026 ESPGHAN/NASPGHAN guideline recognizes lactulose as having a therapeutic role in functional constipation. Typical clinical dosing is 0.6–2 g/kg/day for 7–18 years and 350–700 mg/kg/day for neonates and infants through 7 months, usually once daily or in two divided doses. DoseCare uses this evidence-based weight regimen and does not extrapolate beyond the supported age ranges.',
+    pediatricUse: 'The 2026 ESPGHAN/NASPGHAN guideline recognizes lactulose as having a therapeutic role in functional constipation. Typical dosing is 350–700 mg/kg/day for neonates and infants through 6 months, and 0.6–2 g/kg/day for 7 months through 18 years, in one or two divided doses. DoseCare does not extrapolate beyond these supported age ranges.',
     hepaticImpairment: 'Not applicable to the selected constipation regimen; lactulose has minimal systemic absorption.',
     notes: 'PEG is generally preferred first-line when available; lactulose is an established alternative/therapeutic option. This regimen is for functional constipation, not hepatic encephalopathy.',
     sources: [
