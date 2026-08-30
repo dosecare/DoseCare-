@@ -9,68 +9,16 @@
   const medicines=database?database.getAll():[];
   const byId=id=>database?.getById(id)||null;
   let frequencyField=null, frequencySelect=null;
-  function normalizeFormulation(f){
-    if(!f)return null;
-    const amount=Number(f.concentration?.amount ?? f.mgPer5mL ?? f.mgPerMl);
-    const volume=Number(f.concentration?.volume ?? (f.mgPer5mL ? 5 : 1));
-    if(!Number.isFinite(amount)||amount<=0||!Number.isFinite(volume)||volume<=0)return null;
-    return {...f,mgPerMl:amount/volume,display:f.display||`${amount} mg/${volume} mL`,concentration:{amount,unit:'mg',volume,volumeUnit:'mL'}};
-  }
-  function doseText(r){
-    if(r.type==='label_weight_age_based') return 'Weight/age-based labeled dose';
-    if(r.schedule?.length) return r.schedule.map(s=>`${s.dayRange}: ${s.doseMgPerKg??s.doseMgPerKgPerDose} mg/kg`).join(' • ');
-    const a=r.minDose??r.dose??r.doseMgPerKg??r.doseMgPerKgPerDay,b=r.maxDose??r.dose??r.doseMgPerKg??r.doseMgPerKgPerDay;
-    return `${a===b?a:`${a}–${b}`} ${r.unit||(r.type==='mg_per_kg_per_day'||r.type==='mg_per_kg_day'?'mg/kg/day':'mg/kg/dose')}`;
-  }
-  function requirements(r){
-    if(!r)return {age:false,weight:false};
-    const ageByBounds=r.minAgeWeeks!==undefined||r.maxAgeWeeks!==undefined||r.minAgeMonths!==undefined||r.maxAgeMonths!==undefined;
-    return {age:r.requiresAge ?? (ageByBounds||['age_based','label_age_based','label_weight_age_based'].includes(r.type)),weight:r.requiresWeight ?? ['mg_per_kg_per_day','mg_per_kg_day','mg_per_kg_per_dose','mg_per_kg_single_dose','weight_based','label_weight_age_based','condition_based'].includes(r.type)};
-  }
+  function toMg(amount,unit){const n=Number(amount);if(!Number.isFinite(n)||n<=0)return null;const u=String(unit||'mg').toLowerCase();if(u==='g'||u==='gram'||u==='grams')return n*1000;if(u==='mcg'||u==='µg'||u==='microgram'||u==='micrograms')return n/1000;return n;}
+  function normalizeFormulation(f){if(!f)return null;const rawAmount=f.concentration?.amount??f.mgPer5mL??f.mgPerMl;const rawUnit=f.concentration?.unit??'mg';const amountMg=toMg(rawAmount,rawUnit);const volume=Number(f.concentration?.volume??(f.mgPer5mL!==undefined?5:1));if(amountMg===null||!Number.isFinite(volume)||volume<=0)return null;return {...f,mgPerMl:amountMg/volume,display:f.display||`${rawAmount} ${rawUnit}/${volume} mL`,concentration:{amount:amountMg,unit:'mg',volume,volumeUnit:'mL'}};}
+  function doseText(r){if(r.type==='label_weight_age_based')return 'Weight/age-based labeled dose';if(r.schedule?.length)return r.schedule.map(s=>`${s.dayRange}: ${s.doseMgPerKg??s.doseMgPerKgPerDose} mg/kg`).join(' • ');const a=r.minDose??r.dose??r.doseMgPerKg??r.doseMgPerKgPerDay,b=r.maxDose??r.dose??r.doseMgPerKg??r.doseMgPerKgPerDay;return `${a===b?a:`${a}–${b}`} ${r.unit||(r.type==='mg_per_kg_per_day'||r.type==='mg_per_kg_day'?'mg/kg/day':'mg/kg/dose')}`;}
+  function requirements(r){if(!r)return {age:false,weight:false};const ageByBounds=r.minAgeWeeks!==undefined||r.maxAgeWeeks!==undefined||r.minAgeMonths!==undefined||r.maxAgeMonths!==undefined;return {age:r.requiresAge??(ageByBounds||['age_based','label_age_based','label_weight_age_based'].includes(r.type)),weight:r.requiresWeight??['mg_per_kg_per_day','mg_per_kg_day','mg_per_kg_per_dose','mg_per_kg_single_dose','weight_based','label_weight_age_based','condition_based'].includes(r.type)};}
   function setFieldVisibility(r){const req=requirements(r);if(ageField)ageField.hidden=!req.age;if(weightField)weightField.hidden=!req.weight;if(!req.age)$('age-value').value='';if(!req.weight)$('weight-value').value='';}
-  function ensureFrequencyField(){
-    if(frequencyField)return;
-    frequencyField=document.createElement('div');frequencyField.className='field';frequencyField.id='frequency-field';
-    const label=document.createElement('label');label.htmlFor='frequency-select';label.textContent='Frequency';
-    frequencySelect=document.createElement('select');frequencySelect.id='frequency-select';label.appendChild(frequencySelect);frequencyField.appendChild(label);
-    conditionField.insertAdjacentElement('afterend',frequencyField);frequencyField.hidden=true;
-  }
-  function conditionGroups(rs){
-    const map=new Map();
-    rs.forEach(r=>{const key=r.condition||r.conditions?.[0]||r.id;if(!map.has(key))map.set(key,[]);map.get(key).push(r);});
-    return [...map.entries()];
-  }
-  function selectedRegimen(m){
-    const rs=m?.regimens||[];if(rs.length===1)return rs[0];
-    const groupKey=conditionSelect.value;
-    const group=conditionGroups(rs).find(([key])=>key===groupKey)?.[1]||[];
-    if(!group.length)return null;
-    if(group.length===1)return group[0];
-    return group.find(r=>r.id===frequencySelect?.value)||group[0];
-  }
-  function render(){
-    const m=byId(medicineSelect.value);conditionSelect.innerHTML='<option value="">Select condition / regimen</option>';concentrationSelect.innerHTML='';conditionField.hidden=true;concentrationField.hidden=true;ensureFrequencyField();frequencyField.hidden=true;frequencySelect.innerHTML='';
-    if(!m){recommendedDose.textContent='Select a treatment first';setFieldVisibility(null);return;}
-    const rs=m.regimens||[];const groups=conditionGroups(rs);const needsChoice=rs.length>1;
-    if(needsChoice){
-      conditionField.hidden=false;
-      groups.forEach(([key])=>{const o=document.createElement('option');o.value=key;o.textContent=key;conditionSelect.appendChild(o);});
-      recommendedDose.textContent='Select a condition / regimen to view the dose';setFieldVisibility(null);
-    } else {const r=rs[0];recommendedDose.textContent=r?doseText(r):'Dose not configured';setFieldVisibility(r);}
-    (m.formulations||[]).forEach((f,i)=>{const o=document.createElement('option');o.value=i;o.textContent=f.display||f.label||`${f.mgPer5mL} mg/5 mL`;concentrationSelect.appendChild(o);});
-    if((m.formulations||[]).length>1)concentrationField.hidden=false;
-  }
-  function updateRegimenUI(){
-    const m=byId(medicineSelect.value);const rs=m?.regimens||[];const group=conditionGroups(rs).find(([key])=>key===conditionSelect.value)?.[1]||[];
-    if(group.length>1){frequencyField.hidden=false;frequencySelect.innerHTML='';group.forEach(r=>{const o=document.createElement('option');o.value=r.id;o.textContent=r.frequencyText||r.id;frequencySelect.appendChild(o);});}
-    else {frequencyField.hidden=true;frequencySelect.innerHTML='';}
-    const r=group[0]&&group.length===1?group[0]:group.find(x=>x.id===frequencySelect.value)||group[0]||null;
-    recommendedDose.textContent=r?doseText(r):'Select a condition / regimen to view the dose';setFieldVisibility(r);
-  }
-  medicines.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=m.name;medicineSelect.appendChild(o);});
-  medicineSelect.addEventListener('change',render);
-  conditionSelect.addEventListener('change',updateRegimenUI);
-  document.addEventListener('change',e=>{if(e.target===frequencySelect){const r=selectedRegimen(byId(medicineSelect.value));recommendedDose.textContent=r?doseText(r):'Select a condition / regimen to view the dose';setFieldVisibility(r);}});
-  form.addEventListener('submit',e=>{e.preventDefault();message.textContent='';const m=byId(medicineSelect.value),r=selectedRegimen(m);if(!m||!r){message.textContent='Select a treatment and required condition.';return;}const req=requirements(r);const f=normalizeFormulation((m.formulations||[])[Number(concentrationSelect.value)||0]);if(!f){message.textContent='The selected oral-liquid concentration is not configured correctly.';return;}const result=window.DoseCareDosingEngine.calculate({medicine:m,regimen:r,weight:req.weight?$('weight-value').value:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});if(!result.ok){message.textContent=result.error;return;}sessionStorage.setItem('dosecareV2Result',JSON.stringify({medicine:m,formulation:f,...result}));window.location.href='result.html';});
-  render();
+  function ensureFrequencyField(){if(frequencyField)return;frequencyField=document.createElement('div');frequencyField.className='field';frequencyField.id='frequency-field';const label=document.createElement('label');label.htmlFor='frequency-select';label.textContent='Frequency';frequencySelect=document.createElement('select');frequencySelect.id='frequency-select';label.appendChild(frequencySelect);frequencyField.appendChild(label);conditionField.insertAdjacentElement('afterend',frequencyField);frequencyField.hidden=true;}
+  function conditionGroups(rs){const map=new Map();rs.forEach(r=>{const key=r.condition||r.conditions?.[0]||r.id;if(!map.has(key))map.set(key,[]);map.get(key).push(r);});return [...map.entries()];}
+  function selectedRegimen(m){const rs=m?.regimens||[];if(rs.length===1)return rs[0];const groupKey=conditionSelect.value;const group=conditionGroups(rs).find(([key])=>key===groupKey)?.[1]||[];if(!group.length)return null;if(group.length===1)return group[0];return group.find(r=>r.id===frequencySelect?.value)||group[0];}
+  function render(){const m=byId(medicineSelect.value);conditionSelect.innerHTML='<option value="">Select condition / regimen</option>';concentrationSelect.innerHTML='';conditionField.hidden=true;concentrationField.hidden=true;ensureFrequencyField();frequencyField.hidden=true;frequencySelect.innerHTML='';if(!m){recommendedDose.textContent='Select a treatment first';setFieldVisibility(null);return;}const rs=m.regimens||[];const groups=conditionGroups(rs);if(rs.length>1){conditionField.hidden=false;groups.forEach(([key])=>{const o=document.createElement('option');o.value=key;o.textContent=key;conditionSelect.appendChild(o);});recommendedDose.textContent='Select a condition / regimen to view the dose';setFieldVisibility(null);}else{const r=rs[0];recommendedDose.textContent=r?doseText(r):'Dose not configured';setFieldVisibility(r);}(m.formulations||[]).forEach((f,i)=>{const o=document.createElement('option');o.value=i;o.textContent=f.display||f.label||`${f.mgPer5mL} mg/5 mL`;concentrationSelect.appendChild(o);});if((m.formulations||[]).length>1)concentrationField.hidden=false;}
+  function updateRegimenUI(){const m=byId(medicineSelect.value),rs=m?.regimens||[],group=conditionGroups(rs).find(([key])=>key===conditionSelect.value)?.[1]||[];if(group.length>1){frequencyField.hidden=false;frequencySelect.innerHTML='';group.forEach(r=>{const o=document.createElement('option');o.value=r.id;o.textContent=r.frequencyText||r.id;frequencySelect.appendChild(o);});}else{frequencyField.hidden=true;frequencySelect.innerHTML='';}const r=group[0]&&group.length===1?group[0]:group.find(x=>x.id===frequencySelect.value)||group[0]||null;recommendedDose.textContent=r?doseText(r):'Select a condition / regimen to view the dose';setFieldVisibility(r);}
+  medicines.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=m.name;medicineSelect.appendChild(o);});medicineSelect.addEventListener('change',render);conditionSelect.addEventListener('change',updateRegimenUI);document.addEventListener('change',e=>{if(e.target===frequencySelect){const r=selectedRegimen(byId(medicineSelect.value));recommendedDose.textContent=r?doseText(r):'Select a condition / regimen to view the dose';setFieldVisibility(r);}});
+  form.addEventListener('submit',e=>{e.preventDefault();message.textContent='';const m=byId(medicineSelect.value),r=selectedRegimen(m);if(!m||!r){message.textContent='Select a treatment and required condition.';return;}const req=requirements(r),f=normalizeFormulation((m.formulations||[])[Number(concentrationSelect.value)||0]);if(!f){message.textContent='The selected oral-liquid concentration is not configured correctly.';return;}const result=window.DoseCareDosingEngine.calculate({medicine:m,regimen:r,weight:req.weight?$('weight-value').value:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});if(!result.ok){message.textContent=result.error;return;}sessionStorage.setItem('dosecareV2Result',JSON.stringify({medicine:m,formulation:f,...result}));window.location.href='result.html';});render();
 })();
