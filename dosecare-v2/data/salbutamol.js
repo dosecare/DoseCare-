@@ -61,5 +61,10 @@ window.DoseCareV2Database?.register({
       { organization: 'FDA', title: 'FDA-approved albuterol single-ingredient products / pediatric regulatory information', url: 'https://www.fda.gov/media/113575/download' },
       { organization: 'Ethiopian Food and Drug Authority', title: 'Salbutamol Oral Solution 2 mg/5 mL — Summary of Product Characteristics', url: 'https://www.efda.gov.et/wp-content/uploads/2023/08/Salbutamol-oral-solution_Salbutamol-oral-solution_Medicamen-Biotech-Limited.pdf' }
     ]
-  }
+  },
+  sources: [
+    { organization: 'DailyMed', title: 'Albuterol Sulfate Syrup 2 mg/5 mL — current prescribing information', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=99a490cc-e41d-436b-9cf3-8facb7ac714f' },
+    { organization: 'FDA', title: 'FDA-approved albuterol single-ingredient products / pediatric regulatory information', url: 'https://www.fda.gov/media/113575/download' },
+    { organization: 'Ethiopian Food and Drug Authority', title: 'Salbutamol Oral Solution 2 mg/5 mL — Summary of Product Characteristics', url: 'https://www.efda.gov.et/wp-content/uploads/2023/08/Salbutamol-oral-solution_Salbutamol-oral-solution_Medicamen-Biotech-Limited.pdf' }
+  ]
 });
