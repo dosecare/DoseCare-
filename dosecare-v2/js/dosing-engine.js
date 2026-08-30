@@ -12,6 +12,20 @@
     if (formulation.concentration && num(formulation.concentration.amount)>0 && num(formulation.concentration.volume)>0) return num(formulation.concentration.amount)/num(formulation.concentration.volume);
     return null;
   }
+  function validateBounds(regimen, weight, age, ageUnit) {
+    const w=num(weight), a=num(age), years=ageYears(a, ageUnit);
+    if (regimen.minAgeMonths!==undefined) {
+      if (years===null) return fail('A valid age is required for this regimen.','INVALID_AGE');
+      if (years*12 < Number(regimen.minAgeMonths)) return fail(`This regimen is not configured for children younger than ${regimen.minAgeMonths} months.`,'AGE_BELOW_REGIMEN_MIN');
+    }
+    if (regimen.maxAgeMonths!==undefined) {
+      if (years===null) return fail('A valid age is required for this regimen.','INVALID_AGE');
+      if (years*12 > Number(regimen.maxAgeMonths)) return fail(`This regimen is not configured for children older than ${regimen.maxAgeMonths} months.`,'AGE_ABOVE_REGIMEN_MAX');
+    }
+    if (regimen.maxWeightKg!==undefined && w!==null && w >= Number(regimen.maxWeightKg)+0.1) return fail('This pediatric regimen is limited to the configured weight range; verify the product label or use the appropriate adult regimen.','WEIGHT_ABOVE_REGIMEN_MAX');
+    if (regimen.minWeightKg!==undefined && w!==null && w < Number(regimen.minWeightKg)) return fail('This regimen is not configured for the entered weight.','WEIGHT_BELOW_REGIMEN_MIN');
+    return null;
+  }
   function calculateLabelWeightAge({medicine, regimen, weight, age, ageUnit, formulation}) {
     const w=num(weight), a=num(age), years=ageYears(a, ageUnit);
     const hasWeight=w!==null && w>0;
@@ -19,7 +33,7 @@
     if(!hasWeight && !hasAge) return fail('Enter a valid child weight or age.','MISSING_AGE_OR_WEIGHT');
     if(hasAge && years<2) return {ok:false, code:'CLINICIAN_REVIEW', error:regimen.under24LbMessage, age:a, ageUnit};
     if(hasWeight && kgToLb(w)<24) return {ok:false, code:'CLINICIAN_REVIEW', error:regimen.under24LbMessage, weightKg:w, weightLb:kgToLb(w), age:a, ageUnit};
-
+    const boundError=validateBounds(regimen,w,a,ageUnit); if(boundError) return boundError;
     const lb=hasWeight?kgToLb(w):null;
     const row=regimen.table.find(item => {
       const weightMatch=!hasWeight || (lb>=item.minLb && lb<=item.maxLb);
@@ -36,18 +50,16 @@
   function calculate({medicine, regimen, age, ageUnit, weight, formulation}) {
     if(!medicine || !regimen) return fail('A medicine and a valid regimen are required.','MISSING_REGIMEN');
     if(regimen.type==='label_weight_age_based') return calculateLabelWeightAge({medicine, regimen, weight, age, ageUnit, formulation});
-
     const needsWeight = regimen.requiresWeight ?? ['mg_per_kg_per_day','mg_per_kg_per_dose','weight_based'].includes(regimen.type);
     const needsAge = regimen.requiresAge ?? ['age_based','label_age_based'].includes(regimen.type);
     const w=num(weight), a=num(age);
     if(needsWeight && (w===null || w<=0)) return fail('Enter a valid child weight in kg.','INVALID_WEIGHT');
     if(needsAge && (a===null || a<0 || !['months','years'].includes(ageUnit))) return fail('Enter a valid child age.','INVALID_AGE');
-
+    const boundError=validateBounds(regimen,w,a,ageUnit); if(boundError) return boundError;
     const min=num(regimen.minDose ?? regimen.dose), max=num(regimen.maxDose ?? regimen.dose);
     if(min===null || max===null || min<0 || max<min) return fail('The configured dose cannot be calculated safely.','INVALID_DOSE');
     const frequency=num(regimen.frequency);
     if(['mg_per_kg_per_day','mg_per_kg_per_dose'].includes(regimen.type) && (!frequency || frequency<=0)) return fail('The regimen frequency is missing or invalid.','INVALID_FREQUENCY');
-
     let lowMg, highMg, dailyLowMg=null, dailyHighMg=null;
     if(regimen.type==='mg_per_kg_per_day'){
       dailyLowMg=w*min; dailyHighMg=w*max; lowMg=dailyLowMg/frequency; highMg=dailyHighMg/frequency;
@@ -57,7 +69,6 @@
       lowMg=min; highMg=max;
       if(frequency) { dailyLowMg=lowMg*frequency; dailyHighMg=highMg*frequency; }
     } else return fail(`Unsupported dosing type: ${regimen.type || 'unknown'}.`,'UNSUPPORTED_DOSING_TYPE');
-
     const maximumDaily=num(regimen.maximumDailyDose ?? medicine.maximumDailyDose);
     let maximumApplied=null;
     if(maximumDaily!==null && dailyHighMg!==null && dailyHighMg>maximumDaily && frequency){
