@@ -41,7 +41,7 @@ window.DoseCareV2Database?.register({
     pediatricUse: 'The NASPGHAN/ESPGHAN pediatric GERD guideline lists omeprazole at 1–4 mg/kg/day with an adult-based maximum of 40 mg/day. This entry is limited to pediatric GERD/acid-related disease and does not extrapolate to nonspecific infant regurgitation.',
     notes: 'DoseCare includes an oral suspension formulation only. Capsules, tablets and orally disintegrating tablets are excluded by project scope.',
     sources: [
-      { organization: 'Northwestern? No — Nationwide Children’s Hospital', title: 'Gastroesophageal Reflux Guidelines — Available Dosage Formulations: Omeprazole suspension 2 mg/mL', url: 'https://www.nationwidechildrens.org/-/media/nch/files/for-medical-professionals/practice-tools-new/gastroesophageal-reflux-guidelines.ashx' },
+      { organization: 'Nationwide Children’s Hospital', title: 'Gastroesophageal Reflux Guidelines — Omeprazole suspension 2 mg/mL', url: 'https://www.nationwidechildrens.org/-/media/nch/files/for-medical-professionals/practice-tools-new/gastroesophageal-reflux-guidelines.ashx' },
       { organization: 'NASPGHAN / ESPGHAN', title: 'Pediatric Gastroesophageal Reflux Clinical Practice Guidelines — recommended omeprazole dosage 1–4 mg/kg/day', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5958910/' },
       { organization: 'American Academy of Pediatrics', title: 'Gastroesophageal Reflux: Management Guidance for the Pediatrician', url: 'https://publications.aap.org/pediatrics/article/131/5/e1684/31266/Gastroesophageal-Reflux-Management-Guidance-for' },
       { organization: 'NICE', title: 'Gastro-oesophageal reflux disease in children and young people: diagnosis and management', url: 'https://www.nice.org.uk/guidance/ng1/chapter/Recommendations' }
