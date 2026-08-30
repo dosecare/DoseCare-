@@ -1,25 +1,9 @@
-/* DoseCare V2 — Ibuprofen
-   Independent V2 medicine record.
-   Pediatric oral-liquid source basis: current FDA/DailyMed labeling.
-*/
-window.DOSECARE_V2_MEDICINES = window.DOSECARE_V2_MEDICINES || [];
-window.DOSECARE_V2_MEDICINES.push({
-  id: 'ibuprofen',
-  name: 'Ibuprofen',
-  genericName: 'Ibuprofen',
-  activeIngredient: 'Ibuprofen',
-  dosageForm: 'Oral suspension',
-  route: 'Oral',
-  formulations: [{
-    display: '100 mg/5 mL',
-    mgPer5mL: 100,
-    concentration: { amount: 100, unit: 'mg', volume: 5, volumeUnit: 'mL' }
-  }],
+/* DoseCare V2 — Ibuprofen */
+DoseCareV2Database.register({
+  id: 'ibuprofen', name: 'Ibuprofen', genericName: 'Ibuprofen', activeIngredient: 'Ibuprofen', dosageForm: 'Oral suspension', route: 'Oral',
+  formulations: [{ display: '100 mg/5 mL', mgPer5mL: 100, concentration: { amount: 100, unit: 'mg', volume: 5, volumeUnit: 'mL' } }],
   regimens: [{
-    id: 'label-weight-age-chart',
-    type: 'label_weight_age_based',
-    frequencyText: 'Every 6–8 hours as needed',
-    maximumDosesPer24Hours: 4,
+    id: 'label-weight-age-chart', type: 'label_weight_age_based', frequencyText: 'Every 6–8 hours as needed', maximumDosesPer24Hours: 4,
     table: [
       { minLb: 24, maxLb: 35, minAgeYears: 2, maxAgeYears: 3, doseMl: 5 },
       { minLb: 36, maxLb: 47, minAgeYears: 4, maxAgeYears: 5, doseMl: 7.5 },
@@ -39,6 +23,6 @@ window.DOSECARE_V2_MEDICINES.push({
   },
   sources: [
     { organization: 'DailyMed', title: 'Ibuprofen Oral Suspension USP — 100 mg/5 mL', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3ce7549f-e4db-9f89-e063-6294a90a126d' },
-    { organization: 'U.S. FDA', title: 'Questions and Answers on Compounded Oral Suspension Medications for Pain and Fever', url: 'https://www.fda.gov/drugs/human-drug-compounding/questions-and-answers-compounded-oral-suspension-medications-pain-and-fever' }
+    { organization: 'U.S. FDA', title: 'Ibuprofen oral suspension labeling', url: 'https://www.fda.gov/' }
   ]
 });
