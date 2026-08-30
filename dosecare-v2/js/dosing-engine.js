@@ -43,6 +43,75 @@
   }
   function calculate({medicine,regimen,age,ageUnit,weight,formulation}) {
     if(!medicine||!regimen)return fail('A medicine and a valid regimen are required.','MISSING_REGIMEN');
+        // Age-based labeled liquid dosing.
+    // The regimen stores the labeled dose directly in mL by age,
+    // then the engine derives the corresponding mg from the selected concentration.
+    if (regimen.type === 'label_age_based') {
+      const a = num(age);
+
+      if (a === null || a < 0 || !['months', 'years', 'weeks'].includes(ageUnit)) {
+        return fail('Enter a valid child age.', 'INVALID_AGE');
+      }
+
+      const boundError = validateBounds(regimen, num(weight), a, ageUnit);
+      if (boundError) return boundError;
+
+      const doseMin = num(regimen.doseMin);
+      const doseMax = num(regimen.doseMax);
+      const volumeMin = num(regimen.volumeMin);
+      const volumeMax = num(regimen.volumeMax);
+
+      if (
+        doseMin === null || doseMax === null ||
+        volumeMin === null || volumeMax === null ||
+        doseMin < 0 || doseMax < doseMin ||
+        volumeMin < 0 || volumeMax < volumeMin
+      ) {
+        return fail(
+          'The configured labeled dose cannot be calculated safely.',
+          'INVALID_DOSE'
+        );
+      }
+
+      const mgPerMl = concentrationToMgPerMl(formulation);
+
+      if (!mgPerMl || mgPerMl <= 0) {
+        return fail(
+          'The selected oral-liquid concentration is not configured safely.',
+          'INVALID_CONCENTRATION'
+        );
+      }
+
+      const frequencyText = regimen.frequencyText || null;
+      const maxDosesPer24h = num(regimen.maxDosesPer24h);
+
+      const lowMg = doseMin;
+      const highMg = doseMax;
+      const lowMl = volumeMin;
+      const highMl = volumeMax;
+
+      return {
+        ok: true,
+        medicineId: medicine.id,
+        regimen,
+        weight: num(weight),
+        age: a,
+        ageUnit,
+        frequencyText,
+        frequency: null,
+        lowMg,
+        highMg,
+        lowMl,
+        highMl,
+        dailyLowMg: maxDosesPer24h ? lowMg * maxDosesPer24h : null,
+        dailyHighMg: maxDosesPer24h ? highMg * maxDosesPer24h : null,
+        mgPerMl,
+        maximumApplied: null,
+        maximumDosesPer24Hours: maxDosesPer24h,
+        calculationType: 'label_age_based',
+        concentrationText: formulation?.display || null
+      };
+    }
     if(regimen.type==='label_weight_age_based')return calculateLabelWeightAge({medicine,regimen,weight,age,ageUnit,formulation});
     if(regimen.type==='condition_based' && Array.isArray(regimen.schedule))return calculateScheduled({medicine,regimen,weight,age,ageUnit,formulation});
     const normalizedType=regimen.type==='mg_per_kg_day'?'mg_per_kg_per_day':regimen.type==='mg_per_kg_single_dose'?'mg_per_kg_per_dose':regimen.type;
