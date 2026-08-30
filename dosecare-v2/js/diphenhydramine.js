@@ -4,7 +4,7 @@ window.DoseCareV2Database?.register({
   genericName: 'Diphenhydramine HCl',
   dosageForm: 'Oral Solution',
   category: 'Antihistamine',
-  formulations: [{ amount: 12.5, unit: 'mg', volume: 5, display: '12.5 mg/5 mL' }],
+  formulations: [{ concentration: { amount: 12.5, unit: 'mg', volume: 5, volumeUnit: 'mL' }, display: '12.5 mg/5 mL' }],
   regimens: [{
     id: 'allergy-6-12',
     condition: 'Allergy symptoms',
