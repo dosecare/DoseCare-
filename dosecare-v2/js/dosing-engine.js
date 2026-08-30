@@ -29,19 +29,37 @@
   function calculate({medicine, regimen, age, ageUnit, weight, formulation}) {
     if(!medicine || !regimen) return fail('A medicine and a valid regimen are required.','MISSING_REGIMEN');
     if(regimen.type==='label_weight_age_based') return calculateLabelWeightAge({medicine, regimen, weight, age, ageUnit, formulation});
+
+    // Requirements are determined by the dosing rule, not by a global form template.
+    // Medical data can override these explicitly with requiresAge/requiresWeight.
+    const needsWeight = regimen.requiresWeight ?? ['mg_per_kg_per_day','mg_per_kg_per_dose','weight_based'].includes(regimen.type);
+    const needsAge = regimen.requiresAge ?? ['age_based','label_age_based'].includes(regimen.type);
     const w=num(weight), a=num(age);
-    if(w===null || w<=0) return fail('Enter a valid child weight in kg.','INVALID_WEIGHT');
+    if(needsWeight && (w===null || w<=0)) return fail('Enter a valid child weight in kg.','INVALID_WEIGHT');
+    if(needsAge && (a===null || a<0 || !['months','years'].includes(ageUnit))) return fail('Enter a valid child age.','INVALID_AGE');
+
     const min=num(regimen.minDose ?? regimen.dose), max=num(regimen.maxDose ?? regimen.dose);
     if(min===null || max===null || min<0 || max<min) return fail('The configured dose cannot be calculated safely.','INVALID_DOSE');
     const frequency=num(regimen.frequency);
-    if(!frequency || frequency<=0) return fail('The regimen frequency is missing or invalid.','INVALID_FREQUENCY');
-    let lowMg, highMg, dailyLowMg, dailyHighMg;
-    if(regimen.type==='mg_per_kg_per_day'){dailyLowMg=w*min;dailyHighMg=w*max;lowMg=dailyLowMg/frequency;highMg=dailyHighMg/frequency;}
-    else if(regimen.type==='mg_per_kg_per_dose'){lowMg=w*min;highMg=w*max;dailyLowMg=lowMg*frequency;dailyHighMg=highMg*frequency;}
-    else return fail(`Unsupported dosing type: ${regimen.type || 'unknown'}.`,'UNSUPPORTED_DOSING_TYPE');
+    if(['mg_per_kg_per_day','mg_per_kg_per_dose'].includes(regimen.type) && (!frequency || frequency<=0)) return fail('The regimen frequency is missing or invalid.','INVALID_FREQUENCY');
+
+    let lowMg, highMg, dailyLowMg=null, dailyHighMg=null;
+    if(regimen.type==='mg_per_kg_per_day'){
+      dailyLowMg=w*min; dailyHighMg=w*max; lowMg=dailyLowMg/frequency; highMg=dailyHighMg/frequency;
+    } else if(regimen.type==='mg_per_kg_per_dose'){
+      lowMg=w*min; highMg=w*max; dailyLowMg=lowMg*frequency; dailyHighMg=highMg*frequency;
+    } else if(regimen.type==='fixed_dose' || regimen.type==='age_based' || regimen.type==='label_age_based') {
+      lowMg=min; highMg=max;
+      if(frequency) { dailyLowMg=lowMg*frequency; dailyHighMg=highMg*frequency; }
+    } else return fail(`Unsupported dosing type: ${regimen.type || 'unknown'}.`,'UNSUPPORTED_DOSING_TYPE');
+
     const maximumDaily=num(regimen.maximumDailyDose ?? medicine.maximumDailyDose);
     let maximumApplied=null;
-    if(maximumDaily!==null && dailyHighMg>maximumDaily){lowMg=Math.min(dailyLowMg,maximumDaily)/frequency;highMg=Math.min(dailyHighMg,maximumDaily)/frequency;maximumApplied=maximumDaily;}
+    if(maximumDaily!==null && dailyHighMg!==null && dailyHighMg>maximumDaily && frequency){
+      lowMg=Math.min(dailyLowMg,maximumDaily)/frequency;
+      highMg=Math.min(dailyHighMg,maximumDaily)/frequency;
+      maximumApplied=maximumDaily;
+    }
     const mgPerMl=concentrationToMgPerMl(formulation), lowMl=mgPerMl?lowMg/mgPerMl:null, highMl=mgPerMl?highMg/mgPerMl:null;
     return {ok:true,medicineId:medicine.id,regimen,weight:w,age:a,ageUnit,frequency,lowMg,highMg,dailyLowMg,dailyHighMg,lowMl,highMl,mgPerMl,maximumApplied,calculationType:regimen.type,concentrationText:formulation?.display||null};
   }
