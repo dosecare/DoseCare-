@@ -29,24 +29,37 @@
     const lowMl=row.doseMl, lowMg=lowMl*mgPerMl;
     return {ok:true,medicineId:medicine.id,regimen,weight:hasWeight?w:null,weightLb:lb,age:hasAge?a:null,ageUnit:hasAge?ageUnit:null,frequencyText:regimen.frequencyText,frequency:null,lowMg,highMg:lowMg,lowMl,highMl:lowMl,dailyLowMg:null,dailyHighMg:null,mgPerMl,maximumDosesPer24Hours:regimen.maximumDosesPer24Hours,maximumApplied:null,calculationType:'label_weight_age_based',concentrationText:formulation.display};
   }
+  function calculateScheduled({medicine,regimen,weight,age,ageUnit,formulation}) {
+    const w=num(weight); if(w===null||w<=0)return fail('Enter a valid child weight in kg.','INVALID_WEIGHT');
+    const boundError=validateBounds(regimen,w,age,ageUnit); if(boundError)return boundError;
+    const mgPerMl=concentrationToMgPerMl(formulation); if(!mgPerMl)return fail('The selected oral-liquid concentration is not configured safely.','INVALID_CONCENTRATION');
+    const schedule=(regimen.schedule||[]).map((step,index)=>{
+      const dose=num(step.doseMgPerKg??step.doseMgPerKgPerDose); if(dose===null||dose<0)return null;
+      const max=num(step.maxDoseMg); const mg=Math.min(w*dose,max!==null?max:Infinity); return {index:index+1,dayRange:step.dayRange||`Step ${index+1}`,doseMgPerKg:dose,doseMg:mg,doseMl:mg/mgPerMl,maxDoseMg:max};
+    }).filter(Boolean);
+    if(!schedule.length)return fail('The scheduled regimen has no valid dose steps.','INVALID_SCHEDULE');
+    return {ok:true,medicineId:medicine.id,regimen,weight:w,age:num(age),ageUnit,frequencyText:regimen.frequencyText,frequency:1,lowMg:schedule[0].doseMg,highMg:schedule[0].doseMg,lowMl:schedule[0].doseMl,highMl:schedule[0].doseMl,dailyLowMg:schedule[0].doseMg,dailyHighMg:schedule[0].doseMg,mgPerMl,maximumApplied:null,calculationType:'scheduled_weight_based',concentrationText:formulation.display,schedule};
+  }
   function calculate({medicine,regimen,age,ageUnit,weight,formulation}) {
     if(!medicine||!regimen)return fail('A medicine and a valid regimen are required.','MISSING_REGIMEN');
     if(regimen.type==='label_weight_age_based')return calculateLabelWeightAge({medicine,regimen,weight,age,ageUnit,formulation});
-    const needsWeight=regimen.requiresWeight??['mg_per_kg_per_day','mg_per_kg_per_dose','weight_based'].includes(regimen.type), needsAge=regimen.requiresAge??['age_based','label_age_based'].includes(regimen.type), w=num(weight), a=num(age);
+    if(regimen.type==='condition_based' && Array.isArray(regimen.schedule))return calculateScheduled({medicine,regimen,weight,age,ageUnit,formulation});
+    const normalizedType=regimen.type==='mg_per_kg_day'?'mg_per_kg_per_day':regimen.type==='mg_per_kg_single_dose'?'mg_per_kg_per_dose':regimen.type;
+    const needsWeight=regimen.requiresWeight??['mg_per_kg_per_day','mg_per_kg_per_dose','weight_based'].includes(normalizedType), needsAge=regimen.requiresAge??['age_based','label_age_based'].includes(normalizedType), w=num(weight), a=num(age);
     if(needsWeight&&(w===null||w<=0))return fail('Enter a valid child weight in kg.','INVALID_WEIGHT');
     if(needsAge&&(a===null||a<0||!['months','years','weeks'].includes(ageUnit)))return fail('Enter a valid child age.','INVALID_AGE');
     const boundError=validateBounds(regimen,w,a,ageUnit); if(boundError)return boundError;
-    const min=num(regimen.minDose??regimen.dose), max=num(regimen.maxDose??regimen.dose); if(min===null||max===null||min<0||max<min)return fail('The configured dose cannot be calculated safely.','INVALID_DOSE');
-    const frequency=num(regimen.frequency); if(['mg_per_kg_per_day','mg_per_kg_per_dose'].includes(regimen.type)&&(!frequency||frequency<=0))return fail('The regimen frequency is missing or invalid.','INVALID_FREQUENCY');
+    const min=num(regimen.minDose??regimen.dose??regimen.doseMgPerKg??regimen.doseMgPerKgPerDay), max=num(regimen.maxDose??regimen.dose??regimen.doseMgPerKg??regimen.doseMgPerKgPerDay); if(min===null||max===null||min<0||max<min)return fail('The configured dose cannot be calculated safely.','INVALID_DOSE');
+    const frequency=num(regimen.frequency??(normalizedType==='mg_per_kg_per_dose'?1:1)); if(['mg_per_kg_per_day','mg_per_kg_per_dose'].includes(normalizedType)&&(!frequency||frequency<=0))return fail('The regimen frequency is missing or invalid.','INVALID_FREQUENCY');
     let lowMg,highMg,dailyLowMg=null,dailyHighMg=null;
-    if(regimen.type==='mg_per_kg_per_day'){dailyLowMg=w*min;dailyHighMg=w*max;lowMg=dailyLowMg/frequency;highMg=dailyHighMg/frequency;}
-    else if(regimen.type==='mg_per_kg_per_dose'){lowMg=w*min;highMg=w*max;dailyLowMg=lowMg*frequency;dailyHighMg=highMg*frequency;}
-    else if(['fixed_dose','age_based','label_age_based'].includes(regimen.type)){lowMg=min;highMg=max;if(frequency){dailyLowMg=lowMg*frequency;dailyHighMg=highMg*frequency;}}
+    if(normalizedType==='mg_per_kg_per_day'){dailyLowMg=w*min;dailyHighMg=w*max;lowMg=dailyLowMg/frequency;highMg=dailyHighMg/frequency;}
+    else if(normalizedType==='mg_per_kg_per_dose'){lowMg=w*min;highMg=w*max;dailyLowMg=lowMg*frequency;dailyHighMg=highMg*frequency;}
+    else if(['fixed_dose','age_based','label_age_based'].includes(normalizedType)){lowMg=min;highMg=max;if(frequency){dailyLowMg=lowMg*frequency;dailyHighMg=highMg*frequency;}}
     else return fail(`Unsupported dosing type: ${regimen.type||'unknown'}.`,'UNSUPPORTED_DOSING_TYPE');
     const maximumDaily=num(regimen.maximumDailyDose??medicine.maximumDailyDose); let maximumApplied=null;
     if(maximumDaily!==null&&dailyHighMg!==null&&dailyHighMg>maximumDaily&&frequency){lowMg=Math.min(dailyLowMg,maximumDaily)/frequency;highMg=Math.min(dailyHighMg,maximumDaily)/frequency;maximumApplied=maximumDaily;}
     const mgPerMl=concentrationToMgPerMl(formulation),lowMl=mgPerMl?lowMg/mgPerMl:null,highMl=mgPerMl?highMg/mgPerMl:null;
-    return {ok:true,medicineId:medicine.id,regimen,weight:w,age:a,ageUnit,frequency,lowMg,highMg,dailyLowMg,dailyHighMg,lowMl,highMl,mgPerMl,maximumApplied,calculationType:regimen.type,concentrationText:formulation?.display||null};
+    return {ok:true,medicineId:medicine.id,regimen,weight:w,age:a,ageUnit,frequency,lowMg,highMg,dailyLowMg,dailyHighMg,lowMl,highMl,mgPerMl,maximumApplied,calculationType:normalizedType,concentrationText:formulation?.display||null};
   }
   global.DoseCareDosingEngine={calculate};
 })(window);
