@@ -60,5 +60,10 @@ window.DoseCareV2Database?.register({
       { organization: 'GINA', title: 'GINA 2026 Strategy Report — Acute asthma and wheezing in children 5 years and younger', url: 'https://ginasthma.org/wp-content/uploads/2026/05/GINA-2026-Strategy-Report-WMS.pdf' },
       { organization: 'Healthcare Improvement Scotland / BTS-SIGN', title: 'Initial treatment of acute asthma in children', url: 'https://www.rightdecisions.scot.nhs.uk/asthma-pathway-bts-nice-sign-sign-244/managing-acute-asthma/management-of-acute-asthma-in-children/initial-treatment-of-acute-asthma-in-children/' }
     ]
-  }
+  },
+  sources: [
+    { organization: 'DailyMed', title: 'Prednisolone Oral Solution USP 15 mg/5 mL — current labeling', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=757b41c4-a0fe-4a09-8816-a4cdb7558f41' },
+    { organization: 'GINA', title: 'GINA 2026 Strategy Report — Acute asthma and wheezing in children 5 years and younger', url: 'https://ginasthma.org/wp-content/uploads/2026/05/GINA-2026-Strategy-Report-WMS.pdf' },
+    { organization: 'Healthcare Improvement Scotland / BTS-SIGN', title: 'Initial treatment of acute asthma in children', url: 'https://www.rightdecisions.scot.nhs.uk/asthma-pathway-bts-nice-sign-sign-244/managing-acute-asthma/management-of-acute-asthma-in-children/initial-treatment-of-acute-asthma-in-children/' }
+  ]
 });
