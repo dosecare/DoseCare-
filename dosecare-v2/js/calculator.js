@@ -3,8 +3,9 @@
   'use strict';
   const $=id=>document.getElementById(id);
   const medicineSelect=$('medicine-select'), conditionField=$('condition-field'), conditionSelect=$('condition-select'), concentrationField=$('concentration-field'), concentrationSelect=$('concentration-select'), recommendedDose=$('recommended-dose'), form=$('dose-form'), message=$('form-message');
-  const medicines=Array.isArray(window.DOSECARE_V2_MEDICINES)?window.DOSECARE_V2_MEDICINES:[];
-  const byId=id=>medicines.find(m=>m.id===id)||null;
+  const database=window.DoseCareV2Database;
+  const medicines=database?database.getAll():[];
+  const byId=id=>database?.getById(id)||null;
   function doseText(r){
     if(r.type==='label_weight_age_based') return 'Weight/age-based labeled dose';
     const a=r.minDose??r.dose,b=r.maxDose??a;
@@ -20,7 +21,6 @@
     if((m.formulations||[]).length>1) concentrationField.hidden=false;
   }
   function selectedRegimen(m){const rs=m?.regimens||[];if(rs.length===1)return rs[0];return rs.find(r=>r.id===conditionSelect.value)||null;}
-  medicineSelect.innerHTML='<option value="">Select treatment</option>';
   medicines.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=m.name;medicineSelect.appendChild(o);});
   medicineSelect.addEventListener('change',render);
   conditionSelect.addEventListener('change',()=>{const r=selectedRegimen(byId(medicineSelect.value));recommendedDose.textContent=r?doseText(r):'Select a condition to view the dose';});
