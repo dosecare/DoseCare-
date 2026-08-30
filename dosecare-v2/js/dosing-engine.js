@@ -29,6 +29,7 @@
     const lowMl=row.doseMl, lowMg=lowMl*mgPerMl;
     return {ok:true,medicineId:medicine.id,regimen,weight:hasWeight?w:null,weightLb:lb,age:hasAge?a:null,ageUnit:hasAge?ageUnit:null,frequencyText:regimen.frequencyText,frequency:null,lowMg,highMg:lowMg,lowMl,highMl:lowMl,dailyLowMg:null,dailyHighMg:null,mgPerMl,maximumDosesPer24Hours:regimen.maximumDosesPer24Hours,maximumApplied:null,calculationType:'label_weight_age_based',concentrationText:formulation.display};
   }
+  
   function calculateScheduled({medicine,regimen,weight,age,ageUnit,formulation}) {
     const w=num(weight); if(w===null||w<=0)return fail('Enter a valid child weight in kg.','INVALID_WEIGHT');
     const boundError=validateBounds(regimen,w,age,ageUnit); if(boundError)return boundError;
