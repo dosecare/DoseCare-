@@ -8,6 +8,13 @@
   const database=window.DoseCareV2Database;
   const medicines=database?database.getAll():[];
   const byId=id=>database?.getById(id)||null;
+  function normalizeFormulation(f){
+    if(!f)return null;
+    const amount=Number(f.concentration?.amount ?? f.mgPer5mL ?? f.mgPerMl);
+    const volume=Number(f.concentration?.volume ?? (f.mgPer5mL ? 5 : 1));
+    if(!Number.isFinite(amount)||amount<=0||!Number.isFinite(volume)||volume<=0)return null;
+    return {...f,mgPerMl:amount/volume,display:f.display||`${amount} mg/${volume} mL`,concentration:{amount,unit:'mg',volume,volumeUnit:'mL'}};
+  }
   function doseText(r){
     if(r.type==='label_weight_age_based') return 'Weight/age-based labeled dose';
     if(r.schedule?.length) return r.schedule.map(s=>`${s.dayRange}: ${s.doseMgPerKg??s.doseMgPerKgPerDose} mg/kg`).join(' • ');
@@ -15,7 +22,7 @@
     return `${a===b?a:`${a}–${b}`} ${r.unit||(r.type==='mg_per_kg_per_day'||r.type==='mg_per_kg_day'?'mg/kg/day':'mg/kg/dose')}`;
   }
   function requirements(r){
-    if(!r) return {age:false,weight:false};
+    if(!r)return {age:false,weight:false};
     return {age:r.requiresAge ?? ['age_based','label_age_based','label_weight_age_based'].includes(r.type),weight:r.requiresWeight ?? ['mg_per_kg_per_day','mg_per_kg_day','mg_per_kg_per_dose','mg_per_kg_single_dose','weight_based','label_weight_age_based','condition_based'].includes(r.type)};
   }
   function setFieldVisibility(r){const req=requirements(r);if(ageField)ageField.hidden=!req.age;if(weightField)weightField.hidden=!req.weight;if(!req.age)$('age-value').value='';if(!req.weight)$('weight-value').value='';}
@@ -33,6 +40,6 @@
   medicines.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=m.name;medicineSelect.appendChild(o);});
   medicineSelect.addEventListener('change',render);
   conditionSelect.addEventListener('change',()=>{const r=selectedRegimen(byId(medicineSelect.value));recommendedDose.textContent=r?doseText(r):'Select a condition / regimen to view the dose';setFieldVisibility(r);});
-  form.addEventListener('submit',e=>{e.preventDefault();message.textContent='';const m=byId(medicineSelect.value),r=selectedRegimen(m);if(!m||!r){message.textContent='Select a treatment and required condition.';return;}const req=requirements(r);const f=(m.formulations||[])[Number(concentrationSelect.value)||0];const result=window.DoseCareDosingEngine.calculate({medicine:m,regimen:r,weight:req.weight?$('weight-value').value:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});if(!result.ok){message.textContent=result.error;return;}sessionStorage.setItem('dosecareV2Result',JSON.stringify({medicine:m,formulation:f,...result}));window.location.href='result.html';});
+  form.addEventListener('submit',e=>{e.preventDefault();message.textContent='';const m=byId(medicineSelect.value),r=selectedRegimen(m);if(!m||!r){message.textContent='Select a treatment and required condition.';return;}const req=requirements(r);const f=normalizeFormulation((m.formulations||[])[Number(concentrationSelect.value)||0]);if(!f){message.textContent='The selected oral-liquid concentration is not configured correctly.';return;}const result=window.DoseCareDosingEngine.calculate({medicine:m,regimen:r,weight:req.weight?$('weight-value').value:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});if(!result.ok){message.textContent=result.error;return;}sessionStorage.setItem('dosecareV2Result',JSON.stringify({medicine:m,formulation:f,...result}));window.location.href='result.html';});
   render();
 })();
