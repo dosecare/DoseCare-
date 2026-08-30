@@ -22,7 +22,6 @@ DoseCareV2Database.register({
     notes: 'Shake well before use. Use the labeled dosing chart and an appropriate dosing device. Do not exceed 4 doses in 24 hours.'
   },
   sources: [
-    { organization: 'DailyMed', title: 'Ibuprofen Oral Suspension USP — 100 mg/5 mL', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3ce7549f-e4db-9f89-e063-6294a90a126d' },
-    { organization: 'U.S. FDA', title: 'Ibuprofen oral suspension labeling', url: 'https://www.fda.gov/' }
+    { organization: 'DailyMed', title: 'Ibuprofen Oral Suspension USP — 100 mg/5 mL', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3ce7549f-e4db-9f89-e063-6294a90a126d' }
   ]
 });
