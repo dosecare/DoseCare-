@@ -23,13 +23,12 @@
     });
   });
 
-  test('amoxicillin has distinct ≤12-week and >12-week rules', () => {
+  test('amoxicillin starts the configured pediatric regimens at 3 months', () => {
     const m = db.getById('amoxicillin');
-    const infant = m.regimens.find(r => r.id === 'infant-under-12-weeks-q12h');
-    const older = m.regimens.find(r => r.id === 'ent-mild-q12h');
-    assert(infant && older, 'Required age-specific Amoxicillin regimens missing');
-    assert(infant.maxAgeMonths < older.minAgeMonths, 'Amoxicillin age rules overlap');
-    assert(infant.minDose === 30 && infant.frequency === 2, 'Incorrect ≤12-week Amoxicillin rule');
+    const regimens = m.regimens.filter(r => r.requiresAge);
+    assert(regimens.length > 0, 'No age-limited Amoxicillin regimens found');
+    regimens.forEach(r => assert(r.minAgeMonths === 3, `${r.id}: expected minimum age of 3 months`));
+    regimens.forEach(r => assert(r.maxWeightKg === 39.9, `${r.id}: expected pediatric weight ceiling below 40 kg`));
   });
 
   test('amoxicillin mg/kg/day q12h converts to mg/dose and mL/dose', () => {
@@ -58,6 +57,13 @@
     const r = m.regimens.find(x => x.id === 'ent-mild-q12h');
     const result = engine.calculate({ medicine: m, regimen: r, weight: 40, age: 10, ageUnit: 'years', formulation: m.formulations[0] });
     assert(!result.ok && result.code === 'WEIGHT_ABOVE_REGIMEN_MAX', '40 kg should not use this pediatric regimen');
+  });
+
+  test('amoxicillin rejects age below configured minimum', () => {
+    const m = db.getById('amoxicillin');
+    const r = m.regimens.find(x => x.id === 'ent-mild-q12h');
+    const result = engine.calculate({ medicine: m, regimen: r, weight: 8, age: 2, ageUnit: 'months', formulation: m.formulations[0] });
+    assert(!result.ok && result.code === 'AGE_BELOW_REGIMEN_MIN', 'Age below 3 months should be rejected for this regimen');
   });
 
   test('all registered concentrations are positive', () => {
