@@ -39,7 +39,7 @@ window.DoseCareV2Database?.register({
       requiresAge: true,
       requiresWeight: true,
       minAgeMonths: 7,
-      maxAgeYears: 18
+      maxAgeMonths: 216
     }
   ],
   information: {
