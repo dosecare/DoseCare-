@@ -1,32 +1,32 @@
 :root {
   font-family: Georgia, 'Times New Roman', serif;
 
-  color: #e4e8ef;
+  color: #e0e4eb;
 
-  --bg-deep: #020817;
-  --bg-navy: #081d3b;
-  --navy-mid: #12365f;
+  --bg-deep: #06132b;
+  --bg-navy: #0a2145;
+  --navy-mid: #12335f;
 
-  --silver: #dfe4ec;
-  --silver-soft: #b8c1cf;
-  --muted: #b9c3d1;
+  --silver: #d2d6de;
+  --silver-soft: #aeb7c6;
 
-  --glass: rgba(25, 55, 95, 0.34);
-  --glass-strong: rgba(29, 64, 108, 0.46);
+  --glass: rgba(17, 42, 80, 0.30);
+  --glass-strong: rgba(18, 45, 86, 0.40);
 
-  --field: rgba(4, 17, 38, 0.68);
+  --field: rgba(5, 18, 40, 0.62);
 
-  --line: rgba(225, 231, 240, 0.24);
+  --line: rgba(220, 225, 234, 0.25);
+  --muted: #b8c0cd;
 
-  --accent: #e4e7ec;
-  --accent-text: #06152e;
+  --accent: #e1e4e9;
+  --accent-text: #07152d;
 
   --danger: #f1b8be;
 }
 
-/* =========================================================
+/* =========================
    RESET
-========================================================= */
+========================= */
 
 * {
   box-sizing: border-box;
@@ -44,80 +44,43 @@ body {
 
   color: var(--silver);
 
+  /*
+    No heavy gradient background.
+    Just a deep navy glass-like base.
+  */
   background:
-    radial-gradient(
-      circle at 12% 8%,
-      rgba(48, 101, 165, 0.68),
-      transparent 34%
-    ),
-    radial-gradient(
-      circle at 88% 15%,
-      rgba(35, 83, 140, 0.58),
-      transparent 32%
-    ),
-    radial-gradient(
-      circle at 70% 92%,
-      rgba(40, 91, 151, 0.52),
-      transparent 38%
-    ),
-    linear-gradient(
-      135deg,
-      #020817 0%,
-      #071a36 48%,
-      #0b2850 100%
-    );
+    rgba(5, 17, 38, 0.92);
 
   position: relative;
   overflow-x: hidden;
 }
 
-/* =========================================================
-   SOFT GLASS ATMOSPHERE
-========================================================= */
-
+/* Very subtle glass atmosphere */
 body::before {
   content: "";
 
   position: fixed;
   inset: 0;
 
+  pointer-events: none;
   z-index: -3;
-  pointer-events: none;
-
-  background:
-    linear-gradient(
-      120deg,
-      rgba(255, 255, 255, 0.045),
-      transparent 28%,
-      rgba(255, 255, 255, 0.025) 62%,
-      transparent 82%
-    );
-
-  opacity: 0.9;
-}
-
-body::after {
-  content: "";
-
-  position: fixed;
-  inset: 0;
-
-  z-index: -4;
-  pointer-events: none;
 
   background:
     radial-gradient(
-      ellipse at center,
-      rgba(105, 153, 207, 0.08),
-      transparent 65%
+      circle at 15% 15%,
+      rgba(75, 119, 174, 0.16),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(55, 98, 157, 0.13),
+      transparent 36%
     );
-
-  filter: blur(20px);
 }
 
-/* =========================================================
+/* =========================
    BUBBLES
-========================================================= */
+========================= */
 
 .bubbles {
   position: fixed;
@@ -129,165 +92,132 @@ body::after {
   z-index: -1;
 }
 
+/*
+  Only 4 visible bubbles.
+  They are intentionally brighter
+  so they remain visible behind glass.
+*/
+
 .bubble {
   position: absolute;
+
   bottom: -160px;
 
-  border: 1px solid rgba(226, 235, 247, 0.42);
+  border: 1px solid rgba(220, 230, 242, 0.34);
 
   border-radius: 50%;
 
   background:
     radial-gradient(
-      circle at 28% 22%,
-      rgba(255, 255, 255, 0.24),
-      rgba(184, 210, 238, 0.10) 38%,
-      rgba(90, 137, 187, 0.045) 60%,
+      circle at 30% 25%,
+      rgba(255, 255, 255, 0.22),
+      rgba(180, 202, 228, 0.08) 42%,
+      rgba(90, 130, 180, 0.025) 70%,
       transparent 76%
     );
 
   box-shadow:
-    inset 0 0 22px rgba(235, 243, 252, 0.13),
-    inset 5px 5px 12px rgba(255, 255, 255, 0.07),
-    0 0 30px rgba(93, 145, 202, 0.18);
+    inset 0 0 24px rgba(225, 232, 242, 0.10),
+    0 0 35px rgba(91, 133, 181, 0.13);
 
-  opacity: 0;
+  opacity: 0.38;
 
   animation: riseBubble linear infinite;
 }
 
-/* Bubble positions */
-
+/* Bubble 1 */
 .bubble:nth-child(1) {
-  width: 38px;
-  height: 38px;
-  left: 9%;
-  animation-duration: 25s;
-  animation-delay: -8s;
-}
+  width: 55px;
+  height: 55px;
 
-.bubble:nth-child(2) {
-  width: 92px;
-  height: 92px;
-  left: 25%;
-  animation-duration: 34s;
-  animation-delay: -21s;
-}
+  left: 10%;
 
-.bubble:nth-child(3) {
-  width: 28px;
-  height: 28px;
-  left: 53%;
-  animation-duration: 23s;
-  animation-delay: -6s;
-}
-
-.bubble:nth-child(4) {
-  width: 105px;
-  height: 105px;
-  left: 78%;
-  animation-duration: 39s;
-  animation-delay: -27s;
-}
-
-.bubble:nth-child(5) {
-  width: 52px;
-  height: 52px;
-  left: 91%;
   animation-duration: 30s;
-  animation-delay: -15s;
-}
-
-.bubble:nth-child(6) {
-  width: 24px;
-  height: 24px;
-  left: 42%;
-  animation-duration: 21s;
-  animation-delay: -11s;
-}
-
-.bubble:nth-child(7) {
-  width: 64px;
-  height: 64px;
-  left: 67%;
-  animation-duration: 32s;
-  animation-delay: -19s;
-}
-
-.bubble:nth-child(8) {
-  width: 120px;
-  height: 120px;
-  left: 2%;
-  animation-duration: 43s;
-  animation-delay: -34s;
-}
-
-.bubble:nth-child(9) {
-  width: 44px;
-  height: 44px;
-  left: 34%;
-  animation-duration: 28s;
   animation-delay: -12s;
 }
 
-.bubble:nth-child(10) {
+/* Bubble 2 */
+.bubble:nth-child(2) {
+  width: 110px;
+  height: 110px;
+
+  left: 38%;
+
+  animation-duration: 42s;
+  animation-delay: -25s;
+}
+
+/* Bubble 3 */
+.bubble:nth-child(3) {
   width: 72px;
   height: 72px;
-  left: 58%;
-  animation-duration: 36s;
-  animation-delay: -24s;
+
+  left: 68%;
+
+  animation-duration: 35s;
+  animation-delay: -17s;
+}
+
+/* Bubble 4 */
+.bubble:nth-child(4) {
+  width: 145px;
+  height: 145px;
+
+  left: 84%;
+
+  animation-duration: 48s;
+  animation-delay: -32s;
+}
+
+/*
+  If HTML still contains more than 4 bubbles,
+  hide them without changing HTML.
+*/
+.bubble:nth-child(n + 5) {
+  display: none;
 }
 
 @keyframes riseBubble {
-
   0% {
     transform:
       translate3d(0, 0, 0)
-      scale(0.88);
+      scale(0.90);
 
     opacity: 0;
   }
 
-  10% {
-    opacity: 0.48;
+  12% {
+    opacity: 0.34;
   }
 
-  30% {
+  45% {
     transform:
-      translate3d(18px, -30vh, 0)
-      scale(0.96);
-
-    opacity: 0.52;
-  }
-
-  55% {
-    transform:
-      translate3d(-18px, -58vh, 0)
+      translate3d(22px, -45vh, 0)
       scale(1);
 
-    opacity: 0.44;
+    opacity: 0.40;
   }
 
-  78% {
+  72% {
     transform:
-      translate3d(15px, -88vh, 0)
-      scale(1.05);
+      translate3d(-18px, -78vh, 0)
+      scale(1.04);
 
-    opacity: 0.28;
+    opacity: 0.30;
   }
 
   100% {
     transform:
-      translate3d(-8px, -130vh, 0)
+      translate3d(12px, -130vh, 0)
       scale(1.10);
 
     opacity: 0;
   }
 }
 
-/* =========================================================
-   GENERAL
-========================================================= */
+/* =========================
+   GLOBAL ELEMENTS
+========================= */
 
 a {
   color: inherit;
@@ -299,54 +229,63 @@ select {
   font: inherit;
 }
 
-/* =========================================================
+/* =========================
    PAGE
-========================================================= */
+========================= */
 
 .page {
   width: min(980px, 100%);
+
   margin: 0 auto;
+
   padding: 8px 0 36px;
 }
 
-/* =========================================================
+/* =========================
    GLASS SYSTEM
-========================================================= */
+========================= */
 
 .glass-panel,
 .glass-card {
 
-  border: 1px solid rgba(225, 233, 243, 0.25);
+  border: 1px solid rgba(220, 225, 234, 0.22);
 
   border-radius: 28px;
+
+  /*
+    Main glass effect.
+    More transparent so bubbles
+    remain visible behind it.
+  */
 
   background:
     linear-gradient(
       135deg,
-      rgba(49, 89, 137, 0.42),
-      rgba(10, 31, 61, 0.30)
+      rgba(35, 67, 111, 0.32),
+      rgba(9, 28, 58, 0.20)
     );
 
   box-shadow:
-    0 28px 90px rgba(0, 0, 0, 0.44),
-    0 0 55px rgba(60, 111, 166, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.11),
+    0 28px 90px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
     inset 0 -1px 0 rgba(255, 255, 255, 0.025);
 
   backdrop-filter:
     blur(24px)
-    saturate(135%);
+    saturate(130%);
 
   -webkit-backdrop-filter:
     blur(24px)
-    saturate(135%);
+    saturate(130%);
 
   position: relative;
 
   overflow: hidden;
 }
 
-/* Glass shine */
+/*
+  Soft glass reflection.
+*/
 
 .glass-panel::before,
 .glass-card::before {
@@ -354,6 +293,7 @@ select {
   content: "";
 
   position: absolute;
+
   inset: 0;
 
   pointer-events: none;
@@ -361,45 +301,18 @@ select {
   background:
     linear-gradient(
       125deg,
-      rgba(255, 255, 255, 0.085),
-      transparent 24%,
-      transparent 68%,
-      rgba(255, 255, 255, 0.035)
+      rgba(255, 255, 255, 0.065),
+      transparent 25%,
+      transparent 72%,
+      rgba(255, 255, 255, 0.025)
     );
 
   border-radius: inherit;
 }
 
-/* Subtle glass glow */
-
-.glass-panel::after,
-.glass-card::after {
-
-  content: "";
-
-  position: absolute;
-
-  width: 260px;
-  height: 260px;
-
-  top: -160px;
-  right: -120px;
-
-  pointer-events: none;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(150, 194, 235, 0.11),
-      transparent 70%
-    );
-
-  filter: blur(10px);
-}
-
-/* =========================================================
+/* =========================
    WELCOME
-========================================================= */
+========================= */
 
 .welcome {
 
@@ -408,8 +321,6 @@ select {
   min-height: calc(100vh - 48px);
 
   margin: 0 auto;
-
-  padding: 42px;
 
   display: grid;
 
@@ -420,76 +331,13 @@ select {
   text-align: center;
 }
 
-/* =========================================================
-   WELCOME ANIMATION
-   Total feeling ≈ 3 seconds
-========================================================= */
-
-.welcome > * {
-
-  opacity: 0;
-
-  transform:
-    translateY(18px)
-    scale(0.985);
-
-  animation:
-    welcomeReveal 0.85s cubic-bezier(0.22, 1, 0.36, 1)
-    forwards;
+.glass-panel {
+  padding: 42px;
 }
 
-.welcome .eyebrow {
-  animation-delay: 0.10s;
-}
-
-.welcome h1 {
-  animation-delay: 0.30s;
-}
-
-.welcome .description {
-  animation-delay: 0.50s;
-}
-
-.welcome .developer {
-  animation-delay: 0.70s;
-}
-
-.welcome .primary-button {
-  animation-delay: 0.90s;
-}
-
-@keyframes welcomeReveal {
-
-  0% {
-    opacity: 0;
-
-    transform:
-      translateY(18px)
-      scale(0.985);
-
-    filter: blur(4px);
-  }
-
-  55% {
-    opacity: 1;
-
-    filter: blur(0);
-  }
-
-  100% {
-    opacity: 1;
-
-    transform:
-      translateY(0)
-      scale(1);
-
-    filter: blur(0);
-  }
-}
-
-/* =========================================================
+/* =========================
    WELCOME TEXT
-========================================================= */
+========================= */
 
 .eyebrow {
 
@@ -504,7 +352,7 @@ select {
   font-weight: 700;
 }
 
-.welcome h1 {
+h1 {
 
   font-size: clamp(3.9rem, 11vw, 6.3rem);
 
@@ -512,57 +360,14 @@ select {
 
   letter-spacing: 0.02em;
 
-  color: #edf0f5;
+  color: #e7e9ed;
 
   font-weight: 700;
-
-  text-shadow:
-    0 4px 25px rgba(0, 0, 0, 0.22);
 }
 
-/* =========================================================
-   DOSECARE COLOR ANIMATION
-========================================================= */
-
-.welcome h1 {
-
-  background:
-    linear-gradient(
-      110deg,
-      #e9edf3 0%,
-      #9db8d6 22%,
-      #dfe7f0 42%,
-      #6f9dca 61%,
-      #edf1f6 78%,
-      #91b2d3 100%
-    );
-
-  background-size: 300% 100%;
-
-  -webkit-background-clip: text;
-  background-clip: text;
-
-  -webkit-text-fill-color: transparent;
-
-  animation:
-    welcomeReveal 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.30s forwards,
-    doseCareColorFlow 4s ease-in-out 1.05s infinite;
-}
-
-@keyframes doseCareColorFlow {
-
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
+/*
+  Description
+*/
 
 .description {
 
@@ -570,12 +375,14 @@ select {
 
   margin: 20px auto;
 
-  color: #cdd4de;
+  color: #c9ced7;
 
   line-height: 1.7;
-
-  font-size: 1rem;
 }
+
+/*
+  Developer
+*/
 
 .developer {
 
@@ -584,27 +391,23 @@ select {
   color: var(--silver-soft);
 }
 
-.developer strong {
-  color: #e4e8ee;
-}
-
-/* =========================================================
+/* =========================
    BUTTON
-========================================================= */
+========================= */
 
 .primary-button {
 
   display: inline-flex;
 
   align-items: center;
+
   justify-content: center;
 
   min-height: 48px;
 
   padding: 14px 24px;
 
-  border:
-    1px solid rgba(226, 232, 240, 0.40);
+  border: 1px solid rgba(220, 225, 234, 0.36);
 
   border-radius: 16px;
 
@@ -613,8 +416,8 @@ select {
   background:
     linear-gradient(
       135deg,
-      #e9edf1,
-      #c2cad5
+      #e4e7eb,
+      #b5bdc9
     );
 
   text-decoration: none;
@@ -635,19 +438,15 @@ select {
 
   transform: translateY(-2px);
 
-  opacity: 0.96;
+  opacity: 0.95;
 
   box-shadow:
-    0 10px 30px rgba(201, 211, 224, 0.18);
+    0 10px 30px rgba(201, 206, 216, 0.15);
 }
 
-.primary-button:active {
-  transform: translateY(0);
-}
-
-/* =========================================================
-   TOPBAR
-========================================================= */
+/* =========================
+   TOP BAR
+========================= */
 
 .topbar {
 
@@ -668,7 +467,7 @@ select {
 
 .brand {
 
-  color: #e8ebf0;
+  color: #e7e9ed;
 
   text-decoration: none;
 
@@ -677,11 +476,12 @@ select {
   letter-spacing: 0.08em;
 }
 
-/* =========================================================
+/* =========================
    GLASS CARD
-========================================================= */
+========================= */
 
 .glass-card {
+
   padding: clamp(22px, 4vw, 36px);
 }
 
@@ -692,11 +492,12 @@ select {
   margin: 0 auto;
 }
 
-/* =========================================================
+/* =========================
    SECTION HEADING
-========================================================= */
+========================= */
 
 .section-heading {
+
   margin-bottom: 26px;
 }
 
@@ -716,12 +517,14 @@ select {
   line-height: 1.6;
 }
 
-/* =========================================================
-   FORM FIELDS
-========================================================= */
+/* =========================
+   FIELDS
+========================= */
 
 .field {
+
   display: block;
+
   margin: 18px 0;
 }
 
@@ -753,23 +556,19 @@ select {
   padding: 13px 15px;
 
   border:
-    1px solid rgba(220, 229, 240, 0.20);
+    1px solid rgba(220, 225, 234, 0.18);
 
   border-radius: 15px;
 
   outline: none;
 
-  color: #e8ecf2;
+  color: #e7e9ed;
 
   background:
-    rgba(4, 17, 38, 0.68);
+    rgba(5, 18, 40, 0.58);
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.035);
-
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
 }
 
 .field select option {
@@ -781,24 +580,23 @@ select {
 
 .field input::placeholder {
 
-  color:
-    rgba(215, 222, 231, 0.45);
+  color: rgba(215, 219, 226, 0.45);
 }
 
 .field input:focus,
 .field select:focus {
 
   border-color:
-    rgba(225, 232, 241, 0.65);
+    rgba(220, 225, 234, 0.62);
 
   box-shadow:
-    0 0 0 3px rgba(201, 214, 230, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    0 0 0 3px rgba(201, 206, 216, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* =========================================================
+/* =========================
    GRID
-========================================================= */
+========================= */
 
 .grid-2 {
 
@@ -822,6 +620,7 @@ select {
 }
 
 .inline-input select {
+
   width: 120px;
 }
 
@@ -834,9 +633,9 @@ select {
   padding: 0 6px;
 }
 
-/* =========================================================
-   GLASS FIELD
-========================================================= */
+/* =========================
+   DOSE PREVIEW
+========================= */
 
 .glass-field {
 
@@ -845,15 +644,15 @@ select {
   padding: 16px;
 
   border:
-    1px solid rgba(220, 229, 240, 0.18);
+    1px solid rgba(220, 225, 234, 0.18);
 
   border-radius: 17px;
 
   background:
-    rgba(7, 27, 54, 0.48);
+    rgba(7, 24, 49, 0.40);
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }
 
 .glass-field strong {
@@ -863,9 +662,9 @@ select {
   font-size: 1.05rem;
 }
 
-/* =========================================================
+/* =========================
    FORM MESSAGE
-========================================================= */
+========================= */
 
 .form-message {
 
@@ -885,11 +684,12 @@ form > .primary-button {
   margin-top: 4px;
 }
 
-/* =========================================================
+/* =========================
    RESULT PAGE
-========================================================= */
+========================= */
 
 .result-page {
+
   max-width: 900px;
 }
 
@@ -901,6 +701,7 @@ form > .primary-button {
 }
 
 .result-card {
+
   margin-bottom: 18px;
 }
 
@@ -919,19 +720,19 @@ form > .primary-button {
 
 .result-title-row h1 {
 
-  font-size:
-    clamp(1.65rem, 5vw, 2.4rem);
+  font-size: clamp(1.65rem, 5vw, 2.4rem);
 
   letter-spacing: 0.01em;
 }
 
 .result-title-row span {
+
   color: var(--muted);
 }
 
-/* =========================================================
+/* =========================
    DOSE OUTPUT
-========================================================= */
+========================= */
 
 .dose-output {
 
@@ -951,20 +752,23 @@ form > .primary-button {
   padding: 20px;
 
   border:
-    1px solid rgba(220, 229, 240, 0.16);
+    1px solid rgba(220, 225, 234, 0.16);
 
   border-radius: 18px;
 
   background:
-    rgba(7, 24, 49, 0.46);
+    rgba(7, 24, 49, 0.38);
 
   text-align: center;
 
-  font-size:
-    clamp(1.25rem, 4vw, 1.75rem);
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
 
   color: #e5e8ed;
 }
+
+/* =========================
+   RESULT META
+========================= */
 
 .result-meta {
 
@@ -977,16 +781,17 @@ form > .primary-button {
   padding-top: 14px;
 
   border-top:
-    1px solid rgba(220, 229, 240, 0.11);
+    1px solid rgba(220, 225, 234, 0.11);
 }
 
 .result-meta > span {
+
   margin: 0;
 }
 
-/* =========================================================
-   CALCULATION STEPS
-========================================================= */
+/* =========================
+   CALCULATION LIST
+========================= */
 
 .calculation-list {
 
@@ -1006,12 +811,12 @@ form > .primary-button {
   padding: 16px;
 
   border:
-    1px solid rgba(220, 229, 240, 0.15);
+    1px solid rgba(220, 225, 234, 0.15);
 
   border-radius: 17px;
 
   background:
-    rgba(7, 24, 49, 0.40);
+    rgba(7, 24, 49, 0.34);
 }
 
 .calc-step > span {
@@ -1021,12 +826,13 @@ form > .primary-button {
   place-items: center;
 
   width: 34px;
+
   height: 34px;
 
   border-radius: 50%;
 
   background:
-    rgba(201, 214, 230, 0.12);
+    rgba(201, 206, 216, 0.12);
 
   font-weight: 700;
 }
@@ -1047,14 +853,13 @@ form > .primary-button {
   line-height: 1.6;
 }
 
-/* =========================================================
+/* =========================
    MEDICINE INFORMATION
-========================================================= */
+========================= */
 
 .medicine-heading {
 
-  font-size:
-    clamp(2rem, 6vw, 3rem);
+  font-size: clamp(2rem, 6vw, 3rem);
 
   margin-bottom: 22px;
 }
@@ -1076,24 +881,27 @@ form > .primary-button {
   padding: 15px;
 
   border:
-    1px solid rgba(220, 229, 240, 0.15);
+    1px solid rgba(220, 225, 234, 0.15);
 
   border-radius: 16px;
 
   background:
-    rgba(7, 24, 49, 0.38);
+    rgba(7, 24, 49, 0.34);
 }
 
 .info-grid span,
 .info-block > span {
+
   margin-bottom: 6px;
 }
 
 .info-grid strong {
+
   line-height: 1.4;
 }
 
 .info-block {
+
   margin-top: 12px;
 }
 
@@ -1106,9 +914,9 @@ form > .primary-button {
   line-height: 1.65;
 }
 
-/* =========================================================
+/* =========================
    SOURCES
-========================================================= */
+========================= */
 
 .sources {
 
@@ -1117,7 +925,7 @@ form > .primary-button {
   padding-top: 20px;
 
   border-top:
-    1px solid rgba(220, 229, 240, 0.12);
+    1px solid rgba(220, 225, 234, 0.12);
 }
 
 .reference-item {
@@ -1129,11 +937,12 @@ form > .primary-button {
   text-decoration: none;
 
   border-bottom:
-    1px solid rgba(220, 229, 240, 0.08);
+    1px solid rgba(220, 225, 234, 0.08);
 }
 
 .reference-item span,
 .reference-item strong {
+
   display: block;
 }
 
@@ -1151,9 +960,9 @@ form > .primary-button {
   line-height: 1.45;
 }
 
-/* =========================================================
+/* =========================
    MOBILE
-========================================================= */
+========================= */
 
 @media (max-width: 640px) {
 
@@ -1163,10 +972,6 @@ form > .primary-button {
 
   .glass-panel {
     padding: 28px 20px;
-  }
-
-  .welcome {
-    min-height: calc(100vh - 28px);
   }
 
   .topbar {
@@ -1189,6 +994,7 @@ form > .primary-button {
   }
 
   .inline-input select {
+
     width: 100%;
   }
 
@@ -1199,31 +1005,5 @@ form > .primary-button {
     flex-direction: column;
 
     gap: 4px;
-  }
-
-  .bubble:nth-child(4),
-  .bubble:nth-child(8) {
-
-    opacity: 0.65;
-  }
-}
-
-/* =========================================================
-   REDUCED MOTION ACCESSIBILITY
-========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-  *,
-  *::before,
-  *::after {
-
-    animation-duration: 0.01ms !important;
-
-    animation-iteration-count: 1 !important;
-
-    scroll-behavior: auto !important;
-
-    transition-duration: 0.01ms !important;
   }
 }
