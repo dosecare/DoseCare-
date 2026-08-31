@@ -14,6 +14,29 @@
     if(regimen.maxAgeWeeks!==undefined){ if(weeks===null)return fail('A valid age is required for this regimen.','INVALID_AGE'); if(weeks>Number(regimen.maxAgeWeeks))return fail(`This regimen is not configured for children older than ${regimen.maxAgeWeeks} weeks.`,'AGE_ABOVE_REGIMEN_MAX'); }
     if(regimen.minAgeMonths!==undefined){ if(months===null)return fail('A valid age is required for this regimen.','INVALID_AGE'); if(months<Number(regimen.minAgeMonths))return fail(`This regimen is not configured for children younger than ${regimen.minAgeMonths} months.`,'AGE_BELOW_REGIMEN_MIN'); }
     if(regimen.maxAgeMonths!==undefined){ if(months===null)return fail('A valid age is required for this regimen.','INVALID_AGE'); if(months>Number(regimen.maxAgeMonths))return fail(`This regimen is not configured for children older than ${regimen.maxAgeMonths} months.`,'AGE_ABOVE_REGIMEN_MAX'); }
+     if(regimen.minAgeYears!==undefined){
+      const years=ageYears(a,ageUnit);
+      if(years===null)
+        return fail('A valid age is required for this regimen.','INVALID_AGE');
+
+      if(years<Number(regimen.minAgeYears))
+        return fail(
+          `This regimen is not configured for children younger than ${regimen.minAgeYears} years.`,
+          'AGE_BELOW_REGIMEN_MIN'
+        );
+    }
+
+    if(regimen.maxAgeYears!==undefined){
+      const years=ageYears(a,ageUnit);
+      if(years===null)
+        return fail('A valid age is required for this regimen.','INVALID_AGE');
+
+      if(years>Number(regimen.maxAgeYears))
+        return fail(
+          `This regimen is not configured for children older than ${regimen.maxAgeYears} years.`,
+          'AGE_ABOVE_REGIMEN_MAX'
+        );
+    }
     if(regimen.maxWeightKg!==undefined && w!==null && w>Number(regimen.maxWeightKg))return fail('This pediatric regimen is limited to the configured weight range; verify the product label or use the appropriate regimen.','WEIGHT_ABOVE_REGIMEN_MAX');
     if(regimen.minWeightKg!==undefined && w!==null && w<Number(regimen.minWeightKg))return fail('This regimen is not configured for the entered weight.','WEIGHT_BELOW_REGIMEN_MIN');
     return null;
