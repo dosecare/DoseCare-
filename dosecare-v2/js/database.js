@@ -2,6 +2,7 @@
 (function (global) {
   'use strict';
   const records = [];
+
   function register(medicine) {
     if (!medicine || !medicine.id) throw new Error('Invalid DoseCare V2 medicine record.');
     if (records.some(item => item.id === medicine.id)) throw new Error(`Duplicate medicine id: ${medicine.id}`);
