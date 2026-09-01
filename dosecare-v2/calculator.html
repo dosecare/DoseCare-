@@ -4,14 +4,17 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DoseCare — Calculator</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/legacy-visual.css">
 </head>
 <body>
 <div class="bubbles" aria-hidden="true"><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span></div>
+<div class="star-groups" aria-hidden="true"><span class="star-group star-group-a"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="star-group star-group-b"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="star-group star-group-c"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
 <main class="page calculator-page">
   <header class="topbar"><a href="index.html" class="brand">DoseCare</a><span>Clinical pediatric dose calculator</span></header>
   <section class="glass-card calculator-card">
     <div class="section-heading"><p class="eyebrow">DOSE CALCULATOR</p><h1>Calculate a pediatric oral-liquid dose</h1><p>Select the medicine first. Only supported oral-liquid formulations are included.</p></div>
     <form id="dose-form" novalidate>
+      <label class="field medicine-search-field"><span>Search medicine</span><input id="medicine-search" type="search" autocomplete="off" placeholder="Type the first letters of a medicine…"></label>
       <label class="field"><span>Treatment</span><select id="medicine-select" required><option value="">Select treatment</option></select></label>
       <div id="condition-field" class="field" hidden><label for="condition-select">Condition</label><select id="condition-select"></select></div>
       <div class="dose-preview glass-field"><span>Recommended pediatric dose</span><strong id="recommended-dose">Select a treatment first</strong></div>
@@ -51,4 +54,25 @@
 <script src="js/diphenhydramine.js"></script>
 <script src="js/dosing-engine.js"></script>
 <script src="js/calculator.js"></script>
+<script>
+(function () {
+  const search = document.getElementById('medicine-search');
+  const select = document.getElementById('medicine-select');
+  if (!search || !select) return;
+
+  function filterMedicines() {
+    const query = search.value.trim().toLowerCase();
+    const current = select.value;
+    Array.from(select.options).forEach((option, index) => {
+      if (index === 0) return;
+      option.hidden = query && !option.textContent.trim().toLowerCase().startsWith(query);
+    });
+    if (current && select.options[select.selectedIndex] && select.options[select.selectedIndex].hidden) {
+      select.value = '';
+    }
+  }
+
+  search.addEventListener('input', filterMedicines);
+})();
+</script>
 </body></html>
