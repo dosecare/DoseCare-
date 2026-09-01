@@ -1,0 +1,193 @@
+/* =========================================================
+   DoseCare V2 — Legacy Visual Direction
+   Restores the original DoseCare visual language without
+   changing application structure or calculator logic.
+========================================================= */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { width: 100%; min-height: 100%; }
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: "Segoe UI", Arial, sans-serif !important;
+  color: #fff;
+  background: #06152f !important;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -3;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(38,119,190,.16), transparent 32%),
+    radial-gradient(circle at 85% 75%, rgba(83,71,175,.12), transparent 34%),
+    linear-gradient(135deg, #06142c 0%, #081c3b 50%, #06152f 100%);
+}
+
+.bubbles {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  border: 1px solid rgba(112,191,255,.13);
+  background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.18), rgba(76,156,238,.08) 38%, rgba(76,156,238,.015) 72%);
+  box-shadow: inset 0 0 25px rgba(92,186,255,.06), 0 0 25px rgba(54,143,220,.04);
+  animation: bubbleFloat 14s ease-in-out infinite;
+}
+
+.bubble:nth-child(1) { width: 90px; height: 90px; top: 14%; left: 12%; }
+.bubble:nth-child(2) { width: 52px; height: 52px; top: 24%; right: 13%; animation-delay: -3s; }
+.bubble:nth-child(3) { width: 115px; height: 115px; bottom: 13%; left: 8%; animation-delay: -6s; }
+.bubble:nth-child(4) { width: 68px; height: 68px; right: 10%; bottom: 24%; animation-delay: -9s; }
+
+@keyframes bubbleFloat {
+  0% { transform: translate3d(0,0,0); }
+  50% { transform: translate3d(16px,-22px,0); }
+  100% { transform: translate3d(-10px,14px,0); }
+}
+
+/* Restore the open Welcome composition: no large glass box. */
+.welcome {
+  width: min(900px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  overflow: visible !important;
+}
+
+.welcome::before { display: none !important; }
+
+.eyebrow {
+  font-family: "Segoe UI", Arial, sans-serif !important;
+  font-size: 20px !important;
+  line-height: 1.2;
+  letter-spacing: 10px !important;
+  color: rgba(205,230,255,.82) !important;
+  font-weight: 400 !important;
+  margin: 0 0 20px !important;
+}
+
+.dosecare-title {
+  font-family: "Segoe UI", Arial, sans-serif !important;
+  font-size: clamp(70px, 13vw, 150px) !important;
+  line-height: 1 !important;
+  letter-spacing: 3px !important;
+  font-weight: 700 !important;
+  background: linear-gradient(100deg, #fff, #78dcff, #9c91ff, #fff) !important;
+  background-size: 250% auto !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  text-shadow: none !important;
+  animation: logoGradient 7s linear infinite !important;
+}
+
+.description {
+  max-width: 560px;
+  margin: 25px auto 0 !important;
+  font-family: "Segoe UI", Arial, sans-serif !important;
+  font-size: 19px !important;
+  letter-spacing: 3px;
+  line-height: 1.7;
+  color: rgba(205,230,250,.72) !important;
+}
+
+.developer {
+  margin: 28px 0 !important;
+  color: rgba(205,230,250,.68) !important;
+  font-family: "Segoe UI", Arial, sans-serif !important;
+}
+
+.developer strong { color: #fff; }
+
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 14px 28px !important;
+  border: 1px solid rgba(120,215,255,.32) !important;
+  border-radius: 40px !important;
+  color: #fff !important;
+  background: rgba(50,145,220,.12) !important;
+  text-decoration: none;
+  font-family: "Segoe UI", Arial, sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  letter-spacing: .08em;
+  cursor: pointer;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  transition: .35s ease;
+}
+
+.primary-button:hover {
+  transform: translateY(-3px);
+  background: rgba(70,170,240,.22) !important;
+  box-shadow: 0 0 30px rgba(60,180,255,.16) !important;
+}
+
+@keyframes logoGradient {
+  from { background-position: 0% center; }
+  to { background-position: 250% center; }
+}
+
+/* Keep the rest of V2 functional, but use the old navy/blue visual language. */
+.page { width: min(980px, 100%); margin: 0 auto; padding: 8px 0 36px; }
+
+.glass-card,
+.glass-panel:not(.welcome) {
+  border: 1px solid rgba(120,215,255,.14) !important;
+  border-radius: 24px !important;
+  background: rgba(9,31,63,.34) !important;
+  box-shadow: 0 28px 70px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.05) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+
+.field input,
+.field select {
+  background: rgba(5,18,40,.58) !important;
+  border-color: rgba(120,215,255,.16) !important;
+  color: #fff !important;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: rgba(120,215,255,.48) !important;
+  box-shadow: 0 0 0 3px rgba(60,180,255,.08) !important;
+}
+
+@media (max-width: 640px) {
+  .welcome { padding: 20px; }
+  .eyebrow { font-size: 14px !important; letter-spacing: 6px !important; }
+  .dosecare-title { font-size: clamp(52px,17vw,82px) !important; }
+  .description { font-size: 15px !important; letter-spacing: 2px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble, .dosecare-title { animation: none !important; }
+}
