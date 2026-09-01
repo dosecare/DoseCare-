@@ -1,0 +1,240 @@
+/* DoseCare V2 visual polish — preserves existing application structure. */
+
+:root {
+    --dc-font: Georgia, "Times New Roman", serif;
+    --dc-navy: #06152f;
+    --dc-navy-soft: #0a2145;
+    --dc-cyan: #72dcff;
+    --dc-lavender: #9b91ff;
+    --dc-text: #e7edf5;
+    --dc-muted: rgba(215, 231, 250, 0.68);
+    --dc-line: rgba(160, 220, 255, 0.18);
+    --dc-glass: rgba(10, 32, 66, 0.36);
+}
+
+html,
+body {
+    font-family: var(--dc-font) !important;
+}
+
+body {
+    background: var(--dc-navy) !important;
+    color: var(--dc-text);
+}
+
+/* Remove the heavy painted background while retaining a subtle glass atmosphere. */
+.background {
+    background: rgba(6, 21, 47, 0.52) !important;
+    backdrop-filter: blur(18px) saturate(115%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(115%) !important;
+}
+
+.background::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.018);
+}
+
+/* Four bubbles only: clean, visible, slow and glassy. */
+.bubble-five {
+    display: none !important;
+}
+
+.bubble {
+    background: radial-gradient(
+        circle at 30% 24%,
+        rgba(255,255,255,.20),
+        rgba(111,190,255,.075) 38%,
+        rgba(111,190,255,.018) 68%,
+        transparent 76%
+    ) !important;
+    border-color: rgba(135, 218, 255, 0.20) !important;
+    box-shadow:
+        inset 0 0 28px rgba(180, 230, 255, 0.08),
+        0 0 34px rgba(76, 169, 235, 0.08) !important;
+    animation-duration: 17s !important;
+}
+
+/* Make the welcome screen feel like a premium glass presentation. */
+.welcome-screen {
+    padding: 28px;
+}
+
+.welcome-content {
+    position: relative;
+    width: min(720px, 100%);
+    padding: clamp(34px, 6vw, 58px) clamp(24px, 6vw, 58px);
+    border: 1px solid rgba(150, 220, 255, 0.18);
+    border-radius: 34px;
+    background: rgba(9, 31, 63, 0.30);
+    box-shadow:
+        0 30px 90px rgba(0,0,0,.30),
+        inset 0 1px 0 rgba(255,255,255,.08),
+        inset 0 -1px 0 rgba(255,255,255,.025);
+    backdrop-filter: blur(24px) saturate(125%);
+    -webkit-backdrop-filter: blur(24px) saturate(125%);
+    overflow: hidden;
+}
+
+.welcome-content::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(125deg, rgba(255,255,255,.055), transparent 28%, transparent 70%, rgba(112,220,255,.025));
+}
+
+.welcome-label,
+.welcome-logo,
+.welcome-description,
+.developer-badge {
+    position: relative;
+    z-index: 1;
+}
+
+.welcome-label {
+    font-size: clamp(13px, 2vw, 18px) !important;
+    letter-spacing: .42em !important;
+    color: rgba(207, 229, 250, .76) !important;
+}
+
+.welcome-logo {
+    margin-top: 18px !important;
+    font-size: clamp(58px, 13vw, 128px) !important;
+    letter-spacing: .015em !important;
+    line-height: .98 !important;
+    font-weight: 700 !important;
+    background: linear-gradient(100deg, #f4f7fb 0%, var(--dc-cyan) 30%, var(--dc-lavender) 57%, #f4f7fb 82%, var(--dc-cyan) 100%) !important;
+    background-size: 260% auto !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    animation: dcLogoGradient 7s linear infinite !important;
+    text-shadow: 0 0 32px rgba(100, 205, 255, .07);
+}
+
+.welcome-logo span {
+    color: transparent !important;
+}
+
+.welcome-description {
+    margin-top: 20px !important;
+    font-size: clamp(15px, 2.4vw, 20px) !important;
+    letter-spacing: .18em !important;
+    color: rgba(214, 231, 249, .68) !important;
+}
+
+.developer-badge {
+    margin-top: 30px;
+    padding: 12px 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(130, 215, 255, .20);
+    border-radius: 999px;
+    background: rgba(255,255,255,.035);
+    color: rgba(220, 234, 247, .70);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
+}
+
+.developer-badge strong {
+    color: #e6edf6;
+    letter-spacing: .08em;
+}
+
+/* Existing welcome fade is retained; these give each element a calm entrance. */
+.welcome-label { animation: dcElementIn 1.1s .10s ease both; }
+.welcome-logo { animation: dcLogoGradient 7s linear infinite, dcElementIn 1.25s .22s ease both !important; }
+.welcome-description { animation: dcElementIn 1.1s .38s ease both; }
+.developer-badge { animation: dcElementIn 1.1s .52s ease both; }
+
+.welcome-screen.hide .welcome-label,
+.welcome-screen.hide .welcome-logo,
+.welcome-screen.hide .welcome-description,
+.welcome-screen.hide .developer-badge {
+    animation: dcElementOut .75s ease forwards;
+}
+
+.welcome-screen.hide .welcome-logo {
+    animation: dcElementOut .75s ease forwards !important;
+}
+
+@keyframes dcElementIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dcElementOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+}
+
+@keyframes dcLogoGradient {
+    from { background-position: 0% center; }
+    to { background-position: 260% center; }
+}
+
+/* Premium glass treatment for the application shell. */
+.hero-card,
+.quick-card,
+.side-menu,
+.calculator-card,
+.search-wrapper,
+.select-wrapper,
+.patient-card,
+.result-card {
+    backdrop-filter: blur(22px) saturate(120%);
+    -webkit-backdrop-filter: blur(22px) saturate(120%);
+}
+
+.hero-card {
+    background: rgba(9, 31, 63, .34) !important;
+    border: 1px solid rgba(135, 216, 255, .17);
+    box-shadow: 0 25px 70px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.055);
+}
+
+.quick-card {
+    background: rgba(9, 31, 63, .30) !important;
+    border: 1px solid rgba(135, 216, 255, .14) !important;
+}
+
+.quick-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(115, 215, 255, .26) !important;
+    background: rgba(16, 45, 84, .42) !important;
+    box-shadow: 0 18px 45px rgba(0,0,0,.20);
+}
+
+/* Typography hierarchy — same Georgia family, better proportions. */
+.dashboard-heading h1 {
+    font-family: var(--dc-font) !important;
+    font-size: clamp(32px, 5.2vw, 56px) !important;
+    line-height: 1.08 !important;
+}
+
+.dashboard-heading p,
+.hero-content p,
+.quick-card p {
+    font-family: var(--dc-font) !important;
+}
+
+@media (max-width: 640px) {
+    .welcome-screen { padding: 14px; }
+    .welcome-content { padding: 34px 20px 38px; border-radius: 27px; }
+    .welcome-label { letter-spacing: .30em !important; }
+    .welcome-logo { font-size: clamp(52px, 17vw, 82px) !important; }
+    .welcome-description { letter-spacing: .10em !important; }
+    .developer-badge { font-size: 13px; padding: 10px 17px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bubble,
+    .welcome-label,
+    .welcome-logo,
+    .welcome-description,
+    .developer-badge {
+        animation: none !important;
+    }
+}
