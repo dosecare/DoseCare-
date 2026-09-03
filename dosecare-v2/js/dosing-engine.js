@@ -16,12 +16,18 @@
   }
   function validateBounds(regimen, weight, age, ageUnit) {
     const w = num(weight), a = num(age), weeks = ageWeeks(a, ageUnit), months = ageMonths(a, ageUnit), years = ageYears(a, ageUnit);
-    if (regimen.minAgeWeeks !== undefined && (weeks === null || weeks < Number(regimen.minAgeWeeks))) return fail(weeks === null ? 'A valid age is required for this regimen.' : `This regimen is not configured for children younger than ${regimen.minAgeWeeks} weeks.`, weeks === null ? 'INVALID_AGE' : 'AGE_BELOW_REGIMEN_MIN');
-    if (regimen.maxAgeWeeks !== undefined && (weeks === null || weeks > Number(regimen.maxAgeWeeks))) return fail(weeks === null ? 'A valid age is required for this regimen.' : `This regimen is not configured for children older than ${regimen.maxAgeWeeks} weeks.`, weeks === null ? 'INVALID_AGE' : 'AGE_ABOVE_REGIMEN_MAX');
-    if (regimen.minAgeMonths !== undefined && (months === null || months < Number(regimen.minAgeMonths))) return fail(months === null ? 'A valid age is required for this regimen.' : `This regimen is not configured for children younger than ${regimen.minAgeMonths} months.`, months === null ? 'INVALID_AGE' : 'AGE_BELOW_REGIMEN_MIN');
-    if (regimen.maxAgeMonths !== undefined && (months === null || months > Number(regimen.maxAgeMonths))) return fail(months === null ? 'A valid age is required for this regimen.' : `This regimen is not configured for children older than ${regimen.maxAgeMonths} months.`, months === null ? 'INVALID_AGE' : 'AGE_ABOVE_REGIMEN_MAX');
-    if (regimen.minAgeYears !== undefined && (years === null || years < Number(regimen.minAgeYears))) return fail(years === null ? 'A valid age is required for this regimen.' : `This regimen is not configured for children younger than ${regimen.minAgeYears} years.`, years === null ? 'INVALID_AGE' : 'AGE_BELOW_REGIMEN_MIN');
-    if (regimen.maxAgeYears !== undefined && (years === null || years > Number(regimen.maxAgeYears))) return fail(years === null ? 'A valid age is required for this regimen.' : `This regimen is not configured for children older than ${regimen.maxAgeYears} years.`, years === null ? 'INVALID_AGE' : 'AGE_ABOVE_REGIMEN_MAX');
+    const minWeeks = regimen.minAgeWeeks ?? regimen.minimumAgeWeeks;
+    const maxWeeks = regimen.maxAgeWeeks ?? regimen.maximumAgeWeeks;
+    const minMonths = regimen.minAgeMonths ?? regimen.minimumAgeMonths;
+    const maxMonths = regimen.maxAgeMonths ?? regimen.maximumAgeMonths;
+    const minYears = regimen.minAgeYears ?? regimen.minimumAgeYears;
+    const maxYears = regimen.maxAgeYears ?? regimen.maximumAgeYears;
+    if (minWeeks !== undefined && (weeks === null || weeks < Number(minWeeks))) return fail(weeks === null ? 'A valid age is required for this regimen.' : `This regimen is not configured for children younger than ${minWeeks} weeks.`, weeks === null ? 'INVALID_AGE' : 'AGE_BELOW_REGIMEN_MIN');
+    if (maxWeeks !== undefined && (weeks === null || weeks > Number(maxWeeks))) return fail(weeks === null ? 'A valid age is required for this regimen.' : `This regimen is not configured for children older than ${maxWeeks} weeks.`, weeks === null ? 'INVALID_AGE' : 'AGE_ABOVE_REGIMEN_MAX');
+    if (minMonths !== undefined && (months === null || months < Number(minMonths))) return fail(months === null ? 'A valid age is required for this regimen.' : `This regimen is not configured for children younger than ${minMonths} months.`, months === null ? 'INVALID_AGE' : 'AGE_BELOW_REGIMEN_MIN');
+    if (maxMonths !== undefined && (months === null || months > Number(maxMonths))) return fail(months === null ? 'A valid age is required for this regimen.' : `This regimen is not configured for children older than ${maxMonths} months.`, months === null ? 'INVALID_AGE' : 'AGE_ABOVE_REGIMEN_MAX');
+    if (minYears !== undefined && (years === null || years < Number(minYears))) return fail(years === null ? 'A valid age is required for this regimen.' : `This regimen is not configured for children younger than ${minYears} years.`, years === null ? 'INVALID_AGE' : 'AGE_BELOW_REGIMEN_MIN');
+    if (maxYears !== undefined && (years === null || years > Number(maxYears))) return fail(years === null ? 'A valid age is required for this regimen.' : `This regimen is not configured for children older than ${maxYears} years.`, years === null ? 'INVALID_AGE' : 'AGE_ABOVE_REGIMEN_MAX');
     if (regimen.maxWeightKg !== undefined && w !== null && w > Number(regimen.maxWeightKg)) return fail('This pediatric regimen is limited to the configured weight range; verify the product label or use the appropriate regimen.', 'WEIGHT_ABOVE_REGIMEN_MAX');
     if (regimen.minWeightKg !== undefined && w !== null && w < Number(regimen.minWeightKg)) return fail('This regimen is not configured for the entered weight.', 'WEIGHT_BELOW_REGIMEN_MIN');
     return null;
@@ -33,7 +39,7 @@
     if (doseMin === null || doseMax === null || volumeMin === null || volumeMax === null || doseMin < 0 || doseMax < doseMin || volumeMin < 0 || volumeMax < volumeMin) return fail('The configured labeled dose cannot be calculated safely.', 'INVALID_DOSE');
     const mgPerMl = concentrationToMgPerMl(formulation); if (!mgPerMl || mgPerMl <= 0) return fail('The selected oral-liquid concentration is not configured safely.', 'INVALID_CONCENTRATION');
     if (Math.abs(volumeMin * mgPerMl - doseMin) > 0.01 || Math.abs(volumeMax * mgPerMl - doseMax) > 0.01) return fail('The configured dose and oral-liquid concentration do not match safely.', 'DOSE_CONCENTRATION_MISMATCH');
-    const maxDosesPer24h = num(regimen.maxDosesPer24h);
+    const maxDosesPer24h = num(regimen.maxDosesPer24h ?? regimen.maximumDosesPer24Hours);
     return { ok: true, medicineId: medicine.id, regimen, weight: num(weight), age: a, ageUnit, frequencyText: regimen.frequencyText || null, frequency: null, lowMg: doseMin, highMg: doseMax, lowMl: volumeMin, highMl: volumeMax, dailyLowMg: maxDosesPer24h ? doseMin * maxDosesPer24h : null, dailyHighMg: maxDosesPer24h ? doseMax * maxDosesPer24h : null, mgPerMl, maximumDosesPer24Hours: maxDosesPer24h, maximumApplied: null, calculationType: 'label_age_based', concentrationText: formulation?.display || null };
   }
   function calculateLabelWeightAge({ medicine, regimen, weight, age, ageUnit, formulation }) {
@@ -69,8 +75,8 @@
     if (needsWeight && (w === null || w <= 0)) return fail('Enter a valid child weight in kg.', 'INVALID_WEIGHT');
     if (needsAge && (a === null || a < 0 || !['months', 'years', 'weeks'].includes(ageUnit))) return fail('Enter a valid child age.', 'INVALID_AGE');
     const boundError = validateBounds(regimen, w, a, ageUnit); if (boundError) return boundError;
-    const min = num(regimen.minDose ?? regimen.dose ?? regimen.doseMgPerKg ?? regimen.doseMgPerKgPerDay);
-    const max = num(regimen.maxDose ?? regimen.dose ?? regimen.doseMgPerKg ?? regimen.doseMgPerKgPerDay);
+    const min = num(regimen.minDose ?? regimen.dose ?? regimen.doseMgPerKg ?? regimen.doseMgPerKgPerDose ?? regimen.doseMgPerKgPerDay);
+    const max = num(regimen.maxDose ?? regimen.dose ?? regimen.doseMgPerKg ?? regimen.doseMgPerKgPerDose ?? regimen.doseMgPerKgPerDay);
     if (min === null || max === null || min < 0 || max < min) return fail('The configured dose cannot be calculated safely.', 'INVALID_DOSE');
     const frequency = num(regimen.frequency ?? regimen.dosesPerDay ?? regimen.frequencyPerDay ?? 1);
     if (['mg_per_kg_per_day', 'mg_per_kg_per_dose'].includes(normalizedType) && (!frequency || frequency <= 0)) return fail('The regimen frequency is missing or invalid.', 'INVALID_FREQUENCY');
