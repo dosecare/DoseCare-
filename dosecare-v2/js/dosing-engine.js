@@ -52,9 +52,10 @@
     const w = num(weight); if (w === null || w <= 0) return fail('Enter a valid child weight in kg.', 'INVALID_WEIGHT');
     const boundError = validateBounds(regimen, w, age, ageUnit); if (boundError) return boundError;
     const mgPerMl = concentrationToMgPerMl(formulation); if (!mgPerMl) return fail('The selected oral-liquid concentration is not configured safely.', 'INVALID_CONCENTRATION');
+    const frequency = num(regimen.frequency ?? regimen.dosesPerDay ?? regimen.frequencyPerDay ?? 1);
     const schedule = (regimen.schedule || []).map((step, index) => { const dose = num(step.doseMgPerKg ?? step.doseMgPerKgPerDose); if (dose === null || dose < 0) return null; const max = num(step.maxDoseMg); const mg = Math.min(w * dose, max !== null ? max : Infinity); return { index: index + 1, dayRange: step.dayRange || `Step ${index + 1}`, doseMgPerKg: dose, doseMg: mg, doseMl: mg / mgPerMl, maxDoseMg: max }; }).filter(Boolean);
     if (!schedule.length) return fail('The scheduled regimen has no valid dose steps.', 'INVALID_SCHEDULE');
-    return { ok: true, medicineId: medicine.id, regimen, weight: w, age: num(age), ageUnit, frequencyText: regimen.frequencyText, frequency: 1, lowMg: schedule[0].doseMg, highMg: schedule[0].doseMg, lowMl: schedule[0].doseMl, highMl: schedule[0].doseMl, dailyLowMg: schedule[0].doseMg, dailyHighMg: schedule[0].doseMg, mgPerMl, maximumApplied: null, calculationType: 'scheduled_weight_based', concentrationText: formulation?.display || null, schedule };
+    return { ok: true, medicineId: medicine.id, regimen, weight: w, age: num(age), ageUnit, frequencyText: regimen.frequencyText, frequency, lowMg: schedule[0].doseMg, highMg: schedule[0].doseMg, lowMl: schedule[0].doseMl, highMl: schedule[0].doseMl, dailyLowMg: schedule[0].doseMg * frequency, dailyHighMg: schedule[0].doseMg * frequency, mgPerMl, maximumApplied: null, calculationType: 'scheduled_weight_based', concentrationText: formulation?.display || null, schedule };
   }
   function calculate({ medicine, regimen, age, ageUnit, weight, formulation }) {
     if (!medicine || !regimen) return fail('A medicine and a valid regimen are required.', 'MISSING_REGIMEN');
@@ -71,7 +72,7 @@
     const min = num(regimen.minDose ?? regimen.dose ?? regimen.doseMgPerKg ?? regimen.doseMgPerKgPerDay);
     const max = num(regimen.maxDose ?? regimen.dose ?? regimen.doseMgPerKg ?? regimen.doseMgPerKgPerDay);
     if (min === null || max === null || min < 0 || max < min) return fail('The configured dose cannot be calculated safely.', 'INVALID_DOSE');
-    const frequency = num(regimen.frequency ?? regimen.dosesPerDay ?? regimen.frequencyPerDay ?? (normalizedType === 'mg_per_kg_per_dose' ? 1 : 1));
+    const frequency = num(regimen.frequency ?? regimen.dosesPerDay ?? regimen.frequencyPerDay ?? 1);
     if (['mg_per_kg_per_day', 'mg_per_kg_per_dose'].includes(normalizedType) && (!frequency || frequency <= 0)) return fail('The regimen frequency is missing or invalid.', 'INVALID_FREQUENCY');
     let lowMg, highMg, dailyLowMg = null, dailyHighMg = null;
     if (normalizedType === 'mg_per_kg_per_day') { dailyLowMg = w * min; dailyHighMg = w * max; lowMg = dailyLowMg / frequency; highMg = dailyHighMg / frequency; }
@@ -82,14 +83,14 @@
     const maximumPerAdministration = num(regimen.maximumDosePerAdministration ?? regimen.maxDoseMgPerAdministration ?? regimen.maxDosePerAdministration ?? regimen.maximumDose ?? regimen.maxDoseMg);
     let maximumApplied = null;
     if (maximumDaily !== null && dailyHighMg !== null && dailyHighMg > maximumDaily && frequency) { const cappedLowDaily = Math.min(dailyLowMg, maximumDaily), cappedHighDaily = Math.min(dailyHighMg, maximumDaily); lowMg = cappedLowDaily / frequency; highMg = cappedHighDaily / frequency; dailyLowMg = cappedLowDaily; dailyHighMg = cappedHighDaily; maximumApplied = maximumDaily; }
-    if (maximumPerAdministration !== null && highMg > maximumPerAdministration) { highMg = maximumPerAdministration; if (lowMg > maximumPerAdministration) lowMg = maximumPerAdministration; dailyLowMg = frequency ? lowMg * frequency : dailyLowMg; dailyHighMg = frequency ? highMg * frequency : dailyHighMg; maximumApplied = maximumApplied ?? maximumPerAdministration; }
+    if (maximumPerAdministration !== null && highMg > maximumPerAdministration) { highMg = maximumPerAdministration; if (lowMg > maximumPerAdministration) lowMg = maximumPerAdministration; if (frequency) { dailyLowMg = lowMg * frequency; dailyHighMg = highMg * frequency; } maximumApplied = maximumApplied ?? maximumPerAdministration; }
     const mgPerMl = concentrationToMgPerMl(formulation), lowMl = mgPerMl ? lowMg / mgPerMl : null, highMl = mgPerMl ? highMg / mgPerMl : null;
     const alternativeFrequency = num(regimen.alternativeFrequency ?? regimen.alternativeDosesPerDay);
-    const alternativeLowMg = alternativeFrequency && normalizedType === 'mg_per_kg_per_day' ? dailyLowMg / alternativeFrequency : null;
-    const alternativeHighMg = alternativeFrequency && normalizedType === 'mg_per_kg_per_day' ? dailyHighMg / alternativeFrequency : null;
+    const alternativeLowMg = alternativeFrequency && ['mg_per_kg_per_day', 'fixed_dose', 'age_based'].includes(normalizedType) && dailyLowMg !== null ? dailyLowMg / alternativeFrequency : null;
+    const alternativeHighMg = alternativeFrequency && ['mg_per_kg_per_day', 'fixed_dose', 'age_based'].includes(normalizedType) && dailyHighMg !== null ? dailyHighMg / alternativeFrequency : null;
     const alternativeLowMl = mgPerMl && alternativeLowMg !== null ? alternativeLowMg / mgPerMl : null;
     const alternativeHighMl = mgPerMl && alternativeHighMg !== null ? alternativeHighMg / mgPerMl : null;
-    return { ok: true, medicineId: medicine.id, regimen, weight: w, age: a, ageUnit, frequency, alternativeFrequency: alternativeFrequency || null, lowMg, highMg, dailyLowMg, dailyHighMg, lowMl, highMl, alternativeLowMg, alternativeHighMg, alternativeLowMl, alternativeHighMl, mgPerMl, maximumApplied, calculationType: normalizedType, concentrationText: formulation?.display || null };
+    return { ok: true, medicineId: medicine.id, regimen, weight: w, age: a, ageUnit, frequency, alternativeFrequency: alternativeFrequency || null, lowMg, highMg, dailyLowMg, dailyHighMg, lowMl, highMl, alternativeLowMg, alternativeHighMg, alternativeLowMl, alternativeHighMl, minimumRecommendedDoseMgPerAdministration: num(regimen.minimumRecommendedDoseMgPerAdministration), mgPerMl, maximumApplied, calculationType: normalizedType, concentrationText: formulation?.display || null };
   }
   global.DoseCareDosingEngine = { calculate };
 })(window);
