@@ -21,7 +21,7 @@ DoseCareV2Database.register({
       frequencyText: 'Every 6 hours',
       durationDays: '7–14',
       unit: 'mg/kg/day',
-      minAgeYears: 1
+      minAgeMonths: 13
     },
     {
       id: 'usual-infections-bid',
@@ -33,7 +33,7 @@ DoseCareV2Database.register({
       frequencyText: 'Every 12 hours',
       durationDays: '7–14',
       unit: 'mg/kg/day',
-      minAgeYears: 1,
+      minAgeMonths: 13,
       note: 'For streptococcal pharyngitis and skin/skin-structure infections, the total daily dose may be divided every 12 hours.'
     },
     {
@@ -46,7 +46,7 @@ DoseCareV2Database.register({
       frequencyText: 'Every 6 hours',
       durationDays: '7–14',
       unit: 'mg/kg/day',
-      minAgeYears: 1
+      minAgeMonths: 13
     },
     {
       id: 'otitis-media-qid',
@@ -57,7 +57,7 @@ DoseCareV2Database.register({
       frequency: 4,
       frequencyText: 'Every 6 hours',
       unit: 'mg/kg/day',
-      minAgeYears: 1
+      minAgeMonths: 13
     },
     {
       id: 'streptococcal-pharyngitis-bid',
@@ -69,7 +69,7 @@ DoseCareV2Database.register({
       frequencyText: 'Every 12 hours',
       durationDays: '10 days minimum',
       unit: 'mg/kg/day',
-      minAgeYears: 1,
+      minAgeMonths: 13,
       note: 'Treatment should be given for at least 10 days.'
     }
   ],
