@@ -19,14 +19,14 @@ window.DoseCareV2Database?.register({
       type: 'mg_per_kg_per_dose',
       minDose: 0.1,
       maxDose: 0.1,
-      unit: 'mg/kg/dose',
+      doseUnit: 'mg/kg/dose',
       frequency: 3,
       frequencyText: 'Every 8 hours',
       requiresAge: true,
       requiresWeight: true,
       minAgeYears: 2,
       maxAgeYears: 5,
-      maximumDose: 2
+      maximumDosePerAdministration: 2
     },
     {
       id: 'oral-syrup-6-14',
@@ -35,13 +35,14 @@ window.DoseCareV2Database?.register({
       dose: 2,
       minDose: 2,
       maxDose: 2,
-      unit: 'mg/dose',
+      doseUnit: 'mg/dose',
       frequency: 3,
       frequencyText: 'Every 8 hours',
       requiresAge: true,
       requiresWeight: false,
       minAgeYears: 6,
-      maxAgeYears: 14
+      maxAgeYears: 14,
+      maximumDosePerAdministration: 2
     }
   ],
   information: {
@@ -55,12 +56,7 @@ window.DoseCareV2Database?.register({
     administration: 'Administer orally using a calibrated oral syringe or accurate measuring device. Shake the product if the specific label instructs shaking.',
     pediatricUse: 'The selected oral-syrup regimens are based on labeled pediatric oral dosing. Oral salbutamol is not interchangeable with inhaled/nebulized dosing.',
     hepaticImpairment: 'Use cautiously; specific pediatric oral dosing adjustments are not established in the selected labels.',
-    notes: 'DoseCare includes oral syrup only. Inhalers and nebulizer solutions are deliberately excluded by the project scope.',
-    sources: [
-      { organization: 'DailyMed', title: 'Albuterol Sulfate Syrup 2 mg/5 mL — current prescribing information', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=99a490cc-e41d-436b-9cf3-8facb7ac714f' },
-      { organization: 'FDA', title: 'FDA-approved albuterol single-ingredient products / pediatric regulatory information', url: 'https://www.fda.gov/media/113575/download' },
-      { organization: 'Ethiopian Food and Drug Authority', title: 'Salbutamol Oral Solution 2 mg/5 mL — Summary of Product Characteristics', url: 'https://www.efda.gov.et/wp-content/uploads/2023/08/Salbutamol-oral-solution_Salbutamol-oral-solution_Medicamen-Biotech-Limited.pdf' }
-    ]
+    notes: 'DoseCare includes oral syrup only. Inhalers and nebulizer solutions are deliberately excluded by the project scope.'
   },
   sources: [
     { organization: 'DailyMed', title: 'Albuterol Sulfate Syrup 2 mg/5 mL — current prescribing information', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=99a490cc-e41d-436b-9cf3-8facb7ac714f' },
