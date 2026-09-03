@@ -1,30 +1,28 @@
 /* DoseCare V2 — Cefixime oral suspension */
-DoseCareV2Database.register({
+window.DoseCareV2Database?.register({
   id: 'cefixime',
   name: 'Cefixime',
   genericName: 'Cefixime',
   activeIngredient: 'Cefixime',
   dosageForm: 'Oral suspension',
   route: 'Oral',
+  category: 'Antibiotic',
   formulations: [
     { display: '100 mg/5 mL', mgPer5mL: 100, concentration: { amount: 100, unit: 'mg', volume: 5, volumeUnit: 'mL' } },
     { display: '200 mg/5 mL', mgPer5mL: 200, concentration: { amount: 200, unit: 'mg', volume: 5, volumeUnit: 'mL' } }
   ],
   regimens: [
     {
-      id: 'standard-once-daily', type: 'mg_per_kg_per_day', doseMgPerKgPerDay: 8,
-      frequencyText: 'Once daily', minimumAgeMonths: 6, condition: 'Standard pediatric regimen',
-      maxDailyDoseMg: 400
+      id: 'standard-once-daily', type: 'mg_per_kg_per_day', minDose: 8, maxDose: 8, doseUnit: 'mg/kg/day', frequency: 1,
+      frequencyText: 'Once daily', minAgeMonths: 6, condition: 'Standard pediatric regimen', maximumDailyDose: 400
     },
     {
-      id: 'standard-divided-q12h', type: 'mg_per_kg_per_dose', doseMgPerKg: 4,
-      frequencyText: 'Every 12 hours', minimumAgeMonths: 6, condition: 'Standard pediatric regimen — divided dose',
-      maxDoseMg: 200
+      id: 'standard-divided-q12h', type: 'mg_per_kg_per_dose', minDose: 4, maxDose: 4, doseUnit: 'mg/kg/dose', frequency: 2,
+      frequencyText: 'Every 12 hours', minAgeMonths: 6, condition: 'Standard pediatric regimen — divided dose', maximumDosePerAdministration: 200
     },
     {
-      id: 'streptococcal-pharyngitis', type: 'mg_per_kg_per_day', doseMgPerKgPerDay: 8,
-      frequencyText: 'Once daily for at least 10 days', minimumAgeMonths: 6,
-      condition: 'Streptococcus pyogenes infection', maxDailyDoseMg: 400
+      id: 'streptococcal-pharyngitis', type: 'mg_per_kg_per_day', minDose: 8, maxDose: 8, doseUnit: 'mg/kg/day', frequency: 1,
+      frequencyText: 'Once daily for at least 10 days', minAgeMonths: 6, condition: 'Streptococcus pyogenes infection', maximumDailyDose: 400
     }
   ],
   information: {
