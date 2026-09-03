@@ -14,19 +14,19 @@ window.DoseCareV2Database?.register({
   regimens: [
     {
       id: 'constipation-2-5y', condition: 'Functional constipation', type: 'fixed_dose',
-      minDose: 400, maxDose: 1200, unit: 'mg/day', frequency: 1,
+      minDose: 400, maxDose: 1200, unit: 'mg/day', frequency: 1, alternativeFrequency: 2,
       frequencyText: 'Once daily or divided doses', requiresAge: true, requiresWeight: false,
       minAgeMonths: 24, maxAgeMonths: 71
     },
     {
       id: 'constipation-6-11y', condition: 'Functional constipation', type: 'fixed_dose',
-      minDose: 1200, maxDose: 2400, unit: 'mg/day', frequency: 1,
+      minDose: 1200, maxDose: 2400, unit: 'mg/day', frequency: 1, alternativeFrequency: 2,
       frequencyText: 'Once daily or divided doses', requiresAge: true, requiresWeight: false,
       minAgeMonths: 72, maxAgeMonths: 143
     },
     {
       id: 'constipation-12-18y', condition: 'Functional constipation', type: 'fixed_dose',
-      minDose: 2400, maxDose: 4800, unit: 'mg/day', frequency: 1,
+      minDose: 2400, maxDose: 4800, unit: 'mg/day', frequency: 1, alternativeFrequency: 2,
       frequencyText: 'Once daily or divided doses', requiresAge: true, requiresWeight: false,
       minAgeMonths: 144, maxAgeMonths: 216, maximumDailyDose: 4800
     }
