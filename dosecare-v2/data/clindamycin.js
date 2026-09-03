@@ -2,7 +2,9 @@ window.DoseCareV2Database?.register({
   id: 'clindamycin',
   name: 'Clindamycin',
   genericName: 'Clindamycin palmitate hydrochloride',
+  activeIngredient: 'Clindamycin',
   dosageForm: 'Oral Solution',
+  route: 'Oral',
   category: 'Antibiotic',
   formulations: [
     {
@@ -27,7 +29,9 @@ window.DoseCareV2Database?.register({
       alternativeFrequency: 4,
       frequencyText: 'Divided into 3 or 4 equal doses per day',
       requiresWeight: true,
-      requiresAge: false
+      requiresAge: false,
+      minimumRecommendedDoseMgPerAdministration: 37.5,
+      minimumRecommendedDoseCondition: 'For children weighing 10 kg or less, 37.5 mg (2.5 mL) three times daily should be considered the minimum recommended dose.'
     },
     {
       id: 'severe-infection-13-16-mg-kg-day',
@@ -40,7 +44,9 @@ window.DoseCareV2Database?.register({
       alternativeFrequency: 4,
       frequencyText: 'Divided into 3 or 4 equal doses per day',
       requiresWeight: true,
-      requiresAge: false
+      requiresAge: false,
+      minimumRecommendedDoseMgPerAdministration: 37.5,
+      minimumRecommendedDoseCondition: 'For children weighing 10 kg or less, 37.5 mg (2.5 mL) three times daily should be considered the minimum recommended dose.'
     },
     {
       id: 'more-severe-infection-17-25-mg-kg-day',
@@ -53,7 +59,9 @@ window.DoseCareV2Database?.register({
       alternativeFrequency: 4,
       frequencyText: 'Divided into 3 or 4 equal doses per day',
       requiresWeight: true,
-      requiresAge: false
+      requiresAge: false,
+      minimumRecommendedDoseMgPerAdministration: 37.5,
+      minimumRecommendedDoseCondition: 'For children weighing 10 kg or less, 37.5 mg (2.5 mL) three times daily should be considered the minimum recommended dose.'
     }
   ],
   information: {
@@ -77,36 +85,16 @@ window.DoseCareV2Database?.register({
     sources: [
       {
         organization: 'DailyMed',
-        title: 'Clindamycin Palmitate Hydrochloride for Oral Solution, USP (Pediatric) — 75 mg/5 mL',
-        url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0bfe1e25-f0a1-4e11-9827-82912557c46b'
-      },
-      {
-        organization: 'DailyMed',
-        title: 'Clindamycin Palmitate Hydrochloride for Oral Solution, USP (Pediatric) — Dosage and Administration',
-        url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0800afad-e4cd-4f70-aaa1-a14547be4729'
-      },
-      {
-        organization: 'DailyMed',
-        title: 'Clindamycin Palmitate Hydrochloride for Oral Solution — Current Pediatric Label',
-        url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=faf67eb8-1fd7-4b2c-a55b-24ba664c0dce'
+        title: 'Clindamycin Palmitate Hydrochloride for Oral Solution, USP (Pediatric) — current pediatric label',
+        url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a85e28ea-03be-471f-ad7f-f5c55c67ac97'
       }
     ]
   },
   sources: [
     {
       organization: 'DailyMed',
-      title: 'Clindamycin Palmitate Hydrochloride for Oral Solution, USP (Pediatric) — 75 mg/5 mL',
-      url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0bfe1e25-f0a1-4e11-9827-82912557c46b'
-    },
-    {
-      organization: 'DailyMed',
-      title: 'Clindamycin Palmitate Hydrochloride for Oral Solution, USP (Pediatric) — Dosage and Administration',
-      url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0800afad-e4cd-4f70-aaa1-a14547be4729'
-    },
-    {
-      organization: 'DailyMed',
-      title: 'Clindamycin Palmitate Hydrochloride for Oral Solution — Current Pediatric Label',
-      url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=faf67eb8-1fd7-4b2c-a55b-24ba664c0dce'
+      title: 'Clindamycin Palmitate Hydrochloride for Oral Solution, USP (Pediatric) — current pediatric label',
+      url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a85e28ea-03be-471f-ad7f-f5c55c67ac97'
     }
   ]
 });
