@@ -1,48 +1,49 @@
 /* DoseCare V2 — Azithromycin oral suspension */
-DoseCareV2Database.register({
+window.DoseCareV2Database?.register({
   id: 'azithromycin',
   name: 'Azithromycin',
   genericName: 'Azithromycin',
   activeIngredient: 'Azithromycin',
   dosageForm: 'Oral suspension',
   route: 'Oral',
+  category: 'Antibiotic',
   formulations: [
     { display: '100 mg/5 mL', mgPer5mL: 100, concentration: { amount: 100, unit: 'mg', volume: 5, volumeUnit: 'mL' } },
     { display: '200 mg/5 mL', mgPer5mL: 200, concentration: { amount: 200, unit: 'mg', volume: 5, volumeUnit: 'mL' } }
   ],
   regimens: [
     {
-      id: 'aom-single-dose', type: 'mg_per_kg_single_dose', doseMgPerKg: 30, frequencyText: 'Single dose', maxDoseMg: 1500,
-      minimumAgeMonths: 6, conditions: ['Acute otitis media']
+      id: 'aom-single-dose', type: 'mg_per_kg_single_dose', minDose: 30, maxDose: 30, doseUnit: 'mg/kg/dose', frequency: 1,
+      frequencyText: 'Single dose', maximumDosePerAdministration: 1500, minAgeMonths: 6,
+      condition: 'Acute otitis media'
     },
     {
-      id: 'aom-3-day', type: 'condition_based', frequencyText: 'Once daily for 3 days', minimumAgeMonths: 6,
-      conditions: ['Acute otitis media'],
-      schedule: [{ dayRange: 'Day 1-3', doseMgPerKg: 10, maxDoseMg: 500 }]
+      id: 'aom-3-day', type: 'condition_based', frequency: 1, frequencyText: 'Once daily for 3 days', minAgeMonths: 6,
+      condition: 'Acute otitis media', schedule: [{ dayRange: 'Days 1–3', doseMgPerKg: 10, maxDoseMg: 500 }]
     },
     {
-      id: 'aom-5-day', type: 'condition_based', frequencyText: 'Once daily for 5 days', minimumAgeMonths: 6,
-      conditions: ['Acute otitis media'],
-      schedule: [
+      id: 'aom-5-day', type: 'condition_based', frequency: 1, frequencyText: 'Once daily for 5 days', minAgeMonths: 6,
+      condition: 'Acute otitis media', schedule: [
         { dayRange: 'Day 1', doseMgPerKg: 10, maxDoseMg: 500 },
-        { dayRange: 'Days 2-5', doseMgPerKg: 5, maxDoseMg: 250 }
+        { dayRange: 'Days 2–5', doseMgPerKg: 5, maxDoseMg: 250 }
       ]
     },
     {
-      id: 'sinusitis-3-day', type: 'mg_per_kg_day', doseMgPerKgPerDay: 10, frequencyText: 'Once daily for 3 days', minimumAgeMonths: 6,
-      conditions: ['Acute bacterial sinusitis'], maxDailyDoseMg: 500
+      id: 'sinusitis-3-day', type: 'mg_per_kg_per_day', minDose: 10, maxDose: 10, doseUnit: 'mg/kg/day', frequency: 1,
+      frequencyText: 'Once daily for 3 days', minAgeMonths: 6, maximumDailyDose: 500,
+      condition: 'Acute bacterial sinusitis'
     },
     {
-      id: 'cap-5-day', type: 'condition_based', frequencyText: 'Once daily for 5 days', minimumAgeMonths: 6,
-      conditions: ['Community-acquired pneumonia'],
-      schedule: [
+      id: 'cap-5-day', type: 'condition_based', frequency: 1, frequencyText: 'Once daily for 5 days', minAgeMonths: 6,
+      condition: 'Community-acquired pneumonia', schedule: [
         { dayRange: 'Day 1', doseMgPerKg: 10, maxDoseMg: 500 },
-        { dayRange: 'Days 2-5', doseMgPerKg: 5, maxDoseMg: 250 }
+        { dayRange: 'Days 2–5', doseMgPerKg: 5, maxDoseMg: 250 }
       ]
     },
     {
-      id: 'pharyngitis-5-day', type: 'mg_per_kg_day', doseMgPerKgPerDay: 12, frequencyText: 'Once daily for 5 days', minimumAgeYears: 2,
-      conditions: ['Pharyngitis / tonsillitis'], maxDailyDoseMg: 500
+      id: 'pharyngitis-5-day', type: 'mg_per_kg_per_day', minDose: 12, maxDose: 12, doseUnit: 'mg/kg/day', frequency: 1,
+      frequencyText: 'Once daily for 5 days', minAgeYears: 2, maximumDailyDose: 500,
+      condition: 'Pharyngitis / tonsillitis'
     }
   ],
   information: {
