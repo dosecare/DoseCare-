@@ -11,10 +11,10 @@ DoseCareV2Database.register({
     { display: '250 mg/5 mL', mgPer5mL: 250, concentration: { amount: 250, unit: 'mg', volume: 5, volumeUnit: 'mL' } }
   ],
   regimens: [
-    { id: 'pharyngitis-tonsillitis', type: 'mg_per_kg_per_day', doseMgPerKgPerDay: 20, frequencyText: 'Twice daily for 10 days', dosesPerDay: 2, maxDailyDoseMg: 500, minimumAgeMonths: 3, maximumAgeYears: 12, conditions: ['Pharyngitis / tonsillitis'] },
-    { id: 'acute-otitis-media', type: 'mg_per_kg_per_day', doseMgPerKgPerDay: 30, frequencyText: 'Twice daily for 10 days', dosesPerDay: 2, maxDailyDoseMg: 1000, minimumAgeMonths: 3, maximumAgeYears: 12, conditions: ['Acute otitis media'] },
-    { id: 'acute-bacterial-maxillary-sinusitis', type: 'mg_per_kg_per_day', doseMgPerKgPerDay: 30, frequencyText: 'Twice daily for 10 days', dosesPerDay: 2, maxDailyDoseMg: 1000, minimumAgeMonths: 3, maximumAgeYears: 12, conditions: ['Acute bacterial maxillary sinusitis'] },
-    { id: 'impetigo', type: 'mg_per_kg_per_day', doseMgPerKgPerDay: 30, frequencyText: 'Twice daily for 10 days', dosesPerDay: 2, maxDailyDoseMg: 1000, minimumAgeMonths: 3, maximumAgeYears: 12, conditions: ['Impetigo'] }
+    { id: 'pharyngitis-tonsillitis', type: 'mg_per_kg_per_day', doseMgPerKgPerDay: 20, frequency: 2, frequencyText: 'Twice daily for 10 days', maximumDailyDose: 500, minAgeMonths: 3, maxAgeYears: 12, conditions: ['Pharyngitis / tonsillitis'], requiresWeight: true, requiresAge: true },
+    { id: 'acute-otitis-media', type: 'mg_per_kg_per_day', doseMgPerKgPerDay: 30, frequency: 2, frequencyText: 'Twice daily for 10 days', maximumDailyDose: 1000, minAgeMonths: 3, maxAgeYears: 12, conditions: ['Acute otitis media'], requiresWeight: true, requiresAge: true },
+    { id: 'acute-bacterial-maxillary-sinusitis', type: 'mg_per_kg_per_day', doseMgPerKgPerDay: 30, frequency: 2, frequencyText: 'Twice daily for 10 days', maximumDailyDose: 1000, minAgeMonths: 3, maxAgeYears: 12, conditions: ['Acute bacterial maxillary sinusitis'], requiresWeight: true, requiresAge: true },
+    { id: 'impetigo', type: 'mg_per_kg_per_day', doseMgPerKgPerDay: 30, frequency: 2, frequencyText: 'Twice daily for 10 days', maximumDailyDose: 1000, minAgeMonths: 3, maxAgeYears: 12, conditions: ['Impetigo'], requiresWeight: true, requiresAge: true }
   ],
   information: {
     class: 'Second-generation cephalosporin antibiotic',
