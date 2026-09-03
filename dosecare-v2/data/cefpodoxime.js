@@ -11,9 +11,9 @@ DoseCareV2Database.register({
     { display: '100 mg/5 mL', mgPer5mL: 100, concentration: { amount: 100, unit: 'mg', volume: 5, volumeUnit: 'mL' } }
   ],
   regimens: [
-    { id: 'aom', condition: 'Acute otitis media', type: 'mg_per_kg_per_day', minDose: 10, maxDose: 10, frequency: 2, frequencyText: 'Every 12 hours', requiresAge: true, requiresWeight: true, minAgeMonths: 2, maxDailyDoseMg: 400, maxDoseMgPerAdministration: 200, durationDays: 5 },
-    { id: 'pharyngitis', condition: 'Pharyngitis / tonsillitis', type: 'mg_per_kg_per_day', minDose: 10, maxDose: 10, frequency: 2, frequencyText: 'Every 12 hours', requiresAge: true, requiresWeight: true, minAgeMonths: 2, maxDailyDoseMg: 200, maxDoseMgPerAdministration: 100, durationDays: { min: 5, max: 10 } },
-    { id: 'sinusitis', condition: 'Acute maxillary sinusitis', type: 'mg_per_kg_per_day', minDose: 10, maxDose: 10, frequency: 2, frequencyText: 'Every 12 hours', requiresAge: true, requiresWeight: true, minAgeMonths: 2, maxDailyDoseMg: 400, maxDoseMgPerAdministration: 200, durationDays: 10 }
+    { id: 'aom', condition: 'Acute otitis media', type: 'mg_per_kg_per_day', minDose: 10, maxDose: 10, doseUnit: 'mg/kg/day', frequency: 2, frequencyText: 'Every 12 hours', requiresAge: true, requiresWeight: true, minAgeMonths: 2, maximumDailyDose: 400, maximumDosePerAdministration: 200, durationDays: 5 },
+    { id: 'pharyngitis', condition: 'Pharyngitis / tonsillitis', type: 'mg_per_kg_per_day', minDose: 10, maxDose: 10, doseUnit: 'mg/kg/day', frequency: 2, frequencyText: 'Every 12 hours', requiresAge: true, requiresWeight: true, minAgeMonths: 2, maximumDailyDose: 200, maximumDosePerAdministration: 100, durationDays: { min: 5, max: 10 } },
+    { id: 'sinusitis', condition: 'Acute maxillary sinusitis', type: 'mg_per_kg_per_day', minDose: 10, maxDose: 10, doseUnit: 'mg/kg/day', frequency: 2, frequencyText: 'Every 12 hours', requiresAge: true, requiresWeight: true, minAgeMonths: 2, maximumDailyDose: 400, maximumDosePerAdministration: 200, durationDays: 10 }
   ],
   information: {
     class: 'Third-generation cephalosporin antibacterial',
