@@ -23,6 +23,16 @@
     });
   });
 
+  test('registered medicine metadata exposes canonical keys only', () => {
+    db.getAll().forEach(m => {
+      const info = m.information || {};
+      assert(!Object.prototype.hasOwnProperty.call(info, 'mechanismOfAction'), `${m.id}: legacy mechanismOfAction key leaked into registry`);
+      assert(!Object.prototype.hasOwnProperty.call(info, 'warningsPrecautions'), `${m.id}: legacy warningsPrecautions key leaked into registry`);
+      if (info.mechanism != null) assert(typeof info.mechanism === 'string', `${m.id}: mechanism must be a string`);
+      if (info.precautions != null) assert(Array.isArray(info.precautions), `${m.id}: precautions must be an array`);
+    });
+  });
+
   test('amoxicillin starts the configured pediatric regimens at 3 months', () => {
     const m = db.getById('amoxicillin');
     const regimens = m.regimens.filter(r => r.requiresAge);
