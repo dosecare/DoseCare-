@@ -1,7 +1,8 @@
 window.DoseCareV2Audit = (() => {
   const expectedIds = [
     'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin',
-    'paracetamol','ibuprofen','mefenamic-acid','cetirizine','loratadine','diphenhydramine','salbutamol','ondansetron','lactulose','magnesium-hydroxide','omeprazole','prednisolone'
+    'paracetamol','ibuprofen','mefenamic-acid','cetirizine','loratadine','diphenhydramine','salbutamol','ondansetron','lactulose','magnesium-hydroxide','omeprazole','prednisolone',
+    'cefaclor','erythromycin','metronidazole','ors','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone'
   ];
   const validTypes = new Set(['mg_per_kg_per_day','mg_per_kg_per_dose','condition_based','fixed_dose','age_based','label_age_based','label_weight_age_based','scheduled','weight_based','volume_by_age','volume_per_kg']);
   const errors = [], warnings = [];
@@ -19,7 +20,7 @@ window.DoseCareV2Audit = (() => {
       if (m[field] == null) errors.push(`${m.id}: missing required field ${field}`);
     }
     if (m.route !== 'Oral') errors.push(`${m.id}: route must be Oral`);
-    if (!/suspension|solution|syrup/i.test(String(m.dosageForm || ''))) errors.push(`${m.id}: dosageForm is not an oral liquid`);
+    if (!/suspension|solution|syrup|drops|powder/i.test(String(m.dosageForm || ''))) errors.push(`${m.id}: dosageForm is not an oral liquid`);
     if (!Array.isArray(m.formulations) || !m.formulations.length) errors.push(`${m.id}: no formulations`);
     for (const f of (m.formulations || [])) {
       if (f.volumeBased === true) continue;
