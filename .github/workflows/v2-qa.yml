@@ -19,5 +19,5 @@ jobs:
         with:
           node-version: 20
 
-      - name: Run DoseCare V2 regression suite
+      - name: Run DoseCare V2 regression suite and database audit
         run: node dosecare-v2/tests/run-node-tests.js
