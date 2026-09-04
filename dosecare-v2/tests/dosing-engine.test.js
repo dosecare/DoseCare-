@@ -154,6 +154,30 @@
     assert(result.maximumApplied === true || result.maximumAppliedType === 'daily', 'Expected daily maximum to be applied');
   });
 
+  test('clarithromycin caps the standard pediatric regimen at 500 mg per dose', () => {
+    const m = db.getById('clarithromycin');
+    const r = m.regimens.find(x => x.id === 'standard-pediatric-15-mg-kg-day');
+    const f = m.formulations.find(x => x.mgPer5mL === 250);
+    const result = engine.calculate({ medicine: m, regimen: r, weight: 70, age: 10, ageUnit: 'years', formulation: f });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(near(result.lowMg, 500), `Expected capped 500 mg/dose, got ${result.lowMg}`);
+    assert(near(result.highMg, 500), `Expected capped 500 mg/dose, got ${result.highMg}`);
+    assert(near(result.dailyHighMg, 1000), `Expected capped 1000 mg/day, got ${result.dailyHighMg}`);
+    assert(result.maximumAppliedType === 'daily' || result.maximumAppliedType === 'per_administration', 'Expected a maximum-dose cap to be recorded');
+  });
+
+  test('clindamycin supports both 3-dose and 4-dose daily splitting', () => {
+    const m = db.getById('clindamycin');
+    const r = m.regimens.find(x => x.id === 'serious-infection-8-12-mg-kg-day');
+    const f = m.formulations[0];
+    const result = engine.calculate({ medicine: m, regimen: r, weight: 20, age: 8, ageUnit: 'years', formulation: f });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(near(result.dailyLowMg, 160), `Expected 160 mg/day, got ${result.dailyLowMg}`);
+    assert(near(result.lowMg, 160 / 3), `Expected 3-dose split of ${160 / 3} mg, got ${result.lowMg}`);
+    assert(near(result.alternativeLowMg, 40), `Expected 4-dose split of 40 mg, got ${result.alternativeLowMg}`);
+    assert(near(result.alternativeLowMl, 40 / 15), `Expected 2.6667 mL, got ${result.alternativeLowMl}`);
+  });
+
   window.DoseCareV2DosingTests = {
     run() {
       const results = tests.map(t => {
