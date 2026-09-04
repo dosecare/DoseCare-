@@ -16,6 +16,7 @@ function loadScript(filePath) {
 }
 
 loadScript(path.join(root, 'js', 'database.js'));
+global.DoseCareV2Database = global.window.DoseCareV2Database;
 
 const medicineFiles = fs.readdirSync(dataDir)
   .filter(name => name.endsWith('.js'))
@@ -29,6 +30,7 @@ medicineFiles.forEach(name => loadScript(path.join(dataDir, name)));
 loadScript(path.join(root, 'js', 'dosing-engine.js'));
 loadScript(path.join(__dirname, 'dosing-engine.test.js'));
 
+global.DoseCareV2DosingEngine = global.window.DoseCareV2DosingEngine;
 const result = window.DoseCareV2DosingTests.run();
 for (const item of result.results) {
   console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`);
