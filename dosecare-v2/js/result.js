@@ -3,9 +3,14 @@
 'use strict';
 const root=document.getElementById('result-stack');
 let raw=null;
-try{raw=sessionStorage.getItem('dosecareV2Result');}catch(error){console.warn('DoseCare sessionStorage unavailable:',error);}
+// Prefer the URL payload first. This makes the result page work even when
+// sessionStorage/localStorage are blocked by the browser or device.
+if(location.hash.startsWith('#data=')){
+  try{raw=decodeURIComponent(location.hash.slice(6));}
+  catch(error){console.warn('DoseCare URL result payload could not be decoded:',error);}
+}
+if(!raw){try{raw=sessionStorage.getItem('dosecareV2Result');}catch(error){console.warn('DoseCare sessionStorage unavailable:',error);}}
 if(!raw){try{raw=localStorage.getItem('dosecareV2Result');}catch(error){console.warn('DoseCare localStorage unavailable:',error);}}
-if(!raw&&location.hash.startsWith('#data=')){try{raw=decodeURIComponent(location.hash.slice(6));}catch(error){console.warn('DoseCare URL result payload could not be decoded:',error);}}
 const esc=v=>String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
 const fmt=v=>Number.isFinite(Number(v))?Number(v).toFixed(2).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1'):'—';
 const ageText=(age,unit)=>age==null?'Not provided':`${fmt(age)} ${unit||''}`.trim();
