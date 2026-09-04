@@ -1,8 +1,7 @@
 /* DoseCare V2 — Zinc sulfate pediatric oral liquid record. */
 (function(global){
   'use strict';
-  global.DoseCareV2Database = global.DoseCareV2Database || { medicines: [], addMedicine: function(m){ this.medicines.push(m); } };
-  global.DoseCareV2Database.addMedicine({
+  global.DoseCareV2Database.register({
     id:'zinc-sulfate',
     name:'Zinc Sulfate',
     genericName:'Zinc sulfate',
@@ -55,7 +54,7 @@
       warningsPrecautions:['Hypersensitivity to zinc or excipients.','Copper deficiency is a contraindication in the WHO-prequalified 10 mg/5 mL product.'],
       adverseEffects:['Nausea','Vomiting','Abdominal discomfort'],
       interactions:['Iron salts may interfere with zinc absorption when administered together.'],
-      notes:'Dose is expressed as elemental zinc, not the mass of zinc sulfate salt. Give once daily for 10–14 days. If vomiting occurs within 30 minutes, the WHO-prequalified product information recommends repeating the dose.'],
+      notes:'Dose is expressed as elemental zinc, not the mass of zinc sulfate salt. Give once daily for 10–14 days. If vomiting occurs within 30 minutes, the WHO-prequalified product information recommends repeating the dose.',
       sources:[
         {organization:'World Health Organization',title:'Zinc supplementation in the management of diarrhoea',url:'https://www.who.int/tools/elena/interventions/zinc-diarrhoea'},
         {organization:'World Health Organization',title:'Zinc (as sulfate) 10 mg/5 mL oral solution — WHOPAR Part 4',url:'https://extranet.who.int/prequal/sites/default/files/whopar_files/DI010part4v2.pdf'},
