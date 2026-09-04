@@ -13,7 +13,7 @@ window.DoseCareV2Database?.register({
   ],
   regimens: [
     {
-      id: 'aom-single-dose', type: 'mg_per_kg_single_dose', minDose: 30, maxDose: 30, doseUnit: 'mg/kg/dose', frequency: 1,
+      id: 'aom-single-dose', type: 'mg_per_kg_per_dose', minDose: 30, maxDose: 30, doseUnit: 'mg/kg/dose', frequency: 1,
       frequencyText: 'Single dose', maximumDosePerAdministration: 1500, minAgeMonths: 6,
       condition: 'Acute otitis media'
     },
