@@ -12,11 +12,11 @@
   const test = (name, fn) => tests.push({ name, fn });
 
   test('database contains core V2 medicines', () => {
-    ['paracetamol', 'ibuprofen', 'amoxicillin'].forEach(id => assert(db.getById(id), `Missing medicine: ${id}`));
+    ['paracetamol', 'ibuprofen', 'amoxicillin', 'cefprozil'].forEach(id => assert(db.getById(id), `Missing medicine: ${id}`));
   });
 
   test('formulations are oral liquids only', () => {
-    ['paracetamol', 'ibuprofen', 'amoxicillin'].forEach(id => {
+    ['paracetamol', 'ibuprofen', 'amoxicillin', 'cefprozil'].forEach(id => {
       const m = db.getById(id);
       assert(m.route === 'Oral', `${id}: route must be Oral`);
       assert(/suspension|solution|syrup/i.test(m.dosageForm), `${id}: dosage form must be oral liquid`);
@@ -64,6 +64,26 @@
     const r = m.regimens.find(x => x.id === 'ent-mild-q12h');
     const result = engine.calculate({ medicine: m, regimen: r, weight: 8, age: 2, ageUnit: 'months', formulation: m.formulations[0] });
     assert(!result.ok && result.code === 'AGE_BELOW_REGIMEN_MIN', 'Age below 3 months should be rejected for this regimen');
+  });
+
+  test('paracetamol label chart maps 2–3 years and 24–35 lb to 5 mL', () => {
+    const m = db.getById('paracetamol');
+    const r = m.regimens.find(x => x.id === 'label-weight-age-chart');
+    const result = engine.calculate({ medicine: m, regimen: r, weight: 12, age: 2.5, ageUnit: 'years', formulation: m.formulations[0] });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(near(result.lowMl, 5), `Expected 5 mL/dose, got ${result.lowMl}`);
+  });
+
+  test('cefprozil acute otitis media applies the 1000 mg/day maximum', () => {
+    const m = db.getById('cefprozil');
+    const r = m.regimens.find(x => x.id === 'otitis-media-15-mg-kg-q12h');
+    const f = m.formulations.find(x => x.mgPer5mL === 250);
+    const result = engine.calculate({ medicine: m, regimen: r, weight: 40, age: 10, ageUnit: 'years', formulation: f });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(near(result.dailyLowMg, 1000), `Expected capped 1000 mg/day, got ${result.dailyLowMg}`);
+    assert(near(result.lowMg, 500), `Expected capped 500 mg/dose, got ${result.lowMg}`);
+    assert(near(result.lowMl, 10), `Expected 10 mL/dose, got ${result.lowMl}`);
+    assert(result.maximumApplied === true || result.maximumAppliedType === 'daily', 'Expected daily maximum to be applied');
   });
 
   test('all registered concentrations are positive', () => {
