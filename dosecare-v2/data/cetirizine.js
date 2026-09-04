@@ -1,5 +1,5 @@
 /* DoseCare V2 — Cetirizine oral solution
- * Sources cross-checked: current DailyMed oral-solution labels and FDA pediatric labeling information.
+ * Oral liquid only. Pediatric dosing follows current DailyMed labeling for 1 mg/mL oral solution.
  */
 window.DoseCareV2Database?.register({
   id: 'cetirizine',
@@ -38,7 +38,7 @@ window.DoseCareV2Database?.register({
       requiresAge: true, requiresWeight: false, minAgeYears: 2, maxAgeYears: 5, maximumDailyDose: 5
     },
     {
-      id: 'children-6y-plus', condition: 'Allergic symptoms',
+      id: 'allergic-rhinitis-6y-plus', condition: 'Allergic rhinitis / chronic urticaria',
       type: 'fixed_dose', minDose: 5, maxDose: 10, unit: 'mg/day', frequency: 1, frequencyText: 'Every 24 hours',
       requiresAge: true, requiresWeight: false, minAgeYears: 6, maximumDailyDose: 10
     }
@@ -52,12 +52,15 @@ window.DoseCareV2Database?.register({
     warningsPrecautions: ['Use caution in renal impairment; dosing may require adjustment.', 'Drowsiness can occur in some patients.'],
     interactions: ['Alcohol and other CNS depressants may increase drowsiness.'],
     administration: 'May be taken without regard to food. Use an accurate oral measuring device.',
-    pediatricUse: 'Labeled oral-solution dosing includes patients 6 months and older for specified indications.',
-    notes: 'Oral solution 1 mg/mL.'
+    pediatricUse: 'Current DailyMed labeling for 1 mg/mL oral solution supports 2.5 mg once daily from 6–23 months for perennial allergic rhinitis/chronic urticaria, with 12–23 months allowed up to 5 mg/day. For chronic urticaria at 2–5 years, the initial dose is 2.5 mg once daily and may increase to 5 mg/day. From 6 years, 5–10 mg/day is the configured pediatric/adolescent range.',
+    notes: 'Oral solution 1 mg/mL. The 6–23 month indication is specifically perennial allergic rhinitis/chronic urticaria; DoseCare does not label this as a generic allergy dose.',
+    sources: [
+      { organization: 'DailyMed', title: 'Cetirizine Hydrochloride Oral Solution USP 1 mg/mL — revised 2025', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=41d7af88-87b4-370e-e063-6294a90a8af6' },
+      { organization: 'FDA', title: 'Cetirizine pediatric labeling information / approved pediatric use', url: 'https://www.accessdata.fda.gov/scripts/sda/sdDetailNavigation.cfm?id=14CE032258C11B7DE053564DA8C071F2' }
+    ]
   },
   sources: [
-    { organization: 'DailyMed', title: 'Cetirizine Hydrochloride Oral Solution USP 1 mg/mL', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=41d7af88-87b4-370e-e063-6294a90a8af6' },
-    { organization: 'DailyMed', title: 'Cetirizine Hydrochloride Oral Solution 1 mg/mL — pediatric dosing', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=71448ab0-e23e-4cf7-940e-7d67e7362fb4' },
+    { organization: 'DailyMed', title: 'Cetirizine Hydrochloride Oral Solution USP 1 mg/mL — revised 2025', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=41d7af88-87b4-370e-e063-6294a90a8af6' },
     { organization: 'FDA', title: 'Cetirizine pediatric labeling information / approved pediatric use', url: 'https://www.accessdata.fda.gov/scripts/sda/sdDetailNavigation.cfm?id=14CE032258C11B7DE053564DA8C071F2' }
   ]
 });
