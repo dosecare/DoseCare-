@@ -9,7 +9,8 @@
     'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js',
     'cetirizine.js','loratadine.js','diphenhydramine.js',
     'ondansetron.js','prednisolone.js','salbutamol.js',
-    'lactulose.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js'
+    'lactulose.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js',
+    'sulfamethoxazole-trimethoprim.js'
   ];
 
   function loadScript(src) {
