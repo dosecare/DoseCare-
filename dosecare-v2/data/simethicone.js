@@ -1,9 +1,7 @@
 /* DoseCare V2 — Simethicone oral drops */
 (function(global){
   'use strict';
-  global.DoseCareV2Database = global.DoseCareV2Database || {records:[]};
-  global.DoseCareV2Database.records = global.DoseCareV2Database.records || [];
-  global.DoseCareV2Database.records.push({
+  global.DoseCareV2Database.register({
     id:'simethicone',
     name:'Simethicone',
     genericName:'Simethicone',
