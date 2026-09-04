@@ -11,7 +11,7 @@ loadScript(path.join(root, 'js', 'database.js'));
 global.DoseCareV2Database = global.window.DoseCareV2Database;
 const expectedFiles = [
   'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js','metronidazole.js','ors.js',
-  'paracetamol.js','ibuprofen.js','mefenamic-acid.js','cetirizine.js','loratadine.js','diphenhydramine.js','salbutamol.js','ondansetron.js','lactulose.js','magnesium-hydroxide.js','omeprazole.js','prednisolone.js','famotidine.js','sulfamethoxazole-trimethoprim.js'
+  'paracetamol.js','ibuprofen.js','mefenamic-acid.js','cetirizine.js','loratadine.js','diphenhydramine.js','salbutamol.js','ondansetron.js','lactulose.js','magnesium-hydroxide.js','omeprazole.js','prednisolone.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js'
 ];
 const actualFiles = fs.readdirSync(dataDir).filter(name => name.endsWith('.js')).sort();
 if (actualFiles.length !== expectedFiles.length || expectedFiles.some(name => !actualFiles.includes(name))) throw new Error(`Medicine file manifest mismatch. Expected ${expectedFiles.length} known files, found ${actualFiles.length}: ${actualFiles.join(', ')}`);
