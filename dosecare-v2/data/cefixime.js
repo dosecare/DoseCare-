@@ -14,15 +14,15 @@ window.DoseCareV2Database?.register({
   regimens: [
     {
       id: 'standard-once-daily', type: 'mg_per_kg_per_day', minDose: 8, maxDose: 8, doseUnit: 'mg/kg/day', frequency: 1,
-      frequencyText: 'Once daily', minAgeMonths: 6, condition: 'Standard pediatric regimen', maximumDailyDose: 400
+      frequencyText: 'Once daily', minAgeMonths: 6, maxAgeYears: 12, maxWeightKg: 45, condition: 'Standard pediatric regimen', maximumDailyDose: 400
     },
     {
       id: 'standard-divided-q12h', type: 'mg_per_kg_per_dose', minDose: 4, maxDose: 4, doseUnit: 'mg/kg/dose', frequency: 2,
-      frequencyText: 'Every 12 hours', minAgeMonths: 6, condition: 'Standard pediatric regimen — divided dose', maximumDosePerAdministration: 200
+      frequencyText: 'Every 12 hours', minAgeMonths: 6, maxAgeYears: 12, maxWeightKg: 45, condition: 'Standard pediatric regimen — divided dose', maximumDosePerAdministration: 200
     },
     {
       id: 'streptococcal-pharyngitis', type: 'mg_per_kg_per_day', minDose: 8, maxDose: 8, doseUnit: 'mg/kg/day', frequency: 1,
-      frequencyText: 'Once daily for at least 10 days', minAgeMonths: 6, condition: 'Streptococcus pyogenes infection', maximumDailyDose: 400
+      frequencyText: 'Once daily for at least 10 days', minAgeMonths: 6, maxAgeYears: 12, maxWeightKg: 45, condition: 'Streptococcus pyogenes infection', maximumDailyDose: 400
     }
   ],
   information: {
