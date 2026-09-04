@@ -3,7 +3,7 @@ window.DoseCareV2Audit = (() => {
     'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin',
     'paracetamol','ibuprofen','mefenamic-acid','cetirizine','loratadine','diphenhydramine','salbutamol','ondansetron','lactulose','magnesium-hydroxide','omeprazole','prednisolone'
   ];
-  const validTypes = new Set(['mg_per_kg_per_day','mg_per_kg_per_dose','condition_based','fixed_dose','age_based','label_age_based','label_weight_age_based','scheduled','weight_based']);
+  const validTypes = new Set(['mg_per_kg_per_day','mg_per_kg_per_dose','condition_based','fixed_dose','age_based','label_age_based','label_weight_age_based','scheduled','weight_based','volume_by_age','volume_per_kg']);
   const errors = [], warnings = [];
   const db = window.DoseCareV2Database;
   if (!db) return { passed:false, errors:['Database is not loaded'], warnings:[] };
@@ -14,7 +14,6 @@ window.DoseCareV2Audit = (() => {
   if (missing.length) errors.push(`Missing expected medicines: ${missing.join(', ')}`);
   if (extra.length) warnings.push(`Unexpected medicine IDs: ${extra.join(', ')}`);
   if (actualIds.length !== expectedIds.length) errors.push(`Expected ${expectedIds.length} medicines, found ${actualIds.length}`);
-
   for (const m of medicines) {
     for (const field of ['id','name','dosageForm','route','formulations','regimens','information','sources']) {
       if (m[field] == null) errors.push(`${m.id}: missing required field ${field}`);
@@ -23,6 +22,7 @@ window.DoseCareV2Audit = (() => {
     if (!/suspension|solution|syrup/i.test(String(m.dosageForm || ''))) errors.push(`${m.id}: dosageForm is not an oral liquid`);
     if (!Array.isArray(m.formulations) || !m.formulations.length) errors.push(`${m.id}: no formulations`);
     for (const f of (m.formulations || [])) {
+      if (f.volumeBased === true) continue;
       const c = f.concentration || {};
       const amount = Number(c.amount ?? f.amount ?? f.mgPer5mL ?? f.strengthMg ?? 0);
       const volume = Number(c.volume ?? f.volume ?? (f.mgPer5mL ? 5 : 0));
