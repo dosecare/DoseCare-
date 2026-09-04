@@ -1,0 +1,23 @@
+name: DoseCare V2 QA
+
+on:
+  push:
+    branches: [dosecare-v2-rebuild]
+  pull_request:
+    branches: [dosecare-v2-rebuild]
+
+jobs:
+  dosing-engine-tests:
+    name: Dosing Engine Regression Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run DoseCare V2 regression suite
+        run: node dosecare-v2/tests/run-node-tests.js
