@@ -23,7 +23,9 @@ DoseCareV2Database.register({
   information: {
     class: 'Third-generation cephalosporin antibacterial',
     indications: ['Acute bacterial otitis media', 'Acute maxillary sinusitis', 'Pharyngitis / tonsillitis', 'Uncomplicated skin and skin-structure infections'],
-    mechanism: 'Beta-lactam antibacterial that inhibits bacterial cell-wall synthesis.',
+    mechanism: 'Cefdinir is a beta-lactam antibacterial that inhibits bacterial cell-wall synthesis.',
+    precautions: ['Check for a history of serious hypersensitivity to cefdinir, cephalosporins, penicillins, or other beta-lactam antibacterials.', 'Antacids containing aluminum or magnesium and iron-containing products can reduce cefdinir absorption; separate administration as directed by the prescribing information.', 'Dose adjustment may be required in renal impairment; this calculator does not perform renal dose adjustment.', 'Antibiotic-associated diarrhea, including Clostridioides difficile-associated diarrhea, can occur.'],
+    adverseEffects: ['Diarrhea', 'Rash', 'Nausea', 'Vomiting', 'Abdominal pain', 'Hypersensitivity reactions'],
     notes: 'Pediatric dosing is 14 mg/kg/day up to 600 mg/day. For otitis media, sinusitis and pharyngitis/tonsillitis, the label permits 7 mg/kg every 12 hours or 14 mg/kg every 24 hours; skin infection is dosed 7 mg/kg every 12 hours. Pediatric labeling applies to ages 6 months through 12 years.'
   },
   sources: [
