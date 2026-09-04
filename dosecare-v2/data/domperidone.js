@@ -1,9 +1,7 @@
 /* DoseCare V2 — Domperidone oral suspension */
 (function(global){
   'use strict';
-  global.DoseCareV2Database = global.DoseCareV2Database || {records:[]};
-  global.DoseCareV2Database.records = global.DoseCareV2Database.records || [];
-  global.DoseCareV2Database.records.push({
+  global.DoseCareV2Database.register({
     id:'domperidone',
     name:'Domperidone',
     genericName:'Domperidone',
