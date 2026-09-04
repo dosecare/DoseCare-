@@ -9,9 +9,9 @@ const ageText=(age,unit)=>age==null?'Not provided':`${fmt(age)} ${unit||''}`.tri
 if(!raw){root.innerHTML='<article class="glass-card"><h1>No calculation found</h1><p>Return to the calculator and enter patient information.</p><a class="primary-button" href="calculator.html">BACK TO CALCULATOR</a></article>';return;}
 let d;try{d=JSON.parse(raw);}catch{d=null;}
 if(!d?.medicine||!d?.regimen||!d.ok){root.innerHTML='<article class="glass-card"><h1>Result unavailable</h1><p>The calculation could not be read safely.</p></article>';return;}
-const m=d.medicine,r=d.regimen,info=m.information||{};
-const dose=d.lowMg===d.highMg?`${fmt(d.lowMg)} mg/dose`:`${fmt(d.lowMg)}–${fmt(d.highMg)} mg/dose`;
-const vol=d.lowMl==null?'Not available':(d.lowMl===d.highMl?`${fmt(d.lowMl)} mL/dose`:`${fmt(d.lowMl)}–${fmt(d.highMl)} mL/dose`);
+const m=d.medicine,r=d.regimen,info=m.information||{},isVolume=d.calculationType==='volume_by_age'||d.calculationType==='volume_per_kg';
+const dose=isVolume?(d.displayDose||`${fmt(d.lowMl)} mL`):(d.lowMg===d.highMg?`${fmt(d.lowMg)} mg/dose`:`${fmt(d.lowMg)}–${fmt(d.highMg)} mg/dose`);
+const vol=isVolume?(d.volumeInstruction||'See regimen'):(d.lowMl==null?'Not available':(d.lowMl===d.highMl?`${fmt(d.lowMl)} mL/dose`:`${fmt(d.lowMl)}–${fmt(d.highMl)} mL/dose`));
 const freq=r.frequencyText||`${fmt(d.frequency)} times daily`;
 const conc=d.concentrationText||d.formulation?.display||'';
 const refs=(m.sources||info.sources||[]).map(x=>`<a class="reference-item" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer"><span>${esc(x.organization||'Source')}</span><strong>${esc(x.title||'Reference')}</strong></a>`).join('');
@@ -21,12 +21,13 @@ const adverseEffects=info.adverseEffects||[];
 const interactions=info.interactions||[];
 const steps=[];
 const normalizedType=r.type==='mg_per_kg_day'?'mg_per_kg_per_day':r.type==='mg_per_kg_single_dose'?'mg_per_kg_per_dose':r.type;
-if(Array.isArray(d.schedule)&&d.schedule.length){
+if(isVolume){
+ steps.push(`<div class="calc-step"><span>01</span><div><strong>Volume-based rehydration</strong><p>This ORS regimen is calculated in <b>mL</b>, not mg. No drug concentration conversion is applied.</p></div></div>`);
+ if(d.calculationType==='volume_per_kg') steps.push(`<div class="calc-step"><span>02</span><div><strong>Calculate total ORS volume</strong><p>${fmt(d.weight)} kg × ${fmt(r.volumeMlPerKg)} mL/kg = <b>${fmt(d.lowMl)} mL</b> over ${fmt(r.durationHours)} hours (about <b>${fmt(d.lowMl/Number(r.durationHours))} mL/hour</b>).</p></div></div>`);
+ else steps.push(`<div class="calc-step"><span>02</span><div><strong>Age-based volume</strong><p>WHO guidance for the selected age band: <b>${esc(d.displayDose)}</b> ${esc(d.volumeInstruction||'')}</p></div></div>`);
+} else if(Array.isArray(d.schedule)&&d.schedule.length){
  steps.push(`<div class="calc-step"><span>01</span><div><strong>Scheduled regimen</strong><p>The labeled time-dependent schedule was applied without collapsing the doses into a single daily frequency.</p></div></div>`);
- d.schedule.forEach((s,i)=>{
-  const timing=s.label||(s.timeAfterHours===0?'Initial dose':`${fmt(s.timeAfterHours)} hours after the first dose`);
-  steps.push(`<div class="calc-step"><span>${String(i+2).padStart(2,'0')}</span><div><strong>${esc(timing)}</strong><p>${fmt(s.doseMg)} mg = <b>${fmt(s.doseMl)} mL</b>${s.doseMgPerKg!=null?` (${fmt(s.doseMgPerKg)} mg/kg × ${fmt(d.weight)} kg)`:''}.</p></div></div>`);
- });
+ d.schedule.forEach((s,i)=>{const timing=s.label||(s.timeAfterHours===0?'Initial dose':`${fmt(s.timeAfterHours)} hours after the first dose`);steps.push(`<div class="calc-step"><span>${String(i+2).padStart(2,'0')}</span><div><strong>${esc(timing)}</strong><p>${fmt(s.doseMg)} mg = <b>${fmt(s.doseMl)} mL</b>${s.doseMgPerKg!=null?` (${fmt(s.doseMgPerKg)} mg/kg × ${fmt(d.weight)} kg)`:''}.</p></div></div>`);});
  if(d.scheduleTotalMg!=null)steps.push(`<div class="calc-step"><span>${String(steps.length+1).padStart(2,'0')}</span><div><strong>Scheduled phase total</strong><p><b>${fmt(d.scheduleTotalMg)} mg</b> = <b>${fmt(d.scheduleTotalMl)} mL</b> across the explicitly listed doses. This is not presented as a 24-hour daily dose.</p></div></div>`);
 } else if(normalizedType==='label_weight_age_based'){
  steps.push(`<div class="calc-step"><span>01</span><div><strong>Label dose selection</strong><p>The configured pediatric weight/age table selected <b>${fmt(d.lowMg)} mg/dose</b> for the entered patient.</p></div></div>`);
@@ -43,10 +44,10 @@ if(Array.isArray(d.schedule)&&d.schedule.length){
  steps.push(`<div class="calc-step"><span>01</span><div><strong>Configured regimen</strong><p>The selected pediatric regimen produced <b>${esc(dose)}</b>.</p></div></div>`);
 }
 if(d.maximumApplied!=null)steps.push(`<div class="calc-step"><span>${String(steps.length+1).padStart(2,'0')}</span><div><strong>Maximum-dose check</strong><p>Configured maximum applied: <b>${fmt(d.maximumApplied)} mg/day</b>.</p></div></div>`);
-if(d.lowMl!=null&&!Array.isArray(d.schedule))steps.push(`<div class="calc-step"><span>${String(steps.length+1).padStart(2,'0')}</span><div><strong>mg → mL conversion</strong><p>${fmt(d.lowMg)} mg ÷ ${fmt(d.mgPerMl)} mg/mL = <b>${fmt(d.lowMl)} mL</b>.</p></div></div>`);
+if(d.lowMl!=null&&!Array.isArray(d.schedule)&&!isVolume)steps.push(`<div class="calc-step"><span>${String(steps.length+1).padStart(2,'0')}</span><div><strong>mg → mL conversion</strong><p>${fmt(d.lowMg)} mg ÷ ${fmt(d.mgPerMl)} mg/mL = <b>${fmt(d.lowMl)} mL</b>.</p></div></div>`);
 const alternative=d.alternativeFrequency&&d.alternativeLowMg!=null?`${fmt(d.alternativeLowMg)}${d.alternativeHighMg!==d.alternativeLowMg?`–${fmt(d.alternativeHighMg)}`:''} mg/dose${d.alternativeLowMl!=null?` (${fmt(d.alternativeLowMl)}${d.alternativeHighMl!==d.alternativeLowMl?`–${fmt(d.alternativeHighMl)}`:''} mL/dose)`:''}`:null;
 const maxDaily=r.maximumDailyDose??r.maxDailyDoseMg??r.maxDailyDose??m.maximumDailyDose;
-const calculatedDaily=d.dailyLowMg!=null?(d.dailyLowMg===d.dailyHighMg?`${fmt(d.dailyLowMg)} mg/day`:`${fmt(d.dailyLowMg)}–${fmt(d.dailyHighMg)} mg/day`):'See regimen';
+const calculatedDaily=isVolume?'Not applicable':(d.dailyLowMg!=null?(d.dailyLowMg===d.dailyHighMg?`${fmt(d.dailyLowMg)} mg/day`:`${fmt(d.dailyLowMg)}–${fmt(d.dailyHighMg)} mg/day`):'See regimen');
 root.innerHTML=`
 <article class="glass-card result-card">
  <p class="eyebrow">PATIENT INFORMATION</p>
@@ -55,8 +56,8 @@ root.innerHTML=`
   <div><span>Condition / regimen</span><strong>${esc(r.condition||'Pediatric dose')}</strong></div>
   <div><span>Age</span><strong>${esc(ageText(d.age,d.ageUnit))}</strong></div>
   <div><span>Weight</span><strong>${d.weight!=null?`${fmt(d.weight)} kg`:'Not required'}</strong></div>
-  <div><span>Concentration</span><strong>${esc(conc||'Not specified')}</strong></div>
-  <div><span>Frequency</span><strong>${esc(freq)}</strong></div>
+  <div><span>Formulation</span><strong>${esc(conc||'Not specified')}</strong></div>
+  <div><span>Regimen</span><strong>${esc(freq)}</strong></div>
  </div>
  <div class="dose-output"><strong>${esc(dose)}</strong><strong>${esc(vol)}</strong></div>
 </article>
@@ -71,8 +72,8 @@ root.innerHTML=`
  <div class="info-grid">
   <div><span>Active ingredient</span><strong>${esc(m.activeIngredient||'Not configured')}</strong></div>
   <div><span>Drug class</span><strong>${esc(info.class||'Not configured')}</strong></div>
-  <div><span>Frequency</span><strong>${esc(freq)}</strong></div>
-  <div><span>Maximum daily dose</span><strong>${maxDaily!=null?`${fmt(maxDaily)} mg/day`:'See source label'}</strong></div>
+  <div><span>Regimen</span><strong>${esc(freq)}</strong></div>
+  <div><span>Maximum daily dose</span><strong>${isVolume?'Not applicable':(maxDaily!=null?`${fmt(maxDaily)} mg/day`:'See source label')}</strong></div>
   <div><span>Calculated daily dose</span><strong>${esc(calculatedDaily)}</strong></div>
  </div>
  <div class="info-block"><span>Mechanism of action</span><p>${esc(mechanism)}</p></div>
