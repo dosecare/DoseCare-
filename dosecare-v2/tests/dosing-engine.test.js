@@ -10,17 +10,38 @@
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
   const near = (a, b, eps = 1e-9) => Math.abs(a - b) < eps;
   const test = (name, fn) => tests.push({ name, fn });
+  const ALL_IDS = ['amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','paracetamol','ibuprofen','mefenamic-acid','cetirizine','loratadine','diphenhydramine','salbutamol','ondansetron','lactulose','magnesium-hydroxide','omeprazole','prednisolone'];
 
-  test('database contains core V2 medicines', () => {
-    ['paracetamol', 'ibuprofen', 'amoxicillin', 'cefprozil'].forEach(id => assert(db.getById(id), `Missing medicine: ${id}`));
+  test('database contains all 23 V2 medicines', () => {
+    const all = db.getAll();
+    assert(all.length === 23, `Expected 23 medicines, got ${all.length}`);
+    const ids = all.map(m => m.id);
+    assert(new Set(ids).size === ids.length, 'Duplicate medicine IDs detected');
+    ALL_IDS.forEach(id => assert(db.getById(id), `Missing medicine: ${id}`));
   });
 
-  test('formulations are oral liquids only', () => {
-    ['paracetamol', 'ibuprofen', 'amoxicillin', 'cefprozil'].forEach(id => {
-      const m = db.getById(id);
-      assert(m.route === 'Oral', `${id}: route must be Oral`);
-      assert(/suspension|solution|syrup/i.test(m.dosageForm), `${id}: dosage form must be oral liquid`);
+  test('all registered formulations are oral liquids only', () => {
+    db.getAll().forEach(m => {
+      assert(m.route === 'Oral', `${m.id}: route must be Oral`);
+      assert(/suspension|solution|syrup/i.test(m.dosageForm), `${m.id}: dosage form must be oral liquid`);
+      (m.formulations || []).forEach(f => {
+        assert(f.concentration && f.concentration.amount > 0, `${m.id}: invalid concentration amount`);
+        assert(f.concentration.volume > 0, `${m.id}: invalid concentration volume`);
+      });
     });
+  });
+
+  test('all regimens have valid types', () => {
+    const allowed = new Set(['mg_per_kg_per_day','mg_per_kg_per_dose','fixed_dose','age_based','label_age_based','label_weight_age_based','condition_based','weight_based']);
+    db.getAll().forEach(m => (m.regimens || []).forEach(r => assert(allowed.has(r.type), `${m.id}/${r.id}: unsupported regimen type ${r.type}`)));
+  });
+
+  test('allowedFormulations references existing formulations', () => {
+    db.getAll().forEach(m => (m.regimens || []).forEach(r => {
+      if (!r.allowedFormulations) return;
+      const ids = new Set((m.formulations || []).map(f => f.id).filter(Boolean));
+      r.allowedFormulations.forEach(id => assert(ids.has(id), `${m.id}/${r.id}: unknown allowed formulation ${id}`));
+    }));
   });
 
   test('registered medicine metadata exposes canonical keys only', () => {
@@ -76,6 +97,43 @@
     assert(!result.ok && result.code === 'AGE_BELOW_REGIMEN_MIN', 'Age below 3 months should be rejected for this regimen');
   });
 
+  test('cefixime accepts the 12-year boundary', () => {
+    const m = db.getById('cefixime');
+    const r = m.regimens.find(x => x.id === 'standard-once-daily');
+    const result = engine.calculate({ medicine: m, regimen: r, weight: 30, age: 12, ageUnit: 'years', formulation: m.formulations[0] });
+    assert(result.ok, result.error || '12 years should be accepted');
+  });
+
+  test('cefixime rejects age above 12 years', () => {
+    const m = db.getById('cefixime');
+    const r = m.regimens.find(x => x.id === 'standard-once-daily');
+    const result = engine.calculate({ medicine: m, regimen: r, weight: 30, age: 12.01, ageUnit: 'years', formulation: m.formulations[0] });
+    assert(!result.ok && result.code === 'AGE_ABOVE_REGIMEN_MAX', 'Age above 12 years should be rejected');
+  });
+
+  test('cefixime accepts 45 kg boundary and rejects above 45 kg', () => {
+    const m = db.getById('cefixime');
+    const r = m.regimens.find(x => x.id === 'standard-once-daily');
+    const atBoundary = engine.calculate({ medicine: m, regimen: r, weight: 45, age: 12, ageUnit: 'years', formulation: m.formulations[0] });
+    assert(atBoundary.ok, atBoundary.error || '45 kg should be accepted');
+    const above = engine.calculate({ medicine: m, regimen: r, weight: 45.01, age: 12, ageUnit: 'years', formulation: m.formulations[0] });
+    assert(!above.ok && above.code === 'WEIGHT_ABOVE_REGIMEN_MAX', 'Weight above 45 kg should be rejected');
+  });
+
+  test('cefpodoxime accepts the 12-year boundary', () => {
+    const m = db.getById('cefpodoxime');
+    const r = m.regimens.find(x => x.id === 'aom');
+    const result = engine.calculate({ medicine: m, regimen: r, weight: 30, age: 12, ageUnit: 'years', formulation: m.formulations[0] });
+    assert(result.ok, result.error || '12 years should be accepted');
+  });
+
+  test('cefpodoxime rejects age above 12 years', () => {
+    const m = db.getById('cefpodoxime');
+    const r = m.regimens.find(x => x.id === 'aom');
+    const result = engine.calculate({ medicine: m, regimen: r, weight: 30, age: 12.01, ageUnit: 'years', formulation: m.formulations[0] });
+    assert(!result.ok && result.code === 'AGE_ABOVE_REGIMEN_MAX', 'Age above 12 years should be rejected');
+  });
+
   test('paracetamol label chart maps 2–3 years and 24–35 lb to 5 mL', () => {
     const m = db.getById('paracetamol');
     const r = m.regimens.find(x => x.id === 'label-weight-age-chart');
@@ -94,13 +152,6 @@
     assert(near(result.lowMg, 500), `Expected capped 500 mg/dose, got ${result.lowMg}`);
     assert(near(result.lowMl, 10), `Expected 10 mL/dose, got ${result.lowMl}`);
     assert(result.maximumApplied === true || result.maximumAppliedType === 'daily', 'Expected daily maximum to be applied');
-  });
-
-  test('all registered concentrations are positive', () => {
-    db.getAll().forEach(m => (m.formulations || []).forEach(f => {
-      assert(f.concentration && f.concentration.amount > 0, `${m.id}: invalid concentration amount`);
-      assert(f.concentration.volume > 0, `${m.id}: invalid concentration volume`);
-    }));
   });
 
   window.DoseCareV2DosingTests = {
