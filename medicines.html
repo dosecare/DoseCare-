@@ -1,291 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DoseCare | Medicines</title>
-
-    <link
-        rel="stylesheet"
-        href="medicines.css"
-    >
-
+    <link rel="stylesheet" href="medicines.css">
 </head>
-
-
 <body>
-
-
-    <!-- =========================================
-         BACKGROUND
-    ========================================= -->
-
     <div class="background">
-
-        <div class="glow glow-one"></div>
-        <div class="glow glow-two"></div>
-        <div class="glow glow-three"></div>
-
-        <div class="bubble bubble-one"></div>
-        <div class="bubble bubble-two"></div>
-        <div class="bubble bubble-three"></div>
-        <div class="bubble bubble-four"></div>
-
-        <div id="stars"></div>
-
-        <div id="particles"></div>
-
+        <div class="glow glow-one"></div><div class="glow glow-two"></div><div class="glow glow-three"></div>
+        <div class="bubble bubble-one"></div><div class="bubble bubble-two"></div><div class="bubble bubble-three"></div><div class="bubble bubble-four"></div>
+        <div id="stars"></div><div id="particles"></div>
     </div>
-
-
-
-    <!-- =========================================
-         MAIN
-    ========================================= -->
-
     <main class="medicine-page">
-
-
-        <!-- =====================================
-             HEADER
-        ===================================== -->
-
         <header class="medicine-header">
-
-            <button
-                class="back-button"
-                id="back-button"
-                aria-label="Back"
-                type="button"
-            >
-                ←
-            </button>
-
-
-            <div class="header-title">
-
-                <span class="mini-label">
-                    DOSECARE
-                </span>
-
-                <h1>
-                    Medicine Library
-                </h1>
-
-            </div>
-
+            <button class="back-button" id="back-button" aria-label="Back" type="button">←</button>
+            <div class="header-title"><span class="mini-label">DOSECARE</span><h1>Medicine Library</h1></div>
         </header>
-
-
-
-        <!-- =====================================
-             INTRO
-        ===================================== -->
-
         <section class="intro-section">
-
-            <span class="section-label">
-                MEDICINE DATABASE
-            </span>
-
-            <h2>
-                Explore medicines
-            </h2>
-
-            <p>
-                Search and explore medicine information,
-                indications, mechanism of action,
-                precautions and more.
-            </p>
-
+            <span class="section-label">MEDICINE DATABASE</span><h2>Explore medicines</h2>
+            <p>Search and explore medicine information, indications, mechanism of action, precautions and more.</p>
         </section>
-
-
-
-        <!-- =====================================
-             SEARCH
-        ===================================== -->
-
         <section class="filters">
-
-
             <div class="search-box">
-
-                <span class="search-icon">
-                    ⌕
-                </span>
-
-
-                <input
-                    type="text"
-                    id="medicine-library-search"
-                    placeholder="Search medicine..."
-                    autocomplete="off"
-                >
-
-
-                <button
-                    id="clear-search"
-                    class="clear-search"
-                    type="button"
-                    aria-label="Clear search"
-                >
-                    ×
-                </button>
-
+                <span class="search-icon">⌕</span>
+                <input type="text" id="medicine-library-search" placeholder="Search medicine..." autocomplete="off">
+                <button id="clear-search" class="clear-search" type="button" aria-label="Clear search">×</button>
             </div>
-
-
-
             <div class="filter-row">
-
-
-                <select
-                    id="medicine-class-filter"
-                    class="filter-select"
-                >
-
-                    <option value="">
-                        All drug classes
-                    </option>
-
-                </select>
-
-
-
-                <select
-                    id="medicine-condition-filter"
-                    class="filter-select"
-                >
-
-                    <option value="">
-                        All conditions
-                    </option>
-
-                </select>
-
-
+                <select id="medicine-class-filter" class="filter-select"><option value="">All drug classes</option></select>
+                <select id="medicine-condition-filter" class="filter-select"><option value="">All conditions</option></select>
             </div>
-
         </section>
-
-
-
-        <!-- =====================================
-             RESULTS HEADER
-        ===================================== -->
-
-        <div class="results-header">
-
-            <span id="medicine-count">
-                0 medicines
-            </span>
-
-        </div>
-
-
-
-        <!-- =====================================
-             MEDICINES
-        ===================================== -->
-
-        <section
-            id="medicine-grid"
-            class="medicine-list"
-        >
-
+        <div class="results-header"><span id="medicine-count">0 medicines</span></div>
+        <section id="medicine-grid" class="medicine-list"></section>
+        <section id="empty-state" class="empty-state" style="display: none;">
+            <div class="empty-icon">⌕</div><h3>No medicines found</h3><p>Try another medicine name, drug class or condition.</p>
         </section>
-
-
-
-        <!-- =====================================
-             EMPTY STATE
-        ===================================== -->
-
-        <section
-            id="empty-state"
-            class="empty-state"
-            style="display: none;"
-        >
-
-            <div class="empty-icon">
-                ⌕
-            </div>
-
-            <h3>
-                No medicines found
-            </h3>
-
-            <p>
-                Try another medicine name,
-                drug class or condition.
-            </p>
-
-        </section>
-
-
-
     </main>
-
-
-
-    <!-- =========================================
-         MEDICINE MODAL
-    ========================================= -->
-
-    <div
-        id="medicine-modal"
-        class="medicine-modal"
-    >
-
-        <div
-            id="modal-overlay"
-            class="modal-overlay"
-        ></div>
-
-
+    <div id="medicine-modal" class="medicine-modal">
+        <div id="modal-overlay" class="modal-overlay"></div>
         <article class="modal-card">
-
-            <button
-                id="close-modal"
-                class="modal-close"
-                type="button"
-                aria-label="Close"
-            >
-                ×
-            </button>
-
-
-            <div
-                id="medicine-details-content"
-                class="modal-content"
-            >
-            </div>
-
+            <button id="close-modal" class="modal-close" type="button" aria-label="Close">×</button>
+            <div id="medicine-details-content" class="modal-content"></div>
         </article>
-
     </div>
-
-
-
-    <!-- =========================================
-         JAVASCRIPT
-    ========================================= -->
-
     <script src="theme.js"></script>
-
+    <script src="dosecare-v2/js/database.js"></script>
+    <script src="dosecare-v2/data/paracetamol.js"></script>
+    <script src="dosecare-v2/data/ibuprofen.js"></script>
+    <script src="dosecare-v2/data/mefenamic-acid.js"></script>
+    <script src="dosecare-v2/data/amoxicillin.js"></script>
+    <script src="dosecare-v2/data/amoxicillin-clavulanate.js"></script>
+    <script src="dosecare-v2/data/azithromycin.js"></script>
+    <script src="dosecare-v2/data/cephalexin.js"></script>
+    <script src="dosecare-v2/data/cefuroxime.js"></script>
+    <script src="dosecare-v2/data/cefixime.js"></script>
+    <script src="dosecare-v2/data/cefpodoxime.js"></script>
+    <script src="dosecare-v2/data/cefdinir.js"></script>
+    <script src="dosecare-v2/data/cefprozil.js"></script>
+    <script src="dosecare-v2/data/clarithromycin.js"></script>
+    <script src="dosecare-v2/data/clindamycin.js"></script>
+    <script src="dosecare-v2/data/cefaclor.js"></script>
+    <script src="dosecare-v2/data/erythromycin.js"></script>
+    <script src="dosecare-v2/data/cetirizine.js"></script>
+    <script src="dosecare-v2/data/loratadine.js"></script>
+    <script src="dosecare-v2/data/diphenhydramine.js"></script>
+    <script src="dosecare-v2/data/ondansetron.js"></script>
+    <script src="dosecare-v2/data/prednisolone.js"></script>
+    <script src="dosecare-v2/data/salbutamol.js"></script>
+    <script src="dosecare-v2/data/lactulose.js"></script>
+    <script src="dosecare-v2/data/omeprazole.js"></script>
+    <script src="dosecare-v2/data/magnesium-hydroxide.js"></script>
+    <script src="dosecare-v2/data/famotidine.js"></script>
+    <script src="dosecare-v2/data/sulfamethoxazole-trimethoprim.js"></script>
     <script src="medicines.js"></script>
-
+    <script>
+        if (typeof registerMedicines === 'function' && window.DoseCareV2Database) {
+            registerMedicines(window.DoseCareV2Database.getAll());
+        }
+    </script>
     <script src="medicines-page.js"></script>
-
-
 </body>
-
 </html>
