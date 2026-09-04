@@ -36,6 +36,16 @@
     db.getAll().forEach(m => (m.regimens || []).forEach(r => assert(allowed.has(r.type), `${m.id}/${r.id}: unsupported regimen type ${r.type}`)));
   });
 
+  test('scheduled regimens contain usable schedule steps', () => {
+    db.getAll().forEach(m => (m.regimens || []).forEach(r => {
+      if (!Array.isArray(r.schedule)) return;
+      assert(r.schedule.length > 0, `${m.id}/${r.id}: empty schedule`);
+      r.schedule.forEach((step, i) => {
+        assert(Number.isFinite(Number(step.doseMg)) || Number.isFinite(Number(step.doseMgPerKg ?? step.doseMgPerKgPerDose)), `${m.id}/${r.id} step ${i + 1}: missing dose`);
+      });
+    }));
+  });
+
   test('allowedFormulations references existing formulations', () => {
     db.getAll().forEach(m => (m.regimens || []).forEach(r => {
       if (!r.allowedFormulations) return;
@@ -176,6 +186,32 @@
     assert(near(result.lowMg, 160 / 3), `Expected 3-dose split of ${160 / 3} mg, got ${result.lowMg}`);
     assert(near(result.alternativeLowMg, 40), `Expected 4-dose split of 40 mg, got ${result.alternativeLowMg}`);
     assert(near(result.alternativeLowMl, 40 / 15), `Expected 2.6667 mL, got ${result.alternativeLowMl}`);
+  });
+
+  test('ondansetron 4–11 initial chemotherapy phase returns all three labeled doses', () => {
+    const m = db.getById('ondansetron');
+    const r = m.regimens.find(x => x.id === 'chemotherapy-4-11-initial');
+    assert(Array.isArray(r.schedule) && r.schedule.length === 3, 'Expected three initial-phase doses');
+    const result = engine.calculate({ medicine: m, regimen: r, age: 8, ageUnit: 'years', formulation: m.formulations[0] });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(result.schedule.length === 3, `Expected 3 schedule entries, got ${result.schedule.length}`);
+    assert(result.schedule.every(step => near(step.doseMg, 4)), 'Each initial dose should be 4 mg');
+    assert(near(result.scheduleTotalMg, 12), `Expected 12 mg across initial phase, got ${result.scheduleTotalMg}`);
+    assert(near(result.scheduleTotalMl, 15), `Expected 15 mL across initial phase, got ${result.scheduleTotalMl}`);
+    assert(result.schedule[0].timeAfterHours === 0 && result.schedule[1].timeAfterHours === 4 && result.schedule[2].timeAfterHours === 8, 'Incorrect 4–11 timing sequence');
+  });
+
+  test('ondansetron 12–17 initial chemotherapy phase returns both labeled doses', () => {
+    const m = db.getById('ondansetron');
+    const r = m.regimens.find(x => x.id === 'chemotherapy-12-17-initial');
+    assert(Array.isArray(r.schedule) && r.schedule.length === 2, 'Expected two initial-phase doses');
+    const result = engine.calculate({ medicine: m, regimen: r, age: 15, ageUnit: 'years', formulation: m.formulations[0] });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(result.schedule.length === 2, `Expected 2 schedule entries, got ${result.schedule.length}`);
+    assert(result.schedule.every(step => near(step.doseMg, 8)), 'Each initial dose should be 8 mg');
+    assert(near(result.scheduleTotalMg, 16), `Expected 16 mg across initial phase, got ${result.scheduleTotalMg}`);
+    assert(near(result.scheduleTotalMl, 20), `Expected 20 mL across initial phase, got ${result.scheduleTotalMl}`);
+    assert(result.schedule[0].timeAfterHours === 0 && result.schedule[1].timeAfterHours === 8, 'Incorrect 12–17 timing sequence');
   });
 
   window.DoseCareV2DosingTests = {
