@@ -5,6 +5,7 @@ const root=document.getElementById('result-stack');
 let raw=null;
 try{raw=sessionStorage.getItem('dosecareV2Result');}catch(error){console.warn('DoseCare sessionStorage unavailable:',error);}
 if(!raw){try{raw=localStorage.getItem('dosecareV2Result');}catch(error){console.warn('DoseCare localStorage unavailable:',error);}}
+if(!raw&&location.hash.startsWith('#data=')){try{raw=decodeURIComponent(location.hash.slice(6));}catch(error){console.warn('DoseCare URL result payload could not be decoded:',error);}}
 const esc=v=>String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
 const fmt=v=>Number.isFinite(Number(v))?Number(v).toFixed(2).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1'):'—';
 const ageText=(age,unit)=>age==null?'Not provided':`${fmt(age)} ${unit||''}`.trim();
@@ -29,40 +30,5 @@ if(d.lowMl!=null&&!Array.isArray(d.schedule)&&!isVolume)steps.push(`<div class="
 const alternative=d.alternativeFrequency&&d.alternativeLowMg!=null?`${fmt(d.alternativeLowMg)}${d.alternativeHighMg!==d.alternativeLowMg?`–${fmt(d.alternativeHighMg)}`:''} mg/dose${d.alternativeLowMl!=null?` (${fmt(d.alternativeLowMl)}${d.alternativeHighMl!==d.alternativeLowMl?`–${fmt(d.alternativeHighMl)}`:''} mL/dose)`:''}`:null;
 const maxDaily=r.maximumDailyDose??r.maxDailyDoseMg??r.maxDailyDose??m.maximumDailyDose;
 const calculatedDaily=isVolume?'Not applicable':(d.dailyLowMg!=null?(d.dailyLowMg===d.dailyHighMg?`${fmt(d.dailyLowMg)} mg/day`:`${fmt(d.dailyLowMg)}–${fmt(d.dailyHighMg)} mg/day`):'See regimen');
-root.innerHTML=`
-<article class="glass-card result-card">
- <p class="eyebrow">PATIENT INFORMATION</p>
- <div class="info-grid">
-  <div><span>Medicine</span><strong>${esc(m.name)}</strong></div>
-  <div><span>Condition / regimen</span><strong>${esc(r.condition||'Pediatric dose')}</strong></div>
-  <div><span>Age</span><strong>${esc(ageText(d.age,d.ageUnit))}</strong></div>
-  <div><span>Weight</span><strong>${d.weight!=null?`${fmt(d.weight)} kg`:'Not required'}</strong></div>
-  <div><span>Formulation</span><strong>${esc(conc||'Not specified')}</strong></div>
-  <div><span>Regimen</span><strong>${esc(freq)}</strong></div>
- </div>
- <div class="dose-output"><strong>${esc(dose)}</strong><strong>${esc(vol)}</strong></div>
-</article>
-<article class="glass-card result-card">
- <p class="eyebrow">STEP-BY-STEP CALCULATION</p>
- <div class="calculation-list">${steps.join('')}</div>
- ${alternative?`<div class="result-meta"><span>Alternative frequency</span><strong>${fmt(d.alternativeFrequency)} times daily — ${esc(alternative)}</strong></div>`:''}
-</article>
-<article class="glass-card result-card">
- <p class="eyebrow">ADDITIONAL DETAILS</p>
- <h1 class="medicine-heading">${esc(m.name)}</h1>
- <div class="info-grid">
-  <div><span>Active ingredient</span><strong>${esc(m.activeIngredient||'Not configured')}</strong></div>
-  <div><span>Drug class</span><strong>${esc(info.class||'Not configured')}</strong></div>
-  <div><span>Regimen</span><strong>${esc(freq)}</strong></div>
-  <div><span>Maximum daily dose</span><strong>${isVolume?'Not applicable':(maxDaily!=null?`${fmt(maxDaily)} mg/day`:'See source label')}</strong></div>
-  <div><span>Calculated daily dose</span><strong>${esc(calculatedDaily)}</strong></div>
- </div>
- <div class="info-block"><span>Mechanism of action</span><p>${esc(mechanism)}</p></div>
- <div class="info-block"><span>Indications</span><p>${esc((info.indications||[]).join(' • ')||'Not configured')}</p></div>
- <div class="info-block"><span>Precautions & warnings</span><p>${esc(precautions.join(' • ')||'Not configured')}</p></div>
- <div class="info-block"><span>Adverse effects</span><p>${esc(adverseEffects.join(' • ')||'Not configured')}</p></div>
- ${interactions.length?`<div class="info-block"><span>Interactions</span><p>${esc(interactions.join(' • '))}</p></div>`:''}
- <div class="info-block"><span>Notes</span><p>${esc(info.notes||'')}</p></div>
- <div class="sources"><p class="eyebrow">SOURCES & REFERENCES</p>${refs||'<p>No source record attached.</p>'}</div>
-</article>`;
+root.innerHTML=`<article class="glass-card result-card"><p class="eyebrow">PATIENT INFORMATION</p><div class="info-grid"><div><span>Medicine</span><strong>${esc(m.name)}</strong></div><div><span>Condition / regimen</span><strong>${esc(r.condition||'Pediatric dose')}</strong></div><div><span>Age</span><strong>${esc(ageText(d.age,d.ageUnit))}</strong></div><div><span>Weight</span><strong>${d.weight!=null?`${fmt(d.weight)} kg`:'Not required'}</strong></div><div><span>Formulation</span><strong>${esc(conc||'Not specified')}</strong></div><div><span>Regimen</span><strong>${esc(freq)}</strong></div></div><div class="dose-output"><strong>${esc(dose)}</strong><strong>${esc(vol)}</strong></div></article><article class="glass-card result-card"><p class="eyebrow">STEP-BY-STEP CALCULATION</p><div class="calculation-list">${steps.join('')}</div>${alternative?`<div class="result-meta"><span>Alternative frequency</span><strong>${fmt(d.alternativeFrequency)} times daily — ${esc(alternative)}</strong></div>`:''}</article><article class="glass-card result-card"><p class="eyebrow">ADDITIONAL DETAILS</p><h1 class="medicine-heading">${esc(m.name)}</h1><div class="info-grid"><div><span>Active ingredient</span><strong>${esc(m.activeIngredient||'Not configured')}</strong></div><div><span>Drug class</span><strong>${esc(info.class||'Not configured')}</strong></div><div><span>Regimen</span><strong>${esc(freq)}</strong></div><div><span>Maximum daily dose</span><strong>${isVolume?'Not applicable':(maxDaily!=null?`${fmt(maxDaily)} mg/day`:'See source label')}</strong></div><div><span>Calculated daily dose</span><strong>${esc(calculatedDaily)}</strong></div></div><div class="info-block"><span>Mechanism of action</span><p>${esc(mechanism)}</p></div><div class="info-block"><span>Indications</span><p>${esc((info.indications||[]).join(' • ')||'Not configured')}</p></div><div class="info-block"><span>Precautions & warnings</span><p>${esc(precautions.join(' • ')||'Not configured')}</p></div><div class="info-block"><span>Adverse effects</span><p>${esc(adverseEffects.join(' • ')||'Not configured')}</p></div>${interactions.length?`<div class="info-block"><span>Interactions</span><p>${esc(interactions.join(' • '))}</p></div>`:''}<div class="info-block"><span>Notes</span><p>${esc(info.notes||'')}</p></div><div class="sources"><p class="eyebrow">SOURCES & REFERENCES</p>${refs||'<p>No source record attached.</p>'}</div></article>`;
 })();
