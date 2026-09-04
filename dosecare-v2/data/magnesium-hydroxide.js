@@ -45,11 +45,11 @@ window.DoseCareV2Database?.register({
     notes: 'PEG is generally preferred first-line for functional constipation when available. Magnesium hydroxide is an alternative osmotic laxative. The 2026 guideline is the pediatric dosing source; current DailyMed product labeling can have different pediatric age restrictions and must not be treated as the source of the configured 2–5 year dose.',
     sources: [
       { organization: 'ESPGHAN / NASPGHAN', title: 'Guidelines for treatment of functional constipation in children aged 0–18 years (2026) — primary pediatric dosing source', url: 'https://onlinelibrary.wiley.com/doi/10.1002/jpn3.70447' },
-      { organization: 'DailyMed', title: 'Milk of Magnesia — Magnesium Hydroxide Suspension 1200 mg/15 mL', url: 'https://www.dailymed.nl.gov/drugInfo.cfm?setid=3f7cff50-749b-5275-e063-6394a90af407' }
+      { organization: 'DailyMed', title: 'Milk of Magnesia — Magnesium Hydroxide Suspension 1200 mg/15 mL', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3f7cff50-749b-5275-e063-6394a90af407' }
     ]
   },
   sources: [
     { organization: 'ESPGHAN / NASPGHAN', title: 'Guidelines for treatment of functional constipation in children aged 0–18 years (2026) — primary pediatric dosing source', url: 'https://onlinelibrary.wiley.com/doi/10.1002/jpn3.70447' },
-    { organization: 'DailyMed', title: 'Milk of Magnesia — Magnesium Hydroxide Suspension 1200 mg/15 mL', url: 'https://www.dailymed.nl.gov/drugInfo.cfm?setid=3f7cff50-749b-5275-e063-6394a90af407' }
+    { organization: 'DailyMed', title: 'Milk of Magnesia — Magnesium Hydroxide Suspension 1200 mg/15 mL', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3f7cff50-749b-5275-e063-6394a90af407' }
   ]
 });
