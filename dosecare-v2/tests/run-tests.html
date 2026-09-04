@@ -2,5 +2,30 @@
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DoseCare V2 Regression Tests</title><style>body{font-family:system-ui,sans-serif;max-width:820px;margin:40px auto;padding:0 20px}pre{white-space:pre-wrap}.pass{color:#16833b}.fail{color:#b42318}</style></head>
 <body><h1>DoseCare V2 — Regression Tests</h1><pre id="output">Running tests…</pre>
-<script src="../js/database.js"></script><script src="../data/paracetamol.js"></script><script src="../data/ibuprofen.js"></script><script src="../data/amoxicillin.js"></script><script src="../data/cefprozil.js"></script><script src="../js/dosing-engine.js"></script><script src="./dosing-engine.test.js"></script>
+<script src="../js/database.js"></script>
+<script src="../data/amoxicillin.js"></script>
+<script src="../data/amoxicillin-clavulanate.js"></script>
+<script src="../data/azithromycin.js"></script>
+<script src="../data/cephalexin.js"></script>
+<script src="../data/cefuroxime.js"></script>
+<script src="../data/cefixime.js"></script>
+<script src="../data/cefpodoxime.js"></script>
+<script src="../data/cefdinir.js"></script>
+<script src="../data/cefprozil.js"></script>
+<script src="../data/clarithromycin.js"></script>
+<script src="../data/clindamycin.js"></script>
+<script src="../data/paracetamol.js"></script>
+<script src="../data/ibuprofen.js"></script>
+<script src="../data/mefenamic-acid.js"></script>
+<script src="../data/cetirizine.js"></script>
+<script src="../data/loratadine.js"></script>
+<script src="../data/diphenhydramine.js"></script>
+<script src="../data/salbutamol.js"></script>
+<script src="../data/ondansetron.js"></script>
+<script src="../data/lactulose.js"></script>
+<script src="../data/magnesium-hydroxide.js"></script>
+<script src="../data/omeprazole.js"></script>
+<script src="../data/prednisolone.js"></script>
+<script src="../js/dosing-engine.js"></script>
+<script src="./dosing-engine.test.js"></script>
 <script>(function(){const out=document.getElementById('output');try{if(!window.DoseCareV2DosingTests)throw new Error('Test suite did not load');const result=window.DoseCareV2DosingTests.run();out.textContent=(result.passed?'ALL TESTS PASSED':'TESTS FAILED')+'\n\n'+result.results.map(x=>(x.passed?'PASS: ':'FAIL: ')+x.name+(x.error?'\n  '+x.error:'')).join('\n\n');document.title=result.passed?'PASS — DoseCare V2':'FAIL — DoseCare V2';}catch(e){out.textContent='RUNNER ERROR\n\n'+e.message;document.title='ERROR — DoseCare V2';}})();</script></body></html>
