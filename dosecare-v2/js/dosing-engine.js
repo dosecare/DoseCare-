@@ -55,19 +55,29 @@
     return { ok: true, medicineId: medicine.id, regimen, weight: hasWeight ? w : null, weightLb: lb, age: hasAge ? a : null, ageUnit: hasAge ? ageUnit : null, frequencyText: regimen.frequencyText, frequency: null, lowMg, highMg: lowMg, lowMl, highMl: lowMl, dailyLowMg: null, dailyHighMg: null, mgPerMl, maximumDosesPer24Hours: regimen.maximumDosesPer24Hours, maximumApplied: null, calculationType: 'label_weight_age_based', concentrationText: formulation?.display || null };
   }
   function calculateScheduled({ medicine, regimen, weight, age, ageUnit, formulation }) {
-    const w = num(weight); if (w === null || w <= 0) return fail('Enter a valid child weight in kg.', 'INVALID_WEIGHT');
-    const boundError = validateBounds(regimen, w, age, ageUnit); if (boundError) return boundError;
     const mgPerMl = concentrationToMgPerMl(formulation); if (!mgPerMl) return fail('The selected oral-liquid concentration is not configured safely.', 'INVALID_CONCENTRATION');
-    const frequency = num(regimen.frequency ?? regimen.dosesPerDay ?? regimen.frequencyPerDay ?? 1);
-    const schedule = (regimen.schedule || []).map((step, index) => { const dose = num(step.doseMgPerKg ?? step.doseMgPerKgPerDose); if (dose === null || dose < 0) return null; const max = num(step.maxDoseMg); const mg = Math.min(w * dose, max !== null ? max : Infinity); return { index: index + 1, dayRange: step.dayRange || `Step ${index + 1}`, doseMgPerKg: dose, doseMg: mg, doseMl: mg / mgPerMl, maxDoseMg: max }; }).filter(Boolean);
+    const schedule = (regimen.schedule || []).map((step, index) => {
+      const fixedDose = num(step.doseMg);
+      const weightDose = num(step.doseMgPerKg ?? step.doseMgPerKgPerDose);
+      if (fixedDose === null && (weightDose === null || weightDose < 0)) return null;
+      const max = num(step.maxDoseMg);
+      const mg = fixedDose !== null ? fixedDose : Math.min(num(weight) * weightDose, max !== null ? max : Infinity);
+      if (mg < 0 || !Number.isFinite(mg)) return null;
+      return { index: index + 1, timeAfterHours: num(step.timeAfterHours), dayRange: step.dayRange || `Step ${index + 1}`, doseMgPerKg: weightDose, doseMg: mg, doseMl: mg / mgPerMl, maxDoseMg: max };
+    }).filter(Boolean);
     if (!schedule.length) return fail('The scheduled regimen has no valid dose steps.', 'INVALID_SCHEDULE');
-    return { ok: true, medicineId: medicine.id, regimen, weight: w, age: num(age), ageUnit, frequencyText: regimen.frequencyText, frequency, lowMg: schedule[0].doseMg, highMg: schedule[0].doseMg, lowMl: schedule[0].doseMl, highMl: schedule[0].doseMl, dailyLowMg: null, dailyHighMg: null, mgPerMl, maximumApplied: null, calculationType: 'scheduled_weight_based', concentrationText: formulation?.display || null, schedule };
+    const requiresWeight = schedule.some(step => step.doseMgPerKg !== null);
+    const w = num(weight);
+    if (requiresWeight && (w === null || w <= 0)) return fail('Enter a valid child weight in kg.', 'INVALID_WEIGHT');
+    const boundError = validateBounds(regimen, w, age, ageUnit); if (boundError) return boundError;
+    const totalInitialMg = schedule.reduce((sum, step) => sum + step.doseMg, 0);
+    return { ok: true, medicineId: medicine.id, regimen, weight: requiresWeight ? w : null, age: num(age), ageUnit, frequencyText: regimen.frequencyText, frequency: num(regimen.frequency ?? regimen.dosesPerDay ?? regimen.frequencyPerDay ?? schedule.length), lowMg: schedule[0].doseMg, highMg: schedule[0].doseMg, lowMl: schedule[0].doseMl, highMl: schedule[0].doseMl, dailyLowMg: null, dailyHighMg: null, scheduleTotalMg: totalInitialMg, scheduleTotalMl: totalInitialMg / mgPerMl, mgPerMl, maximumApplied: null, calculationType: 'scheduled', concentrationText: formulation?.display || null, schedule };
   }
   function calculate({ medicine, regimen, age, ageUnit, weight, formulation }) {
     if (!medicine || !regimen) return fail('A medicine and a valid regimen are required.', 'MISSING_REGIMEN');
     if (regimen.type === 'label_age_based') return calculateLabelAgeBased({ medicine, regimen, weight, age, ageUnit, formulation });
     if (regimen.type === 'label_weight_age_based') return calculateLabelWeightAge({ medicine, regimen, weight, age, ageUnit, formulation });
-    if (regimen.type === 'condition_based' && Array.isArray(regimen.schedule)) return calculateScheduled({ medicine, regimen, weight, age, ageUnit, formulation });
+    if (Array.isArray(regimen.schedule) && regimen.schedule.length) return calculateScheduled({ medicine, regimen, weight, age, ageUnit, formulation });
     const normalizedType = regimen.type === 'mg_per_kg_day' ? 'mg_per_kg_per_day' : regimen.type === 'mg_per_kg_single_dose' ? 'mg_per_kg_per_dose' : regimen.type;
     const needsWeight = regimen.requiresWeight ?? ['mg_per_kg_per_day', 'mg_per_kg_per_dose', 'weight_based'].includes(normalizedType);
     const needsAge = regimen.requiresAge ?? ['age_based'].includes(normalizedType);
@@ -85,18 +95,9 @@
     else if (normalizedType === 'mg_per_kg_per_dose') { lowMg = w * min; highMg = w * max; dailyLowMg = lowMg * frequency; dailyHighMg = highMg * frequency; }
     else if (['fixed_dose', 'age_based'].includes(normalizedType)) {
       const isDailyUnit = /\/day|per\s*day|daily/i.test(String(regimen.unit || ''));
-      if (isDailyUnit) {
-        dailyLowMg = min;
-        dailyHighMg = max;
-        lowMg = frequency > 0 ? dailyLowMg / frequency : dailyLowMg;
-        highMg = frequency > 0 ? dailyHighMg / frequency : dailyHighMg;
-      } else {
-        lowMg = min;
-        highMg = max;
-        if (frequency) { dailyLowMg = lowMg * frequency; dailyHighMg = highMg * frequency; }
-      }
-    }
-    else return fail(`Unsupported dosing type: ${regimen.type || 'unknown'}.`, 'UNSUPPORTED_DOSING_TYPE');
+      if (isDailyUnit) { dailyLowMg = min; dailyHighMg = max; lowMg = frequency > 0 ? dailyLowMg / frequency : dailyLowMg; highMg = frequency > 0 ? dailyHighMg / frequency : dailyHighMg; }
+      else { lowMg = min; highMg = max; if (frequency) { dailyLowMg = lowMg * frequency; dailyHighMg = highMg * frequency; } }
+    } else return fail(`Unsupported dosing type: ${regimen.type || 'unknown'}.`, 'UNSUPPORTED_DOSING_TYPE');
     const maximumDaily = num(regimen.maximumDailyDose ?? regimen.maxDailyDoseMg ?? regimen.maxDailyDose ?? medicine.maximumDailyDose);
     const maximumPerAdministration = num(regimen.maximumDosePerAdministration ?? regimen.maxDoseMgPerAdministration ?? regimen.maxDosePerAdministration ?? regimen.maximumDose ?? regimen.maxDoseMg);
     let maximumApplied = null, maximumAppliedType = null;
