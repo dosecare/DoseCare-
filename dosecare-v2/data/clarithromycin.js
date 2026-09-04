@@ -21,6 +21,8 @@ window.DoseCareV2Database?.register({
       frequency: 2,
       frequencyText: 'Every 12 hours for 10 days',
       minAgeMonths: 6,
+      maximumDailyDose: 1000,
+      maximumDosePerAdministration: 500,
       requiresWeight: true,
       requiresAge: true
     }
