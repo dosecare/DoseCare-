@@ -7,15 +7,7 @@ window.DoseCareV2Database?.register({
   route: 'Oral',
   category: 'Antibiotic',
   formulations: [
-    {
-      concentration: {
-        amount: 75,
-        unit: 'mg',
-        volume: 5,
-        volumeUnit: 'mL'
-      },
-      display: '75 mg/5 mL'
-    }
+    { id: '75-mg-5mL', concentration: { amount: 75, unit: 'mg', volume: 5, volumeUnit: 'mL' }, display: '75 mg/5 mL' }
   ],
   regimens: [
     {
@@ -65,36 +57,14 @@ window.DoseCareV2Database?.register({
     }
   ],
   information: {
-    mechanismOfAction: 'Lincosamide antibacterial that binds to the 50S ribosomal subunit and inhibits bacterial protein synthesis.',
-    indications: [
-      'Serious bacterial infections caused by susceptible organisms',
-      'Severe bacterial infections when an appropriate oral regimen is clinically indicated'
-    ],
-    adverseEffects: [
-      'Diarrhea',
-      'Abdominal pain',
-      'Nausea',
-      'Vomiting',
-      'Clostridioides difficile-associated diarrhea and colitis'
-    ],
-    warningsPrecautions: [
-      'Clindamycin has a boxed warning for Clostridioides difficile-associated diarrhea and colitis, which can be severe or fatal.',
-      'Discontinue the antibacterial if significant diarrhea occurs and evaluate appropriately.',
-      'Use only for confirmed or strongly suspected bacterial infections caused by susceptible organisms.'
-    ],
-    sources: [
-      {
-        organization: 'DailyMed',
-        title: 'Clindamycin Palmitate Hydrochloride for Oral Solution, USP (Pediatric) — current pediatric label',
-        url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a85e28ea-03be-471f-ad7f-f5c55c67ac97'
-      }
-    ]
+    class: 'Lincosamide antibacterial',
+    mechanism: 'Lincosamide antibacterial that binds to the 50S ribosomal subunit and inhibits bacterial protein synthesis.',
+    indications: ['Serious bacterial infections caused by susceptible organisms'],
+    adverseEffects: ['Diarrhea', 'Abdominal pain', 'Nausea', 'Vomiting', 'Clostridioides difficile-associated diarrhea and colitis'],
+    precautions: ['Clindamycin has a boxed warning for Clostridioides difficile-associated diarrhea and colitis, which can be severe or fatal.', 'Discontinue the antibacterial if significant diarrhea occurs and evaluate appropriately.', 'Use only for confirmed or strongly suspected bacterial infections caused by susceptible organisms.'],
+    notes: 'The pediatric oral solution is 75 mg/5 mL after reconstitution. The 37.5 mg three-times-daily recommendation for children weighing 10 kg or less is a minimum recommended dose consideration, not a universal mg/kg minimum and not a hard engine override. For beta-hemolytic streptococcal infections, treatment should continue for at least 10 days.'
   },
   sources: [
-    {
-      organization: 'DailyMed',
-      title: 'Clindamycin Palmitate Hydrochloride for Oral Solution, USP (Pediatric) — current pediatric label',
-      url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a85e28ea-03be-471f-ad7f-f5c55c67ac97'
-    }
+    { organization: 'DailyMed', title: 'Clindamycin Palmitate Hydrochloride for Oral Solution, USP (Pediatric) — current pediatric label', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a85e28ea-03be-471f-ad7f-f5c55c67ac97' }
   ]
 });
