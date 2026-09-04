@@ -6,7 +6,7 @@
 
   const medicineFiles = [
     'paracetamol.js','ibuprofen.js','mefenamic-acid.js',
-    'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js',
+    'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js',
     'cetirizine.js','loratadine.js','diphenhydramine.js',
     'ondansetron.js','prednisolone.js','salbutamol.js',
     'lactulose.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js',
