@@ -8,7 +8,7 @@
     'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js','metronidazole.js','ors.js',
     'cetirizine.js','loratadine.js','diphenhydramine.js',
     'ondansetron.js','prednisolone.js','salbutamol.js',
-    'lactulose.js','macrogol.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js'
+    'lactulose.js','macrogol.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js','probiotics.js'
   ];
   function loadScript(src) {
     return new Promise((resolve, reject) => {
@@ -20,6 +20,7 @@
       for (const file of medicineFiles) await loadScript(`data/${file}`);
       await loadScript('js/dosing-engine.js');
       await loadScript('js/macrogol-engine-adapter.js');
+      await loadScript('js/probiotic-engine-adapter.js');
       await loadScript('js/ors-engine.js');
       await loadScript('js/calculator.js');
       global.DoseCareV2Ready = true;
