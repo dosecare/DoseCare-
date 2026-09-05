@@ -31,4 +31,5 @@
 <script src="js/database.js"></script>
 <script src="js/database-loader.js"></script>
 <script>(function(){const search=document.getElementById('medicine-search'),select=document.getElementById('medicine-select');if(!search||!select)return;function filterMedicines(){const query=search.value.trim().toLowerCase(),current=select.value;Array.from(select.options).forEach((option,index)=>{if(index===0)return;option.hidden=!!query&&!option.textContent.trim().toLowerCase().startsWith(query)});if(current&&select.options[select.selectedIndex]&&select.options[select.selectedIndex].hidden)select.value=''}search.addEventListener('input',filterMedicines)})();</script>
+<script src="js/dynamic-fields.js"></script>
 </body></html>
