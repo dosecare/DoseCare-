@@ -1,8 +1,8 @@
 window.DoseCareV2Audit = (() => {
   const expectedIds = [
-    'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin',
-    'paracetamol','ibuprofen','mefenamic-acid','ambroxol','cetirizine','loratadine','diphenhydramine','salbutamol','ondansetron','lactulose','magnesium-hydroxide','omeprazole','prednisolone',
-    'cefaclor','erythromycin','metronidazole','ors','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone'
+    'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole','ors',
+    'paracetamol','ibuprofen','mefenamic-acid','ambroxol','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
+    'lactulose','macrogol','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','probiotics','hyoscine-butylbromide'
   ];
   const validTypes = new Set(['mg_per_kg_per_day','mg_per_kg_per_dose','condition_based','fixed_dose','age_based','label_age_based','label_weight_age_based','scheduled','weight_based','volume_by_age','volume_per_kg']);
   const errors = [], warnings = [];
