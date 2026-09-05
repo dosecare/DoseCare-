@@ -2,7 +2,7 @@ window.DoseCareV2Audit = (() => {
   const expectedIds = [
     'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole','ors',
     'paracetamol','ibuprofen','mefenamic-acid','ambroxol','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
-    'lactulose','macrogol','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','probiotics','hyoscine-butylbromide'
+    'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide'
   ];
   const validTypes = new Set(['mg_per_kg_per_day','mg_per_kg_per_dose','condition_based','fixed_dose','age_based','label_age_based','label_weight_age_based','scheduled','weight_based','volume_by_age','volume_per_kg']);
   const errors = [], warnings = [];
@@ -20,7 +20,7 @@ window.DoseCareV2Audit = (() => {
       if (m[field] == null) errors.push(`${m.id}: missing required field ${field}`);
     }
     if (m.route !== 'Oral') errors.push(`${m.id}: route must be Oral`);
-    if (!/suspension|solution|syrup|drops|powder/i.test(String(m.dosageForm || ''))) errors.push(`${m.id}: dosageForm is not an oral liquid`);
+    if (!/suspension|solution|syrup|drops/i.test(String(m.dosageForm || ''))) errors.push(`${m.id}: dosageForm is not an oral liquid`);
     if (!Array.isArray(m.formulations) || !m.formulations.length) errors.push(`${m.id}: no formulations`);
     for (const f of (m.formulations || [])) {
       if (f.volumeBased === true) continue;
@@ -42,7 +42,7 @@ window.DoseCareV2Audit = (() => {
     const info = m.information || {};
     if (info.mechanism == null) warnings.push(`${m.id}: missing canonical information.mechanism`);
     if (info.precautions == null) warnings.push(`${m.id}: missing canonical information.precautions`);
-    if (info.mechanismOfAction != null || info.warningsPrecautions != null) errors.push(`${m.id}: legacy metadata key leaked into runtime`);
+    if (info.mechanismOfAction != null || info.warningsPrecautions != null || info.source != null || info.sourceUrl != null) errors.push(`${m.id}: legacy metadata key leaked into runtime`);
     if (!Array.isArray(m.sources) || !m.sources.length) errors.push(`${m.id}: no sources`);
   }
   return { passed: errors.length === 0, errors, warnings, medicineCount: medicines.length };
