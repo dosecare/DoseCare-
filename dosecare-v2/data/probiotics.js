@@ -11,15 +11,15 @@ window.DoseCareV2Database?.register({
   route: 'Oral',
   category: 'Gastrointestinal / Probiotic',
   formulations: [
-    { id: 'probiotic-lgg', display: 'Lacticaseibacillus rhamnosus GG — strain-specific preparation', probioticBased: true, doseUnit: 'CFU' },
-    { id: 'probiotic-s-boulardii', display: 'Saccharomyces boulardii — strain-specific preparation', probioticBased: true, doseUnit: 'mg' },
-    { id: 'probiotic-l-reuteri', display: 'Limosilactobacillus reuteri DSM 17938 — strain-specific preparation', probioticBased: true, doseUnit: 'CFU' }
+    { id: 'probiotic-lgg', display: 'Lacticaseibacillus rhamnosus GG — strain-specific preparation', probioticBased: true, volumeBased: true, doseUnit: 'CFU' },
+    { id: 'probiotic-s-boulardii', display: 'Saccharomyces boulardii — strain-specific preparation', probioticBased: true, volumeBased: true, doseUnit: 'mg' },
+    { id: 'probiotic-l-reuteri', display: 'Limosilactobacillus reuteri DSM 17938 — strain-specific preparation', probioticBased: true, volumeBased: true, doseUnit: 'CFU' }
   ],
   regimens: [
     {
       id: 'acute-gastroenteritis-lgg',
       condition: 'Acute gastroenteritis — adjunct to rehydration',
-      type: 'fixed_range',
+      type: 'probiotic_fixed',
       requiresAge: false,
       requiresWeight: false,
       doseMin: 10000000000,
@@ -32,7 +32,7 @@ window.DoseCareV2Database?.register({
     {
       id: 'acute-gastroenteritis-s-boulardii',
       condition: 'Acute gastroenteritis — adjunct to rehydration',
-      type: 'fixed_range',
+      type: 'probiotic_fixed',
       requiresAge: false,
       requiresWeight: false,
       doseMin: 250,
@@ -45,7 +45,7 @@ window.DoseCareV2Database?.register({
     {
       id: 'acute-gastroenteritis-l-reuteri',
       condition: 'Acute gastroenteritis — adjunct to rehydration',
-      type: 'fixed_range',
+      type: 'probiotic_fixed',
       requiresAge: false,
       requiresWeight: false,
       doseMin: 100000000,
@@ -58,26 +58,15 @@ window.DoseCareV2Database?.register({
     {
       id: 'antibiotic-associated-diarrhea-lgg',
       condition: 'Prevention of antibiotic-associated diarrhea',
-      type: 'fixed_range',
+      type: 'probiotic_fixed',
       requiresAge: false,
       requiresWeight: false,
       doseMin: 5000000000,
-      doseMax: null,
+      doseMax: 5000000000,
       doseUnit: 'CFU/day',
+      durationDays: null,
       frequencyText: 'At least 5 × 10⁹ CFU/day, started simultaneously with antibiotic treatment',
       allowedFormulations: ['probiotic-lgg']
-    },
-    {
-      id: 'antibiotic-associated-diarrhea-s-boulardii',
-      condition: 'Prevention of antibiotic-associated diarrhea',
-      type: 'fixed_range',
-      requiresAge: false,
-      requiresWeight: false,
-      doseMin: 5000000000,
-      doseMax: null,
-      doseUnit: 'CFU/day',
-      frequencyText: 'At least 5 × 10⁹ CFU/day, started simultaneously with antibiotic treatment',
-      allowedFormulations: ['probiotic-s-boulardii']
     }
   ],
   information: {
