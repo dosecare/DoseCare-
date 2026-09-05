@@ -4,7 +4,7 @@
 (function (global) {
   'use strict';
   const medicineFiles = [
-    'paracetamol.js','ibuprofen.js','mefenamic-acid.js',
+    'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js',
     'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js','metronidazole.js','ors.js',
     'cetirizine.js','loratadine.js','desloratadine.js','chlorpheniramine.js','fexofenadine.js','diphenhydramine.js',
     'ondansetron.js','prednisolone.js','salbutamol.js',
