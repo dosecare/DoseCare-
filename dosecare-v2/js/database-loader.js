@@ -19,6 +19,7 @@
     try {
       for (const file of medicineFiles) await loadScript(`data/${file}`);
       await loadScript('js/dosing-engine.js');
+      await loadScript('js/macrogol-engine-adapter.js');
       await loadScript('js/ors-engine.js');
       await loadScript('js/calculator.js');
       global.DoseCareV2Ready = true;
