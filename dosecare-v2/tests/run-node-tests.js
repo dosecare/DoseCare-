@@ -11,11 +11,12 @@ loadScript(path.join(root, 'js', 'database.js'));
 global.DoseCareV2Database = global.window.DoseCareV2Database;
 const expectedFiles = [
   'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js','metronidazole.js','ors.js',
-  'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js','cetirizine.js','loratadine.js','diphenhydramine.js','salbutamol.js','ondansetron.js','lactulose.js','magnesium-hydroxide.js','omeprazole.js','prednisolone.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js'
+  'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js','cetirizine.js','loratadine.js','desloratadine.js','chlorpheniramine.js','fexofenadine.js','diphenhydramine.js','ondansetron.js','prednisolone.js','salbutamol.js','lactulose.js','macrogol.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js','probiotics.js','hyoscine-butylbromide.js'
 ];
 const actualFiles = fs.readdirSync(dataDir).filter(name => name.endsWith('.js')).sort();
-if (actualFiles.length !== expectedFiles.length || expectedFiles.some(name => !actualFiles.includes(name))) throw new Error(`Medicine file manifest mismatch. Expected ${expectedFiles.length} known files, found ${actualFiles.length}: ${actualFiles.join(', ')}`);
-expectedFiles.forEach(name => loadScript(path.join(dataDir, name)));
+const sortedExpectedFiles = expectedFiles.slice().sort();
+if (actualFiles.length !== sortedExpectedFiles.length || sortedExpectedFiles.some((name, index) => name !== actualFiles[index])) throw new Error(`Medicine file manifest mismatch. Expected ${sortedExpectedFiles.length} known files, found ${actualFiles.length}: ${actualFiles.join(', ')}`);
+sortedExpectedFiles.forEach(name => loadScript(path.join(dataDir, name)));
 loadScript(path.join(root, 'js', 'dosing-engine.js'));
 loadScript(path.join(root, 'js', 'ors-engine.js'));
 loadScript(path.join(__dirname, 'dosing-engine.test.js'));
