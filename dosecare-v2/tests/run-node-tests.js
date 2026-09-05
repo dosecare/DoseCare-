@@ -11,7 +11,7 @@ loadScript(path.join(root, 'js', 'database.js'));
 global.DoseCareV2Database = global.window.DoseCareV2Database;
 const expectedFiles = [
   'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js','metronidazole.js','ors.js',
-  'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js','cetirizine.js','loratadine.js','desloratadine.js','chlorpheniramine.js','fexofenadine.js','diphenhydramine.js','ondansetron.js','prednisolone.js','salbutamol.js','lactulose.js','macrogol.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js','probiotics.js','hyoscine-butylbromide.js'
+  'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js','cetirizine.js','loratadine.js','desloratadine.js','chlorpheniramine.js','fexofenadine.js','diphenhydramine.js','ondansetron.js','prednisolone.js','salbutamol.js','lactulose.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js','hyoscine-butylbromide.js'
 ];
 const actualFiles = fs.readdirSync(dataDir).filter(name => name.endsWith('.js')).sort();
 const sortedExpectedFiles = expectedFiles.slice().sort();
