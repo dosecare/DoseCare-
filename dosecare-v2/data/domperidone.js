@@ -24,7 +24,7 @@
       frequency:3,
       dosesPerDay:3,
       frequencyText:'0.25 mg/kg/dose up to 3 times daily',
-      maximumDailyDose:0.75,
+      maximumDailyDosePerKg:0.75,
       maximumDailyDoseUnit:'mg/kg/day',
       durationDays:7,
       requiresAge:false,
