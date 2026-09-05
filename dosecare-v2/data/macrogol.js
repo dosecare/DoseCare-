@@ -15,6 +15,7 @@ window.DoseCareV2Database?.register({
       id: 'macrogol-paediatric-6-9g-sachet',
       display: 'Macrogol 3350 6.563 g + electrolytes per sachet',
       sachetBased: true,
+      volumeBased: true,
       sachetContent: { macrogol3350: 6.563, unit: 'g' },
       reconstitution: 'Dissolve each sachet in 62.5 mL water.'
     }
