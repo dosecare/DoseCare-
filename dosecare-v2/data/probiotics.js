@@ -1,90 +1,34 @@
 /* DoseCare V2 — pediatric oral probiotics
- * Evidence source: ESPGHAN 2023 Position Paper on probiotics for pediatric GI disorders.
- * Oral powder / drops only; strain-specific dosing is used because probiotic efficacy is strain-specific.
+ * Product-specific implementation: Culturelle Kids Daily Probiotic Packets.
+ * Clinical targets are based on ESPGHAN; administration is expressed as packets,
+ * using the labeled 5 billion CFU per packet strength.
  */
 window.DoseCareV2Database?.register({
-  id: 'probiotics',
-  name: 'Probiotics',
-  genericName: 'Probiotics',
-  activeIngredient: 'Strain-specific probiotic preparations',
-  dosageForm: 'Oral powder / drops',
-  route: 'Oral',
-  category: 'Gastrointestinal / Probiotic',
-  formulations: [
-    { id: 'probiotic-lgg', display: 'Lacticaseibacillus rhamnosus GG — strain-specific preparation', probioticBased: true, volumeBased: true, doseUnit: 'CFU' },
-    { id: 'probiotic-s-boulardii', display: 'Saccharomyces boulardii — strain-specific preparation', probioticBased: true, volumeBased: true, doseUnit: 'mg' },
-    { id: 'probiotic-l-reuteri', display: 'Limosilactobacillus reuteri DSM 17938 — strain-specific preparation', probioticBased: true, volumeBased: true, doseUnit: 'CFU' }
-  ],
+  id: 'probiotics', name: 'Probiotics', genericName: 'Probiotics',
+  activeIngredient: 'Lactobacillus rhamnosus GG (LGG), ATCC 53103',
+  dosageForm: 'Oral powder packet', route: 'Oral', category: 'Gastrointestinal / Probiotic',
+  formulations: [{ id: 'culturelle-kids-lgg-5b-packet', display: 'Culturelle Kids Daily Probiotic Packet — 5 billion CFU LGG per packet', probioticBased: true, sachetBased: true, sachetContent: { lggCfu: 5000000000, unit: 'CFU' }, administrationUnit: 'packet', administrationLabel: 'packet', doseUnit: 'CFU/packet', minimumAgeYears: 1, productSource: 'Culturelle Kids Daily Probiotic Packets (NPN 80047737)' }],
   regimens: [
-    {
-      id: 'acute-gastroenteritis-lgg',
-      condition: 'Acute gastroenteritis — adjunct to rehydration',
-      type: 'probiotic_fixed',
-      requiresAge: false,
-      requiresWeight: false,
-      doseMin: 10000000000,
-      doseMax: 10000000000,
-      doseUnit: 'CFU/day',
-      durationDays: '5–7',
-      frequencyText: 'At least 1 × 10¹⁰ CFU/day for 5–7 days',
-      allowedFormulations: ['probiotic-lgg']
-    },
-    {
-      id: 'acute-gastroenteritis-s-boulardii',
-      condition: 'Acute gastroenteritis — adjunct to rehydration',
-      type: 'probiotic_fixed',
-      requiresAge: false,
-      requiresWeight: false,
-      doseMin: 250,
-      doseMax: 750,
-      doseUnit: 'mg/day',
-      durationDays: '5–7',
-      frequencyText: '250–750 mg/day for 5–7 days',
-      allowedFormulations: ['probiotic-s-boulardii']
-    },
-    {
-      id: 'acute-gastroenteritis-l-reuteri',
-      condition: 'Acute gastroenteritis — adjunct to rehydration',
-      type: 'probiotic_fixed',
-      requiresAge: false,
-      requiresWeight: false,
-      doseMin: 100000000,
-      doseMax: 400000000,
-      doseUnit: 'CFU/day',
-      durationDays: 5,
-      frequencyText: '1 × 10⁸ to 4 × 10⁸ CFU/day for 5 days',
-      allowedFormulations: ['probiotic-l-reuteri']
-    },
-    {
-      id: 'antibiotic-associated-diarrhea-lgg',
-      condition: 'Prevention of antibiotic-associated diarrhea',
-      type: 'probiotic_fixed',
-      requiresAge: false,
-      requiresWeight: false,
-      doseMin: 5000000000,
-      doseMax: 5000000000,
-      doseUnit: 'CFU/day',
-      durationDays: null,
-      frequencyText: 'At least 5 × 10⁹ CFU/day, started simultaneously with antibiotic treatment',
-      allowedFormulations: ['probiotic-lgg']
-    }
+    { id: 'acute-gastroenteritis-lgg-culturelle', condition: 'Acute gastroenteritis — adjunct to rehydration', type: 'probiotic_product', requiresAge: true, requiresWeight: false, minAgeYears: 1, doseMin: 10000000000, doseMax: 10000000000, doseUnit: 'CFU/day', administrationMin: 2, administrationMax: 2, administrationUnit: 'packet/day', durationDays: '5–7', frequencyText: '2 packets once daily to provide 10 billion CFU/day', allowedFormulations: ['culturelle-kids-lgg-5b-packet'] },
+    { id: 'antibiotic-associated-diarrhea-lgg-culturelle', condition: 'Prevention of antibiotic-associated diarrhea', type: 'probiotic_product', requiresAge: true, requiresWeight: false, minAgeYears: 1, doseMin: 5000000000, doseMax: 5000000000, doseUnit: 'CFU/day', administrationMin: 1, administrationMax: 1, administrationUnit: 'packet/day', durationDays: null, frequencyText: '1 packet once daily, started simultaneously with antibiotic treatment', allowedFormulations: ['culturelle-kids-lgg-5b-packet'] }
   ],
   information: {
-    class: 'Probiotic',
-    mechanism: 'Strain-dependent modulation of the intestinal microbiota and host gastrointestinal environment.',
+    class: 'Probiotic', mechanism: 'Strain-dependent modulation of the intestinal microbiota and host gastrointestinal environment.',
     indications: ['Selected strains may be used as adjuncts in acute gastroenteritis', 'Selected strains may be considered for prevention of antibiotic-associated diarrhea'],
-    contraindications: ['Use requires clinical consideration in severely immunocompromised or critically ill patients; product-specific contraindications must also be checked.'],
-    adverseEffects: ['Gastrointestinal symptoms may occur, including bloating, abdominal discomfort or flatulence.'],
-    precautions: ['Probiotic effects are strain-specific; the product must contain the strain and dose supported by evidence.', 'Probiotics are adjunctive and do not replace oral rehydration therapy in acute gastroenteritis.', 'Follow the manufacturer instructions for reconstitution, storage and administration of the selected preparation.'],
-    administration: 'Administer orally according to the strain-specific product instructions.',
-    pediatricUse: 'ESPGHAN 2023 gives conditional recommendations for selected strains in children with acute gastroenteritis and for prevention of antibiotic-associated diarrhea. Evidence certainty varies and recommendations are strain-specific.',
-    notes: 'DoseCare does not convert CFU into mL because commercial probiotic concentrations vary by strain and product. Select a strain-specific oral preparation and follow its labeled administration instructions.',
+    contraindications: ['Do not use in an immune-compromised child unless specifically advised by a healthcare professional; check the product label for contraindications.'],
+    adverseEffects: ['Minor gastrointestinal symptoms such as bloating or gas may occur.'],
+    precautions: ['Probiotic effects are strain-specific.', 'Probiotics are adjunctive and do not replace oral rehydration therapy in acute gastroenteritis.', 'The selected product is labeled for children age 1 year and older.', 'Follow product storage and administration instructions.'],
+    administration: 'Administer the packet orally according to the product instructions; it may be mixed with suitable cool food or liquid. Do not use hot food or liquid.',
+    pediatricUse: 'Culturelle Kids Daily Probiotic Packets provide 5 billion CFU of Lactobacillus rhamnosus GG (ATCC 53103) per 1.5 g packet and are labeled for children age 1 year and older.',
+    notes: 'DoseCare uses a product-specific packet strength so the result is actionable. It does not convert CFU to mL. A different probiotic product must be verified separately.',
     sources: [
-      { organization: 'ESPGHAN', title: 'Probiotics for the Management of Pediatric Gastrointestinal Disorders: Position Paper of the ESPGHAN Special Interest Group on Gut Microbiota and Modifications (2023)', url: 'https://www.espghan.org/knowledge-center/publications/Gastroenterology/2023-Synbiotics-in-the-Management-of-Pediatric-Gastrointestinal-Disorders0' },
+      { organization: 'Culturelle', title: 'Culturelle Kids Daily Probiotic Packets — 5 billion CFU LGG per packet; ages 1+', url: 'https://culturelleprobiotic.ca/products/culturelle-kids-daily-probiotic-packets' },
+      { organization: 'ESPGHAN', title: '2023 Position Paper on Probiotics for Pediatric Gastrointestinal Disorders', url: 'https://www.espghan.org/knowledge-center/publications/Gastroenterology/2023-Synbiotics-in-the-Management-of-Pediatric-Gastrointestinal-Disorders0' },
       { organization: 'PubMed', title: 'Use of probiotics for management of acute gastroenteritis: a position paper by the ESPGHAN Working Group for Probiotics and Prebiotics', url: 'https://pubmed.ncbi.nlm.nih.gov/24614141/' }
     ]
   },
   sources: [
+    { organization: 'Culturelle', title: 'Culturelle Kids Daily Probiotic Packets — 5 billion CFU LGG per packet; ages 1+', url: 'https://culturelleprobiotic.ca/products/culturelle-kids-daily-probiotic-packets' },
     { organization: 'ESPGHAN', title: '2023 Position Paper on Probiotics for Pediatric Gastrointestinal Disorders', url: 'https://www.espghan.org/knowledge-center/publications/Gastroenterology/2023-Synbiotics-in-the-Management-of-Pediatric-Gastrointestinal-Disorders0' }
   ]
 });
