@@ -13,9 +13,11 @@ const expectedFiles = [
   'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js','metronidazole.js','ors.js',
   'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js','cetirizine.js','loratadine.js','desloratadine.js','chlorpheniramine.js','fexofenadine.js','diphenhydramine.js','ondansetron.js','prednisolone.js','salbutamol.js','lactulose.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js','hyoscine-butylbromide.js'
 ];
+const archivedFiles = new Set(['macrogol.js','probiotics.js']);
 const actualFiles = fs.readdirSync(dataDir).filter(name => name.endsWith('.js')).sort();
+const activeActualFiles = actualFiles.filter(name => !archivedFiles.has(name));
 const sortedExpectedFiles = expectedFiles.slice().sort();
-if (actualFiles.length !== sortedExpectedFiles.length || sortedExpectedFiles.some((name, index) => name !== actualFiles[index])) throw new Error(`Medicine file manifest mismatch. Expected ${sortedExpectedFiles.length} known files, found ${actualFiles.length}: ${actualFiles.join(', ')}`);
+if (activeActualFiles.length !== sortedExpectedFiles.length || sortedExpectedFiles.some((name, index) => name !== activeActualFiles[index])) throw new Error(`Medicine file manifest mismatch. Expected ${sortedExpectedFiles.length} active files, found ${activeActualFiles.length}: ${activeActualFiles.join(', ')}`);
 sortedExpectedFiles.forEach(name => loadScript(path.join(dataDir, name)));
 loadScript(path.join(root, 'js', 'dosing-engine.js'));
 loadScript(path.join(root, 'js', 'ors-engine.js'));
@@ -31,4 +33,4 @@ const audit = window.DoseCareV2Audit;
 for (const error of audit.errors) console.error(`ERROR — ${error}`);
 for (const warning of audit.warnings) console.warn(`WARN — ${warning}`);
 if (!result.passed || !orsResult.passed || !audit.passed) { process.exitCode = 1; console.error(`\nDoseCare V2 QA FAILED — ${result.results.length} core regression tests + ${orsResult.results.length} ORS tests; database structural audit ${audit.passed ? 'passed' : 'failed'}.`); }
-else console.log(`\nDoseCare V2 QA PASSED — ${result.results.length} core regression tests + ${orsResult.results.length} ORS tests + database structural audit (${audit.medicineCount} medicines).`);
+else console.log(`\nDoseCare V2 QA PASSED — ${result.results.length} core regression tests + ${orsResult.results.length} ORS tests + database structural audit (${audit.medicineCount} active medicines).`);
