@@ -57,8 +57,9 @@
       }
     ],
     information: {
-      indication: 'Symptomatic relief of conditions associated with gastrointestinal spasm.',
+      class: 'Antimuscarinic antispasmodic',
       mechanism: 'Antimuscarinic antispasmodic that reduces smooth-muscle spasm in the gastrointestinal tract.',
+      indications: ['Symptomatic relief of conditions associated with gastrointestinal spasm.'],
       precautions: [
         'Do not use continuously or for extended periods without investigating the cause of abdominal pain.',
         'Severe or unexplained abdominal pain with red flags requires medical assessment.',
@@ -68,9 +69,14 @@
         'Hypersensitivity to hyoscine butylbromide.', 'Myasthenia gravis.',
         'Mechanical gastrointestinal stenosis or paralytic/obstructive ileus.', 'Megacolon.',
         'Narrow-angle glaucoma.', 'Porphyria.', 'Tachycardia or other listed product-specific contraindications.'
-      ],
-      source: 'SAHPRA — Approved Professional Information: BUSCOPAN 0.1% syrup, approved 13 April 2022.',
-      sourceUrl: 'https://pi-pil-repository.sahpra.org.za/wp-content/uploads/2022/05/pi_buscopan-01-syrup-13-04-2022_APPROVED.pdf'
-    }
+      ]
+    },
+    sources: [
+      {
+        organization: 'SAHPRA',
+        title: 'BUSCOPAN 0.1% syrup — Approved Professional Information',
+        url: 'https://pi-pil-repository.sahpra.org.za/wp-content/uploads/2022/05/pi_buscopan-01-syrup-13-04-2022_APPROVED.pdf'
+      }
+    ]
   });
 })(window);
