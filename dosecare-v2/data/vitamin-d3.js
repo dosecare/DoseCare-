@@ -18,16 +18,29 @@ window.DoseCareV2Database.register({
   ],
   regimens: [
     {
-      id: 'vitamin-d3-routine-400iu',
+      id: 'vitamin-d3-routine-infants-400iu',
       type: 'fixed_dose',
-      condition: 'Routine vitamin D supplementation',
+      condition: 'Routine vitamin D supplementation — infants',
       minAgeMonths: 0,
-      maxAgeMonths: 48,
+      maxAgeMonths: 12,
       dose: 0.01,
       unit: 'mg/day',
       frequency: 1,
       frequencyText: 'Once daily',
       allowedFormulations: ['d-vite-400iu-per-ml']
+    },
+    {
+      id: 'vitamin-d3-routine-children-600iu',
+      type: 'fixed_dose',
+      condition: 'Routine vitamin D supplementation — children 1–13 years',
+      minAgeYears: 1,
+      maxAgeYears: 13,
+      dose: 0.015,
+      unit: 'mg/day',
+      frequency: 1,
+      frequencyText: 'Once daily',
+      allowedFormulations: ['d-vite-400iu-per-ml'],
+      clinicalNote: 'NIH recommended intake is 600 IU/day for children 1–13 years. With the configured 400 IU/mL product, this equals 1.5 mL/day. The D-VITE product label states not to exceed 1 mL/day unless a physician recommends otherwise; verify the product label and clinician direction before using a volume above 1 mL/day.'
     }
   ],
   information: {
@@ -35,9 +48,10 @@ window.DoseCareV2Database.register({
     indications: 'Routine pediatric vitamin D supplementation.',
     precautions: [
       'Do not exceed the configured product dose unless directed by a clinician.',
-      'Keep out of reach of children because excessive vitamin D can cause toxicity.'
+      'Keep out of reach of children because excessive vitamin D can cause toxicity.',
+      'For children 1–13 years, the 600 IU/day regimen is based on NIH recommended intake; the configured product label states not to exceed 1 mL/day unless a physician recommends otherwise.'
     ],
-    pediatricUse: 'This DoseCare regimen is limited to 0–48 months and represents routine supplementation, not treatment of vitamin D deficiency.'
+    pediatricUse: 'Routine supplementation: 400 IU/day for infants 0–12 months and 600 IU/day for children 1–13 years, using the configured 400 IU/mL oral solution. This is not a vitamin D deficiency treatment regimen.'
   },
   sources: [
     {
