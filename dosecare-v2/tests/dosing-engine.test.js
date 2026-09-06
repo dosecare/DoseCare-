@@ -11,13 +11,13 @@
 
   const ALL_IDS = [
     'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole',
-    'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','bromhexine','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
+    'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','bromhexine','guaifenesin','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
     'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide'
   ];
 
-  test('database contains all 38 active V2 oral-liquid medicines', () => {
+  test('database contains all 39 active V2 oral-liquid medicines', () => {
     const all = db.getAll();
-    assert(all.length === 38, `Expected 38 medicines, got ${all.length}`);
+    assert(all.length === 39, `Expected 39 medicines, got ${all.length}`);
     const ids = all.map(m => m.id);
     assert(new Set(ids).size === ids.length, 'Duplicate medicine IDs detected');
     ALL_IDS.forEach(id => assert(db.getById(id), `Missing medicine: ${id}`));
@@ -181,6 +181,38 @@
     const r = m.regimens.find(x => x.id === 'age-2-5');
     const result = engine.calculate({ medicine: m, regimen: r, age: 1.5, ageUnit: 'years', formulation: m.formulations[0] });
     assert(!result.ok && result.code === 'AGE_BELOW_REGIMEN_MIN', 'Bromhexine under 2 years should be rejected');
+  });
+
+  test('Guaifenesin 2 to under 6 years preserves 50–100 mg = 2.5–5 mL every 4 hours', () => {
+    const m = db.getById('guaifenesin');
+    const r = m.regimens.find(x => x.id === 'age-2-to-under-6');
+    const f = m.formulations[0];
+    const result = engine.calculate({ medicine: m, regimen: r, age: 4, ageUnit: 'years', formulation: f });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(near(result.lowMg, 50), `Expected 50 mg lower dose, got ${result.lowMg}`);
+    assert(near(result.highMg, 100), `Expected 100 mg upper dose, got ${result.highMg}`);
+    assert(near(result.lowMl, 2.5), `Expected 2.5 mL lower volume, got ${result.lowMl}`);
+    assert(near(result.highMl, 5), `Expected 5 mL upper volume, got ${result.highMl}`);
+    assert(Number(result.maximumDosesPer24Hours) === 6, `Expected max 6 doses/24h, got ${result.maximumDosesPer24Hours}`);
+  });
+
+  test('Guaifenesin 6 to under 12 years preserves 100–200 mg = 5–10 mL every 4 hours', () => {
+    const m = db.getById('guaifenesin');
+    const r = m.regimens.find(x => x.id === 'age-6-to-under-12');
+    const f = m.formulations[0];
+    const result = engine.calculate({ medicine: m, regimen: r, age: 8, ageUnit: 'years', formulation: f });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(near(result.lowMg, 100), `Expected 100 mg lower dose, got ${result.lowMg}`);
+    assert(near(result.highMg, 200), `Expected 200 mg upper dose, got ${result.highMg}`);
+    assert(near(result.lowMl, 5), `Expected 5 mL lower volume, got ${result.lowMl}`);
+    assert(near(result.highMl, 10), `Expected 10 mL upper volume, got ${result.highMl}`);
+  });
+
+  test('Guaifenesin rejects under 2 years', () => {
+    const m = db.getById('guaifenesin');
+    const r = m.regimens.find(x => x.id === 'age-2-to-under-6');
+    const result = engine.calculate({ medicine: m, regimen: r, age: 1.5, ageUnit: 'years', formulation: m.formulations[0] });
+    assert(!result.ok && result.code === 'AGE_BELOW_REGIMEN_MIN', 'Guaifenesin under 2 years should be rejected');
   });
 
   window.DoseCareV2DosingTests = {
