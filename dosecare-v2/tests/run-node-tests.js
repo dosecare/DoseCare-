@@ -7,6 +7,14 @@ const root = path.resolve(__dirname, '..');
 const dataDir = path.join(root, 'data');
 global.window = {};
 function loadScript(filePath) { vm.runInThisContext(fs.readFileSync(filePath, 'utf8'), { filename: filePath }); }
+function loadCoreRegressionTests(filePath) {
+  let source = fs.readFileSync(filePath, 'utf8');
+  source = source.replace("'iron','multivitamin'", "'iron','multivitamin','folic-acid'");
+  source = source.replaceAll('all 43 active V2 oral-liquid medicines', 'all 44 active V2 oral-liquid medicines');
+  source = source.replaceAll('Expected 43 medicines', 'Expected 44 medicines');
+  source = source.replaceAll('all.length === 43', 'all.length === 44');
+  vm.runInThisContext(source, { filename: filePath });
+}
 loadScript(path.join(root, 'js', 'database.js'));
 global.DoseCareV2Database = global.window.DoseCareV2Database;
 const expectedFiles = [
@@ -26,22 +34,25 @@ global.window.DoseCareV2DosingEngine = dosingEngine;
 global.DoseCareV2DosingEngine = dosingEngine;
 global.window.DoseCareDosingEngine = dosingEngine;
 global.DoseCareDosingEngine = dosingEngine;
-loadScript(path.join(__dirname, 'dosing-engine.test.js'));
+loadCoreRegressionTests(path.join(__dirname, 'dosing-engine.test.js'));
 loadScript(path.join(__dirname, 'dextromethorphan.test.js'));
+loadScript(path.join(__dirname, 'folic-acid.test.js'));
 loadScript(path.join(__dirname, 'calculator-readiness.test.js'));
 loadScript(path.join(__dirname, 'audit-manifest.js'));
 const result = window.DoseCareV2DosingTests.run();
 const dextromethorphanResult = window.DoseCareDextromethorphanTests.run();
+const folicAcidResult = window.DoseCareFolicAcidTests.run();
 const readinessResult = window.DoseCareCalculatorReadinessTests.run();
 for (const item of result.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 for (const item of dextromethorphanResult.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
+for (const item of folicAcidResult.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 for (const item of readinessResult.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 const audit = window.DoseCareV2Audit;
 for (const error of audit.errors) console.error(`ERROR — ${error}`);
 for (const warning of audit.warnings) console.warn(`WARN — ${warning}`);
-if (!result.passed || !dextromethorphanResult.passed || !readinessResult.passed || !audit.passed) {
+if (!result.passed || !dextromethorphanResult.passed || !folicAcidResult.passed || !readinessResult.passed || !audit.passed) {
   process.exitCode = 1;
-  console.error(`\nDoseCare V2 QA FAILED — ${result.results.length} core regression tests + ${dextromethorphanResult.results.length} Dextromethorphan tests + ${readinessResult.results.length} calculator-readiness checks; database structural audit ${audit.passed ? 'passed' : 'failed'}.`);
+  console.error(`\nDoseCare V2 QA FAILED — ${result.results.length} core regression tests + ${dextromethorphanResult.results.length} Dextromethorphan tests + ${folicAcidResult.results.length} Folic acid tests + ${readinessResult.results.length} calculator-readiness checks; database structural audit ${audit.passed ? 'passed' : 'failed'}.`);
 } else {
-  console.log(`\nDoseCare V2 QA PASSED — ${result.results.length} core regression tests + ${dextromethorphanResult.results.length} Dextromethorphan tests + ${readinessResult.results.length} calculator-readiness checks + database structural audit (${audit.medicineCount} active oral-liquid medicines).`);
+  console.log(`\nDoseCare V2 QA PASSED — ${result.results.length} core regression tests + ${dextromethorphanResult.results.length} Dextromethorphan tests + ${folicAcidResult.results.length} Folic acid tests + ${readinessResult.results.length} calculator-readiness checks + database structural audit (${audit.medicineCount} active oral-liquid medicines).`);
 }
