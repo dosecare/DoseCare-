@@ -2,7 +2,7 @@ window.DoseCareV2Audit = (() => {
   const expectedIds = [
     'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole',
     'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','bromhexine','guaifenesin','dextromethorphan','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
-    'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide','vitamin-d3','iron'
+    'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide','vitamin-d3','iron','multivitamin'
   ];
   const validTypes = new Set(['mg_per_kg_per_day','mg_per_kg_per_dose','condition_based','fixed_dose','age_based','label_age_based','label_weight_age_based','scheduled','weight_based']);
   const errors = [], warnings = [];
