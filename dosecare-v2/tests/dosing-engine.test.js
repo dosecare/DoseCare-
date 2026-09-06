@@ -12,12 +12,12 @@
   const ALL_IDS = [
     'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole',
     'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','bromhexine','guaifenesin','dextromethorphan','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
-    'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide'
+    'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide','vitamin-d3','iron'
   ];
 
-  test('database contains all 40 active V2 oral-liquid medicines', () => {
+  test('database contains all 42 active V2 oral-liquid medicines', () => {
     const all = db.getAll();
-    assert(all.length === 40, `Expected 40 medicines, got ${all.length}`);
+    assert(all.length === 42, `Expected 42 medicines, got ${all.length}`);
     const ids = all.map(m => m.id);
     assert(new Set(ids).size === ids.length, 'Duplicate medicine IDs detected');
     ALL_IDS.forEach(id => assert(db.getById(id), `Missing medicine: ${id}`));
@@ -213,6 +213,52 @@
     const r = m.regimens.find(x => x.id === 'age-2-to-under-6');
     const result = engine.calculate({ medicine: m, regimen: r, age: 1.5, ageUnit: 'years', formulation: m.formulations[0] });
     assert(!result.ok && result.code === 'AGE_BELOW_REGIMEN_MIN', 'Guaifenesin under 2 years should be rejected');
+  });
+
+  test('Vitamin D3 routine supplementation calculates 1 mL once daily', () => {
+    const m = db.getById('vitamin-d3');
+    const r = m.regimens.find(x => x.id === 'vitamin-d3-routine-400iu');
+    const f = m.formulations.find(x => x.id === 'd-vite-400iu-per-ml');
+    const result = engine.calculate({ medicine: m, regimen: r, age: 6, ageUnit: 'months', formulation: f });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(near(result.lowMg, 0.01), `Expected 0.01 mg/day, got ${result.lowMg}`);
+    assert(near(result.lowMl, 1), `Expected 1 mL/day, got ${result.lowMl}`);
+    assert(Number(result.frequency) === 1, `Expected frequency 1, got ${result.frequency}`);
+  });
+
+  test('Iron prevention 1–2 mg/kg/day uses elemental iron concentration', () => {
+    const m = db.getById('iron');
+    const r = m.regimens.find(x => x.id === 'iron-prevention-1-2-mg-kg-day');
+    const f = m.formulations.find(x => x.id === 'fe-vite-15mg-elemental-iron-per-ml');
+    const result = engine.calculate({ medicine: m, regimen: r, weight: 10, age: 12, ageUnit: 'months', formulation: f });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(near(result.dailyLowMg, 10), `Expected 10 mg elemental iron/day, got ${result.dailyLowMg}`);
+    assert(near(result.dailyHighMg, 20), `Expected 20 mg elemental iron/day, got ${result.dailyHighMg}`);
+    assert(near(result.lowMl, 10 / 15), `Expected 0.6667 mL/day, got ${result.lowMl}`);
+    assert(near(result.highMl, 20 / 15), `Expected 1.3333 mL/day, got ${result.highMl}`);
+  });
+
+  test('Iron prevention respects 30 mg/day maximum elemental iron', () => {
+    const m = db.getById('iron');
+    const r = m.regimens.find(x => x.id === 'iron-prevention-1-2-mg-kg-day');
+    const f = m.formulations[0];
+    const result = engine.calculate({ medicine: m, regimen: r, weight: 20, age: 2, ageUnit: 'years', formulation: f });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(near(result.dailyLowMg, 20), `Expected 20 mg/day lower dose, got ${result.dailyLowMg}`);
+    assert(near(result.dailyHighMg, 30), `Expected capped 30 mg/day upper dose, got ${result.dailyHighMg}`);
+    assert(near(result.highMl, 2), `Expected capped 2 mL/day, got ${result.highMl}`);
+  });
+
+  test('Iron treatment 3–6 mg/kg/day converts using elemental iron, not ferrous sulfate salt mass', () => {
+    const m = db.getById('iron');
+    const r = m.regimens.find(x => x.id === 'iron-treatment-3-6-mg-kg-day');
+    const f = m.formulations[0];
+    const result = engine.calculate({ medicine: m, regimen: r, weight: 10, age: 2, ageUnit: 'years', formulation: f });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(near(result.dailyLowMg, 30), `Expected 30 mg elemental iron/day, got ${result.dailyLowMg}`);
+    assert(near(result.dailyHighMg, 60), `Expected 60 mg elemental iron/day, got ${result.dailyHighMg}`);
+    assert(near(result.lowMl, 2), `Expected 2 mL/day, got ${result.lowMl}`);
+    assert(near(result.highMl, 4), `Expected 4 mL/day, got ${result.highMl}`);
   });
 
   window.DoseCareV2DosingTests = {
