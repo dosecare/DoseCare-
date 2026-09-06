@@ -20,10 +20,10 @@ const sortedExpectedFiles = expectedFiles.slice().sort();
 if (activeActualFiles.length !== sortedExpectedFiles.length || sortedExpectedFiles.some((name, index) => name !== activeActualFiles[index])) throw new Error(`Medicine file manifest mismatch. Expected ${sortedExpectedFiles.length} active files, found ${activeActualFiles.length}: ${activeActualFiles.join(', ')}`);
 sortedExpectedFiles.forEach(name => loadScript(path.join(dataDir, name)));
 loadScript(path.join(root, 'js', 'dosing-engine.js'));
+global.DoseCareV2DosingEngine = global.window.DoseCareV2DosingEngine;
 loadScript(path.join(__dirname, 'dosing-engine.test.js'));
 loadScript(path.join(__dirname, 'dextromethorphan.test.js'));
 loadScript(path.join(__dirname, 'audit-manifest.js'));
-global.DoseCareV2DosingEngine = global.window.DoseCareV2DosingEngine;
 const result = window.DoseCareV2DosingTests.run();
 const dextromethorphanResult = window.DoseCareDextromethorphanTests.run();
 for (const item of result.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
