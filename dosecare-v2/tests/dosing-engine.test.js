@@ -11,13 +11,13 @@
 
   const ALL_IDS = [
     'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole',
-    'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
+    'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','bromhexine','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
     'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide'
   ];
 
-  test('database contains all 37 active V2 oral-liquid medicines', () => {
+  test('database contains all 38 active V2 oral-liquid medicines', () => {
     const all = db.getAll();
-    assert(all.length === 37, `Expected 37 medicines, got ${all.length}`);
+    assert(all.length === 38, `Expected 38 medicines, got ${all.length}`);
     const ids = all.map(m => m.id);
     assert(new Set(ids).size === ids.length, 'Duplicate medicine IDs detected');
     ALL_IDS.forEach(id => assert(db.getById(id), `Missing medicine: ${id}`));
@@ -163,6 +163,24 @@
     const r = m.regimens.find(x => x.id === 'age-2-5');
     const result = engine.calculate({ medicine: m, regimen: r, age: 1.5, ageUnit: 'years', formulation: m.formulations[0] });
     assert(!result.ok && result.code === 'AGE_BELOW_REGIMEN_MIN', 'Carbocisteine under 2 years should be rejected');
+  });
+
+  test('Bromhexine 2–5 years calculates 4 mg = 5 mL twice daily', () => {
+    const m = db.getById('bromhexine');
+    const r = m.regimens.find(x => x.id === 'age-2-5');
+    const f = m.formulations.find(x => x.id === 'bromhexine-4mg-5ml');
+    const result = engine.calculate({ medicine: m, regimen: r, age: 4, ageUnit: 'years', formulation: f });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(near(result.lowMg, 4), `Expected 4 mg/dose, got ${result.lowMg}`);
+    assert(near(result.lowMl, 5), `Expected 5 mL/dose, got ${result.lowMl}`);
+    assert(Number(result.frequency) === 2, `Expected frequency 2, got ${result.frequency}`);
+  });
+
+  test('Bromhexine under 2 years is rejected because no cited pediatric regimen is provided', () => {
+    const m = db.getById('bromhexine');
+    const r = m.regimens.find(x => x.id === 'age-2-5');
+    const result = engine.calculate({ medicine: m, regimen: r, age: 1.5, ageUnit: 'years', formulation: m.formulations[0] });
+    assert(!result.ok && result.code === 'AGE_BELOW_REGIMEN_MIN', 'Bromhexine under 2 years should be rejected');
   });
 
   window.DoseCareV2DosingTests = {
