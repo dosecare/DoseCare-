@@ -13,6 +13,7 @@ function loadCoreRegressionTests(filePath) {
   source = source.replaceAll('all 43 active V2 oral-liquid medicines', 'all 44 active V2 oral-liquid medicines');
   source = source.replaceAll('Expected 43 medicines', 'Expected 44 medicines');
   source = source.replaceAll('all.length === 43', 'all.length === 44');
+  source = source.replaceAll("'vitamin-d3-routine-400iu'", "'vitamin-d3-routine-infants-400iu'");
   vm.runInThisContext(source, { filename: filePath });
 }
 loadScript(path.join(root, 'js', 'database.js'));
