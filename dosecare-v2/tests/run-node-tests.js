@@ -21,6 +21,8 @@ if (activeActualFiles.length !== sortedExpectedFiles.length || sortedExpectedFil
 sortedExpectedFiles.forEach(name => loadScript(path.join(dataDir, name)));
 loadScript(path.join(root, 'js', 'dosing-engine.js'));
 global.DoseCareV2DosingEngine = global.window.DoseCareV2DosingEngine;
+// Backward-compatible alias for the existing V2 regression test suite.
+global.window.DoseCareDosingEngine = global.window.DoseCareV2DosingEngine;
 loadScript(path.join(__dirname, 'dosing-engine.test.js'));
 loadScript(path.join(__dirname, 'dextromethorphan.test.js'));
 loadScript(path.join(__dirname, 'audit-manifest.js'));
