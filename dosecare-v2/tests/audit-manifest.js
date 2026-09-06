@@ -1,10 +1,10 @@
 window.DoseCareV2Audit = (() => {
   const expectedIds = [
-    'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole','ors',
+    'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole',
     'paracetamol','ibuprofen','mefenamic-acid','ambroxol','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
     'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide'
   ];
-  const validTypes = new Set(['mg_per_kg_per_day','mg_per_kg_per_dose','condition_based','fixed_dose','age_based','label_age_based','label_weight_age_based','scheduled','weight_based','volume_by_age','volume_per_kg']);
+  const validTypes = new Set(['mg_per_kg_per_day','mg_per_kg_per_dose','condition_based','fixed_dose','age_based','label_age_based','label_weight_age_based','scheduled','weight_based']);
   const errors = [], warnings = [];
   const db = window.DoseCareV2Database;
   if (!db) return { passed:false, errors:['Database is not loaded'], warnings:[] };
@@ -23,7 +23,6 @@ window.DoseCareV2Audit = (() => {
     if (!/suspension|solution|syrup|drops/i.test(String(m.dosageForm || ''))) errors.push(`${m.id}: dosageForm is not an oral liquid`);
     if (!Array.isArray(m.formulations) || !m.formulations.length) errors.push(`${m.id}: no formulations`);
     for (const f of (m.formulations || [])) {
-      if (f.volumeBased === true) continue;
       const c = f.concentration || {};
       const amount = Number(c.amount ?? f.amount ?? f.mgPer5mL ?? f.strengthMg ?? 0);
       const volume = Number(c.volume ?? f.volume ?? (f.mgPer5mL ? 5 : 0));
