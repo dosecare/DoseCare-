@@ -11,7 +11,7 @@ loadScript(path.join(root, 'js', 'database.js'));
 global.DoseCareV2Database = global.window.DoseCareV2Database;
 const expectedFiles = [
   'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js','metronidazole.js',
-  'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js','carbocisteine.js','bromhexine.js','guaifenesin.js','dextromethorphan.js','cetirizine.js','loratadine.js','desloratadine.js','chlorpheniramine.js','fexofenadine.js','diphenhydramine.js','ondansetron.js','prednisolone.js','salbutamol.js','lactulose.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js','hyoscine-butylbromide.js','vitamin-d3.js','iron.js','multivitamin.js'
+  'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js','carbocisteine.js','bromhexine.js','guaifenesin.js','dextromethorphan.js','cetirizine.js','loratadine.js','desloratadine.js','chlorpheniramine.js','fexofenadine.js','diphenhydramine.js','ondansetron.js','prednisolone.js','salbutamol.js','lactulose.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js','hyoscine-butylbromide.js','vitamin-d3.js','iron.js','multivitamin.js','folic-acid.js'
 ];
 const archivedFiles = new Set(['macrogol.js','probiotics.js','ors.js']);
 const actualFiles = fs.readdirSync(dataDir).filter(name => name.endsWith('.js')).sort();
@@ -20,8 +20,6 @@ const sortedExpectedFiles = expectedFiles.slice().sort();
 if (activeActualFiles.length !== sortedExpectedFiles.length || sortedExpectedFiles.some((name, index) => name !== activeActualFiles[index])) throw new Error(`Medicine file manifest mismatch. Expected ${sortedExpectedFiles.length} active files, found ${activeActualFiles.length}: ${activeActualFiles.join(', ')}`);
 sortedExpectedFiles.forEach(name => loadScript(path.join(dataDir, name)));
 loadScript(path.join(root, 'js', 'dosing-engine.js'));
-// dosing-engine.js currently exports the engine as DoseCareDosingEngine.
-// Expose that canonical object under the V2 test name before loading tests.
 const dosingEngine = global.window.DoseCareV2DosingEngine || global.window.DoseCareDosingEngine;
 if (!dosingEngine) throw new Error('DoseCare dosing engine failed to initialize.');
 global.window.DoseCareV2DosingEngine = dosingEngine;
