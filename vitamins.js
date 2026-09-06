@@ -46,9 +46,12 @@ const vitaminsMedicines = [
     }
 ];
 
-vitaminsMedicines.forEach(medicine => {
-    if (!medicines.some(existingMedicine => String(existingMedicine.id) === String(medicine.id))) medicines.push(medicine);
-});
+/* Register through the central database when available. */
+if (typeof registerMedicines === "function") {
+    registerMedicines(vitaminsMedicines);
+} else {
+    console.error("DoseCare: central registerMedicines() is not available.");
+}
 
 function getVitaminsMedicines() { return vitaminsMedicines; }
 function getVitaminsMedicineCount() { return vitaminsMedicines.length; }
@@ -56,6 +59,8 @@ function getVitaminsMedicineCount() { return vitaminsMedicines.length; }
 /* =========================================================
    FIXED-DOSE CALCULATION BRIDGE
    Supports only explicitly configured fixed-dose regimens.
+   This is a temporary compatibility bridge until fixed-dose
+   handling is fully centralized in the dosing engine.
 ========================================================= */
 
 window.addEventListener("load", function () {
@@ -71,7 +76,10 @@ window.addEventListener("load", function () {
 
         if (!medicineSelect?.value || !regimenSelect?.value || !concentrationSelect?.value) return;
 
-        const medicine = (window.medicines || []).find(m => String(m.id) === String(medicineSelect.value));
+        /* IMPORTANT: medicines is a top-level lexical binding in medicines.js,
+           not window.medicines. */
+        const medicineDatabase = typeof medicines !== "undefined" ? medicines : [];
+        const medicine = medicineDatabase.find(m => String(m.id) === String(medicineSelect.value));
         if (!medicine?.dosing) return;
 
         const regimens = Array.isArray(medicine.dosing.regimens) ? medicine.dosing.regimens : [medicine.dosing];
