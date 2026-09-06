@@ -60,7 +60,7 @@ window.DoseCareV2Database.register({
     },
     {
       title: 'DailyMed — Hydroxyzine Hydrochloride Oral Solution prescribing information',
-      url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=39f93633-000e-6c3f-e063-6394a90a5b0a'
+      url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=39f93633-000e-6c3f-e063-6394a90a5a0b'
     }
   ]
 });
