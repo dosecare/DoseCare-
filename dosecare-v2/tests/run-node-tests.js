@@ -10,27 +10,23 @@ function loadScript(filePath) { vm.runInThisContext(fs.readFileSync(filePath, 'u
 loadScript(path.join(root, 'js', 'database.js'));
 global.DoseCareV2Database = global.window.DoseCareV2Database;
 const expectedFiles = [
-  'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js','metronidazole.js','ors.js',
+  'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js','metronidazole.js',
   'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js','cetirizine.js','loratadine.js','desloratadine.js','chlorpheniramine.js','fexofenadine.js','diphenhydramine.js','ondansetron.js','prednisolone.js','salbutamol.js','lactulose.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js','hyoscine-butylbromide.js'
 ];
-const archivedFiles = new Set(['macrogol.js','probiotics.js']);
+const archivedFiles = new Set(['macrogol.js','probiotics.js','ors.js']);
 const actualFiles = fs.readdirSync(dataDir).filter(name => name.endsWith('.js')).sort();
 const activeActualFiles = actualFiles.filter(name => !archivedFiles.has(name));
 const sortedExpectedFiles = expectedFiles.slice().sort();
 if (activeActualFiles.length !== sortedExpectedFiles.length || sortedExpectedFiles.some((name, index) => name !== activeActualFiles[index])) throw new Error(`Medicine file manifest mismatch. Expected ${sortedExpectedFiles.length} active files, found ${activeActualFiles.length}: ${activeActualFiles.join(', ')}`);
 sortedExpectedFiles.forEach(name => loadScript(path.join(dataDir, name)));
 loadScript(path.join(root, 'js', 'dosing-engine.js'));
-loadScript(path.join(root, 'js', 'ors-engine.js'));
 loadScript(path.join(__dirname, 'dosing-engine.test.js'));
-loadScript(path.join(__dirname, 'ors.test.js'));
 loadScript(path.join(__dirname, 'audit-manifest.js'));
 global.DoseCareV2DosingEngine = global.window.DoseCareV2DosingEngine;
 const result = window.DoseCareV2DosingTests.run();
-const orsResult = window.DoseCareORSTests.run();
 for (const item of result.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
-for (const item of orsResult.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 const audit = window.DoseCareV2Audit;
 for (const error of audit.errors) console.error(`ERROR — ${error}`);
 for (const warning of audit.warnings) console.warn(`WARN — ${warning}`);
-if (!result.passed || !orsResult.passed || !audit.passed) { process.exitCode = 1; console.error(`\nDoseCare V2 QA FAILED — ${result.results.length} core regression tests + ${orsResult.results.length} ORS tests; database structural audit ${audit.passed ? 'passed' : 'failed'}.`); }
-else console.log(`\nDoseCare V2 QA PASSED — ${result.results.length} core regression tests + ${orsResult.results.length} ORS tests + database structural audit (${audit.medicineCount} active medicines).`);
+if (!result.passed || !audit.passed) { process.exitCode = 1; console.error(`\nDoseCare V2 QA FAILED — ${result.results.length} core regression tests; database structural audit ${audit.passed ? 'passed' : 'failed'}.`); }
+else console.log(`\nDoseCare V2 QA PASSED — ${result.results.length} core regression tests + database structural audit (${audit.medicineCount} active oral-liquid medicines).`);
