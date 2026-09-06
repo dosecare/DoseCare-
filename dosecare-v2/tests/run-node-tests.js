@@ -9,10 +9,10 @@ global.window = {};
 function loadScript(filePath) { vm.runInThisContext(fs.readFileSync(filePath, 'utf8'), { filename: filePath }); }
 function loadCoreRegressionTests(filePath) {
   let source = fs.readFileSync(filePath, 'utf8');
-  source = source.replace("'iron','multivitamin'", "'iron','multivitamin','folic-acid'");
-  source = source.replaceAll('all 43 active V2 oral-liquid medicines', 'all 44 active V2 oral-liquid medicines');
-  source = source.replaceAll('Expected 43 medicines', 'Expected 44 medicines');
-  source = source.replaceAll('all.length === 43', 'all.length === 44');
+  source = source.replace("'iron','multivitamin'", "'iron','multivitamin','folic-acid','fluconazole'");
+  source = source.replaceAll('all 43 active V2 oral-liquid medicines', 'all 45 active V2 oral-liquid medicines');
+  source = source.replaceAll('Expected 43 medicines', 'Expected 45 medicines');
+  source = source.replaceAll('all.length === 43', 'all.length === 45');
   source = source.replaceAll("'vitamin-d3-routine-400iu'", "'vitamin-d3-routine-infants-400iu'");
   vm.runInThisContext(source, { filename: filePath });
 }
@@ -20,7 +20,7 @@ loadScript(path.join(root, 'js', 'database.js'));
 global.DoseCareV2Database = global.window.DoseCareV2Database;
 const expectedFiles = [
   'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js','metronidazole.js',
-  'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js','carbocisteine.js','bromhexine.js','guaifenesin.js','dextromethorphan.js','cetirizine.js','loratadine.js','desloratadine.js','chlorpheniramine.js','fexofenadine.js','diphenhydramine.js','ondansetron.js','prednisolone.js','salbutamol.js','lactulose.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js','hyoscine-butylbromide.js','vitamin-d3.js','iron.js','multivitamin.js','folic-acid.js'
+  'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js','carbocisteine.js','bromhexine.js','guaifenesin.js','dextromethorphan.js','cetirizine.js','loratadine.js','desloratadine.js','chlorpheniramine.js','fexofenadine.js','diphenhydramine.js','ondansetron.js','prednisolone.js','salbutamol.js','lactulose.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js','hyoscine-butylbromide.js','vitamin-d3.js','iron.js','multivitamin.js','folic-acid.js','fluconazole.js'
 ];
 const archivedFiles = new Set(['macrogol.js','probiotics.js','ors.js']);
 const actualFiles = fs.readdirSync(dataDir).filter(name => name.endsWith('.js')).sort();
@@ -39,24 +39,27 @@ loadCoreRegressionTests(path.join(__dirname, 'dosing-engine.test.js'));
 loadScript(path.join(__dirname, 'dextromethorphan.test.js'));
 loadScript(path.join(__dirname, 'vitamin-d3.test.js'));
 loadScript(path.join(__dirname, 'folic-acid.test.js'));
+loadScript(path.join(__dirname, 'fluconazole.test.js'));
 loadScript(path.join(__dirname, 'calculator-readiness.test.js'));
 loadScript(path.join(__dirname, 'audit-manifest.js'));
 const result = window.DoseCareV2DosingTests.run();
 const dextromethorphanResult = window.DoseCareDextromethorphanTests.run();
 const vitaminD3Result = window.DoseCareVitaminD3Tests.run();
 const folicAcidResult = window.DoseCareFolicAcidTests.run();
+const fluconazoleResult = window.DoseCareFluconazoleTests.run();
 const readinessResult = window.DoseCareCalculatorReadinessTests.run();
 for (const item of result.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 for (const item of dextromethorphanResult.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 for (const item of vitaminD3Result.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 for (const item of folicAcidResult.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
+for (const item of fluconazoleResult.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 for (const item of readinessResult.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 const audit = window.DoseCareV2Audit;
 for (const error of audit.errors) console.error(`ERROR — ${error}`);
 for (const warning of audit.warnings) console.warn(`WARN — ${warning}`);
-if (!result.passed || !dextromethorphanResult.passed || !vitaminD3Result.passed || !folicAcidResult.passed || !readinessResult.passed || !audit.passed) {
+if (!result.passed || !dextromethorphanResult.passed || !vitaminD3Result.passed || !folicAcidResult.passed || !fluconazoleResult.passed || !readinessResult.passed || !audit.passed) {
   process.exitCode = 1;
-  console.error(`\nDoseCare V2 QA FAILED — ${result.results.length} core regression tests + ${dextromethorphanResult.results.length} Dextromethorphan tests + ${vitaminD3Result.results.length} Vitamin D3 tests + ${folicAcidResult.results.length} Folic acid tests + ${readinessResult.results.length} calculator-readiness checks; database structural audit ${audit.passed ? 'passed' : 'failed'}.`);
+  console.error(`\nDoseCare V2 QA FAILED — ${result.results.length} core regression tests + ${dextromethorphanResult.results.length} Dextromethorphan tests + ${vitaminD3Result.results.length} Vitamin D3 tests + ${folicAcidResult.results.length} Folic acid tests + ${fluconazoleResult.results.length} Fluconazole tests + ${readinessResult.results.length} calculator-readiness checks; database structural audit ${audit.passed ? 'passed' : 'failed'}.`);
 } else {
-  console.log(`\nDoseCare V2 QA PASSED — ${result.results.length} core regression tests + ${dextromethorphanResult.results.length} Dextromethorphan tests + ${vitaminD3Result.results.length} Vitamin D3 tests + ${folicAcidResult.results.length} Folic acid tests + ${readinessResult.results.length} calculator-readiness checks + database structural audit (${audit.medicineCount} active oral-liquid medicines).`);
+  console.log(`\nDoseCare V2 QA PASSED — ${result.results.length} core regression tests + ${dextromethorphanResult.results.length} Dextromethorphan tests + ${vitaminD3Result.results.length} Vitamin D3 tests + ${folicAcidResult.results.length} Folic acid tests + ${fluconazoleResult.results.length} Fluconazole tests + ${readinessResult.results.length} calculator-readiness checks + database structural audit (${audit.medicineCount} active oral-liquid medicines).`);
 }
