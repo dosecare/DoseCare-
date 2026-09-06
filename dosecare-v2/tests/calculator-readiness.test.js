@@ -20,8 +20,7 @@
     return months >= 12 ? { age: months / 12, ageUnit: 'years' } : { age: months, ageUnit: 'months' };
   };
   const weightInput = r => {
-    const min = num(r.minWeightKg);
-    const max = num(r.maxWeightKg);
+    const min = num(r.minWeightKg), max = num(r.maxWeightKg);
     if (min != null && max != null) return (min + max) / 2;
     if (min != null) return min + 2;
     if (max != null) return Math.min(10, max);
@@ -40,19 +39,33 @@
       weight: r.requiresWeight ?? (hasSchedule && r.schedule.some(s => s.doseMgPerKg != null || s.doseMgPerKgPerDose != null) || ['mg_per_kg_per_day','mg_per_kg_per_dose','weight_based','label_weight_age_based'].includes(type))
     };
   }
+  function representativeInputs(r) {
+    // Label weight/age charts use discrete rows. Pick a real row rather than
+    // inventing a continuous age/weight combination that may match no band.
+    if (r.type === 'label_weight_age_based' && Array.isArray(r.table) && r.table.length) {
+      const row = r.table[0];
+      const minLb = num(row.minLb), maxLb = num(row.maxLb);
+      const minYears = num(row.minAgeYears), maxYears = num(row.maxAgeYears);
+      const weightLb = minLb != null && maxLb != null ? (minLb + maxLb) / 2 : (minLb ?? maxLb);
+      const years = minYears != null && maxYears != null ? (minYears + maxYears) / 2 : (minYears ?? maxYears);
+      return { age: years, ageUnit: 'years', weight: weightLb != null ? weightLb / 2.2046226218 : weightInput(r) };
+    }
+    const a = ageInput(r);
+    return { age: a.age, ageUnit: a.ageUnit, weight: weightInput(r) };
+  }
   db.getAll().forEach(m => {
     (m.regimens || []).forEach(r => {
       test(`${m.id}/${r.id} is calculator-ready with representative inputs`, () => {
         const req = requirements(r);
-        const a = ageInput(r);
+        const input = representativeInputs(r);
         const f = compatibleFormulation(m, r);
         if (!f) throw new Error('No formulation compatible with this regimen');
         const result = engine.calculate({
           medicine: m,
           regimen: r,
-          age: req.age ? a.age : undefined,
-          ageUnit: req.age ? a.ageUnit : undefined,
-          weight: req.weight ? weightInput(r) : undefined,
+          age: req.age ? input.age : undefined,
+          ageUnit: req.age ? input.ageUnit : undefined,
+          weight: req.weight ? input.weight : undefined,
           formulation: f
         });
         if (!result.ok) throw new Error(result.error || result.code || 'Calculation failed');
