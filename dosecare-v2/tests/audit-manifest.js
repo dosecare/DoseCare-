@@ -1,7 +1,7 @@
 window.DoseCareV2Audit = (() => {
   const expectedIds = [
     'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole',
-    'paracetamol','ibuprofen','mefenamic-acid','ambroxol','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
+    'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
     'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide'
   ];
   const validTypes = new Set(['mg_per_kg_per_day','mg_per_kg_per_dose','condition_based','fixed_dose','age_based','label_age_based','label_weight_age_based','scheduled','weight_based']);
@@ -13,7 +13,7 @@ window.DoseCareV2Audit = (() => {
   const missing = expectedIds.filter(id => !actualIds.includes(id));
   const extra = actualIds.filter(id => !expectedIds.includes(id));
   if (missing.length) errors.push(`Missing expected medicines: ${missing.join(', ')}`);
-  if (extra.length) warnings.push(`Unexpected medicine IDs: ${extra.join(', ')}`);
+  if (extra.length) errors.push(`Unexpected medicine IDs: ${extra.join(', ')}`);
   if (actualIds.length !== expectedIds.length) errors.push(`Expected ${expectedIds.length} medicines, found ${actualIds.length}`);
   for (const m of medicines) {
     for (const field of ['id','name','dosageForm','route','formulations','regimens','information','sources']) {
