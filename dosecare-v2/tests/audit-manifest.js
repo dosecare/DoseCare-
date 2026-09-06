@@ -1,8 +1,8 @@
 window.DoseCareV2Audit = (() => {
   const expectedIds = [
     'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole',
-    'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','bromhexine','guaifenesin','dextromethorphan','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
-    'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide','vitamin-d3','iron','multivitamin','folic-acid','fluconazole'
+    'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','bromhexine','guaifenesin','dextromethorphan','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','hydroxyzine','ondansetron','prednisolone','salbutamol',
+    'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide','sodium-citrate','vitamin-d3','iron','multivitamin','multivitamin-iron','folic-acid','fluconazole','mebendazole','nitazoxanide'
   ];
   const validTypes = new Set(['mg_per_kg_per_day','mg_per_kg_per_dose','condition_based','fixed_dose','age_based','label_age_based','label_weight_age_based','scheduled','weight_based']);
   const errors = [], warnings = [];
@@ -20,7 +20,7 @@ window.DoseCareV2Audit = (() => {
       if (m[field] == null) errors.push(`${m.id}: missing required field ${field}`);
     }
     if (m.route !== 'Oral') errors.push(`${m.id}: route must be Oral`);
-    if (!/suspension|solution|syrup|drops/i.test(String(m.dosageForm || ''))) errors.push(`${m.id}: dosageForm is not an oral liquid`);
+    if (!/suspension|solution|syrup|drops|liquid/i.test(String(m.dosageForm || ''))) errors.push(`${m.id}: dosageForm is not an oral liquid`);
     if (!Array.isArray(m.formulations) || !m.formulations.length) errors.push(`${m.id}: no formulations`);
     for (const f of (m.formulations || [])) {
       const c = f.concentration || {};
