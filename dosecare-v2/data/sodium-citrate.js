@@ -22,9 +22,9 @@ window.DoseCareV2Database.register({
       condition: 'Systemic alkalization / maintenance of alkaline urine',
       type: 'fixed_dose',
       minAgeYears: 2,
-      dose: 5,
-      highDose: 15,
-      unit: 'mL/dose',
+      dose: 500,
+      highDose: 1500,
+      unit: 'mg sodium citrate/dose',
       frequency: 4,
       frequencyText: '5–15 mL after meals and at bedtime, diluted in water',
       allowedFormulations: ['sodium-citrate-500mg-334mg-per-5ml']
