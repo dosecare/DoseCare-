@@ -11,13 +11,13 @@
 
   const ALL_IDS = [
     'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole',
-    'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','bromhexine','guaifenesin','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
+    'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','bromhexine','guaifenesin','dextromethorphan','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
     'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide'
   ];
 
-  test('database contains all 39 active V2 oral-liquid medicines', () => {
+  test('database contains all 40 active V2 oral-liquid medicines', () => {
     const all = db.getAll();
-    assert(all.length === 39, `Expected 39 medicines, got ${all.length}`);
+    assert(all.length === 40, `Expected 40 medicines, got ${all.length}`);
     const ids = all.map(m => m.id);
     assert(new Set(ids).size === ids.length, 'Duplicate medicine IDs detected');
     ALL_IDS.forEach(id => assert(db.getById(id), `Missing medicine: ${id}`));
