@@ -40,7 +40,8 @@
     const mgPerMl = concentrationToMgPerMl(formulation); if (!mgPerMl || mgPerMl <= 0) return fail('The selected oral-liquid concentration is not configured safely.', 'INVALID_CONCENTRATION');
     if (Math.abs(volumeMin * mgPerMl - doseMin) > 0.01 || Math.abs(volumeMax * mgPerMl - doseMax) > 0.01) return fail('The configured dose and oral-liquid concentration do not match safely.', 'DOSE_CONCENTRATION_MISMATCH');
     const maxDosesPer24h = num(regimen.maxDosesPer24h ?? regimen.maximumDosesPer24Hours);
-    return { ok: true, medicineId: medicine.id, regimen, weight: num(weight), age: a, ageUnit, frequencyText: regimen.frequencyText || null, frequency: null, lowMg: doseMin, highMg: doseMax, lowMl: volumeMin, highMl: volumeMax, dailyLowMg: maxDosesPer24h ? doseMin * maxDosesPer24h : null, dailyHighMg: maxDosesPer24h ? doseMax * maxDosesPer24h : null, mgPerMl, maximumDosesPer24Hours: maxDosesPer24h, maximumApplied: null, calculationType: 'label_age_based', concentrationText: formulation?.display || null };
+    const frequency = num(regimen.frequency ?? regimen.dosesPerDay ?? regimen.frequencyPerDay);
+    return { ok: true, medicineId: medicine.id, regimen, weight: num(weight), age: a, ageUnit, frequencyText: regimen.frequencyText || null, frequency, lowMg: doseMin, highMg: doseMax, lowMl: volumeMin, highMl: volumeMax, dailyLowMg: maxDosesPer24h ? doseMin * maxDosesPer24h : null, dailyHighMg: maxDosesPer24h ? doseMax * maxDosesPer24h : null, mgPerMl, maximumDosesPer24Hours: maxDosesPer24h, maximumApplied: null, calculationType: 'label_age_based', concentrationText: formulation?.display || null };
   }
   function calculateLabelWeightAge({ medicine, regimen, weight, age, ageUnit, formulation }) {
     const w = num(weight), a = num(age), years = ageYears(a, ageUnit), hasWeight = w !== null && w > 0, hasAge = years !== null && years >= 0;
