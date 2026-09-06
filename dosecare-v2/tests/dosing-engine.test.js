@@ -12,12 +12,12 @@
   const ALL_IDS = [
     'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole',
     'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','bromhexine','guaifenesin','dextromethorphan','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
-    'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide','vitamin-d3','iron'
+    'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide','vitamin-d3','iron','multivitamin'
   ];
 
-  test('database contains all 42 active V2 oral-liquid medicines', () => {
+  test('database contains all 43 active V2 oral-liquid medicines', () => {
     const all = db.getAll();
-    assert(all.length === 42, `Expected 42 medicines, got ${all.length}`);
+    assert(all.length === 43, `Expected 43 medicines, got ${all.length}`);
     const ids = all.map(m => m.id);
     assert(new Set(ids).size === ids.length, 'Duplicate medicine IDs detected');
     ALL_IDS.forEach(id => assert(db.getById(id), `Missing medicine: ${id}`));
@@ -259,6 +259,19 @@
     assert(near(result.dailyHighMg, 60), `Expected 60 mg elemental iron/day, got ${result.dailyHighMg}`);
     assert(near(result.lowMl, 2), `Expected 2 mL/day, got ${result.lowMl}`);
     assert(near(result.highMl, 4), `Expected 4 mL/day, got ${result.highMl}`);
+  });
+
+  test('Multivitamin product label calculates 1 mL once daily for 0–48 months', () => {
+    const m = db.getById('multivitamin');
+    const r = m.regimens.find(x => x.id === 'poly-vite-label-1ml-daily');
+    const f = m.formulations.find(x => x.id === 'poly-vite-1ml');
+    const result = engine.calculate({ medicine: m, regimen: r, age: 2, ageUnit: 'years', formulation: f });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(near(result.lowMg, 0.01), `Expected 0.01 mg vitamin D3 anchor/day, got ${result.lowMg}`);
+    assert(near(result.lowMl, 1), `Expected 1 mL/day, got ${result.lowMl}`);
+    assert(Number(result.frequency) === 1, `Expected frequency 1, got ${result.frequency}`);
+    const aboveLabelAge = engine.calculate({ medicine: m, regimen: r, age: 4.01, ageUnit: 'years', formulation: f });
+    assert(!aboveLabelAge.ok && aboveLabelAge.code === 'AGE_ABOVE_REGIMEN_MAX', 'Multivitamin product-label regimen should reject age above 4 years');
   });
 
   window.DoseCareV2DosingTests = {
