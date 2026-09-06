@@ -33,7 +33,10 @@ window.DoseCareV2Database.register({
   information: {
     mechanism: 'Vitamin D3 increases intestinal calcium and phosphate absorption and supports normal bone mineralization.',
     indications: 'Routine pediatric vitamin D supplementation.',
-    precautions: 'Do not exceed the configured product dose unless directed by a clinician. Keep out of reach of children because excessive vitamin D can cause toxicity.',
+    precautions: [
+      'Do not exceed the configured product dose unless directed by a clinician.',
+      'Keep out of reach of children because excessive vitamin D can cause toxicity.'
+    ],
     pediatricUse: 'This DoseCare regimen is limited to 0–48 months and represents routine supplementation, not treatment of vitamin D deficiency.'
   },
   sources: [
