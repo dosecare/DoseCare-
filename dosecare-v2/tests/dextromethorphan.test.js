@@ -1,8 +1,8 @@
 /* DoseCare V2 — Dextromethorphan regression tests. */
 (function () {
   'use strict';
-  const engine = window.DoseCareV2DosingEngine;
-  const db = window.DoseCareV2Database;
+  const engine = window.DoseCareV2DosingEngine || globalThis.DoseCareV2DosingEngine;
+  const db = window.DoseCareV2Database || globalThis.DoseCareV2Database;
   if (!engine || !db) throw new Error('DoseCare V2 engine/database not loaded');
   const tests = [];
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
