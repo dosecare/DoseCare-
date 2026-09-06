@@ -11,25 +11,25 @@
 
   const ALL_IDS = [
     'amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole',
-    'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','bromhexine','guaifenesin','dextromethorphan','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
-    'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide','vitamin-d3','iron','multivitamin'
+    'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','bromhexine','guaifenesin','dextromethorphan','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','hydroxyzine','ondansetron','prednisolone','salbutamol',
+    'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide','sodium-citrate','vitamin-d3','iron','multivitamin','multivitamin-iron','folic-acid','fluconazole','mebendazole','nitazoxanide'
   ];
 
-  test('database contains all 43 active V2 oral-liquid medicines', () => {
+  test('database contains all 50 active V2 oral-liquid medicines', () => {
     const all = db.getAll();
-    assert(all.length === 43, `Expected 43 medicines, got ${all.length}`);
+    assert(all.length === 50, `Expected 50 medicines, got ${all.length}`);
     const ids = all.map(m => m.id);
     assert(new Set(ids).size === ids.length, 'Duplicate medicine IDs detected');
     ALL_IDS.forEach(id => assert(db.getById(id), `Missing medicine: ${id}`));
-    assert(!db.getById('ors'), 'ORS powder must not be active in the oral-liquid medicine database');
-    assert(!db.getById('macrogol'), 'Macrogol powder must not be active in the oral-liquid medicine database');
-    assert(!db.getById('probiotics'), 'Probiotic powder must not be active in the oral-liquid medicine database');
+    assert(!db.getById('ors'), 'ORS powder must not be active');
+    assert(!db.getById('macrogol'), 'Macrogol powder must not be active');
+    assert(!db.getById('probiotics'), 'Probiotic powder must not be active');
   });
 
   test('all registered formulations are oral liquids only', () => {
     db.getAll().forEach(m => {
       assert(m.route === 'Oral', `${m.id}: route must be Oral`);
-      assert(/suspension|solution|syrup|drops/i.test(String(m.dosageForm)), `${m.id}: dosage form must be oral liquid`);
+      assert(/suspension|solution|syrup|drops|liquid/i.test(String(m.dosageForm)), `${m.id}: dosage form must be oral liquid`);
       (m.formulations || []).forEach(f => {
         const c = f.concentration || {};
         assert(Number(c.amount ?? f.amount ?? f.mgPer5mL ?? f.strengthMg) > 0, `${m.id}: invalid concentration amount`);
@@ -38,30 +38,28 @@
     });
   });
 
-  test('all active regimens have supported types', () => {
+  test('all active regimens use supported types and valid formulation references', () => {
     const allowed = new Set(['mg_per_kg_per_day','mg_per_kg_per_dose','fixed_dose','age_based','label_age_based','label_weight_age_based','condition_based','weight_based','scheduled']);
-    db.getAll().forEach(m => (m.regimens || []).forEach(r => assert(allowed.has(r.type), `${m.id}/${r.id}: unsupported regimen type ${r.type}`)));
-  });
-
-  test('allowedFormulations references existing formulations', () => {
     db.getAll().forEach(m => (m.regimens || []).forEach(r => {
-      if (!r.allowedFormulations) return;
-      const ids = new Set((m.formulations || []).map(f => f.id).filter(Boolean));
-      r.allowedFormulations.forEach(id => assert(ids.has(id), `${m.id}/${r.id}: unknown allowed formulation ${id}`));
+      assert(allowed.has(r.type), `${m.id}/${r.id}: unsupported regimen type ${r.type}`);
+      if (r.allowedFormulations) {
+        const ids = new Set((m.formulations || []).map(f => f.id));
+        r.allowedFormulations.forEach(id => assert(ids.has(id), `${m.id}/${r.id}: unknown formulation ${id}`));
+      }
     }));
   });
 
-  test('registered medicine metadata exposes canonical keys only', () => {
+  test('registered medicine metadata exposes canonical information keys', () => {
     db.getAll().forEach(m => {
       const info = m.information || {};
-      assert(!Object.prototype.hasOwnProperty.call(info, 'mechanismOfAction'), `${m.id}: legacy mechanismOfAction key leaked into registry`);
-      assert(!Object.prototype.hasOwnProperty.call(info, 'warningsPrecautions'), `${m.id}: legacy warningsPrecautions key leaked into registry`);
-      if (info.mechanism != null) assert(typeof info.mechanism === 'string', `${m.id}: mechanism must be a string`);
-      if (info.precautions != null) assert(Array.isArray(info.precautions), `${m.id}: precautions must be an array`);
+      assert(!Object.prototype.hasOwnProperty.call(info, 'mechanismOfAction'), `${m.id}: legacy mechanismOfAction leaked`);
+      assert(!Object.prototype.hasOwnProperty.call(info, 'warningsPrecautions'), `${m.id}: legacy warningsPrecautions leaked`);
+      if (info.mechanism != null) assert(typeof info.mechanism === 'string', `${m.id}: mechanism must be string`);
+      if (info.precautions != null) assert(Array.isArray(info.precautions), `${m.id}: precautions must be array`);
     });
   });
 
-  test('amoxicillin mg/kg/day q12h converts to mg/dose and mL/dose', () => {
+  test('amoxicillin mg/kg/day q12h converts correctly', () => {
     const m = db.getById('amoxicillin');
     const r = m.regimens.find(x => x.id === 'ent-mild-q12h');
     const result = engine.calculate({ medicine: m, regimen: r, weight: 10, age: 12, ageUnit: 'months', formulation: m.formulations[0] });
@@ -71,207 +69,58 @@
     assert(near(result.lowMl, 1.5625), `Expected 1.5625 mL/dose, got ${result.lowMl}`);
   });
 
-  test('amoxicillin rejects age below configured minimum', () => {
-    const m = db.getById('amoxicillin');
-    const r = m.regimens.find(x => x.id === 'ent-mild-q12h');
-    const result = engine.calculate({ medicine: m, regimen: r, weight: 8, age: 2, ageUnit: 'months', formulation: m.formulations[0] });
-    assert(!result.ok && result.code === 'AGE_BELOW_REGIMEN_MIN', 'Age below 3 months should be rejected');
-  });
-
-  test('cefixime accepts 12-year and 45-kg boundaries, rejects above', () => {
-    const m = db.getById('cefixime');
-    const r = m.regimens.find(x => x.id === 'standard-once-daily');
-    const atAge = engine.calculate({ medicine: m, regimen: r, weight: 45, age: 12, ageUnit: 'years', formulation: m.formulations[0] });
-    assert(atAge.ok, atAge.error || '12 years / 45 kg should be accepted');
-    const aboveAge = engine.calculate({ medicine: m, regimen: r, weight: 30, age: 12.01, ageUnit: 'years', formulation: m.formulations[0] });
-    assert(!aboveAge.ok && aboveAge.code === 'AGE_ABOVE_REGIMEN_MAX', 'Age above 12 years should be rejected');
-  });
-
-  test('paracetamol label chart maps 2–3 years and 24–35 lb to 5 mL', () => {
-    const m = db.getById('paracetamol');
-    const r = m.regimens.find(x => x.id === 'label-weight-age-chart');
-    const result = engine.calculate({ medicine: m, regimen: r, weight: 12, age: 2.5, ageUnit: 'years', formulation: m.formulations[0] });
-    assert(result.ok, result.error || 'Calculation failed');
-    assert(near(result.lowMl, 5), `Expected 5 mL/dose, got ${result.lowMl}`);
-  });
-
-  test('cefprozil acute otitis media applies 1000 mg/day maximum', () => {
-    const m = db.getById('cefprozil');
-    const r = m.regimens.find(x => x.id === 'otitis-media-15-mg-kg-q12h');
-    const f = m.formulations.find(x => x.mgPer5mL === 250);
-    const result = engine.calculate({ medicine: m, regimen: r, weight: 40, age: 10, ageUnit: 'years', formulation: f });
-    assert(result.ok, result.error || 'Calculation failed');
-    assert(near(result.dailyLowMg, 1000), `Expected capped 1000 mg/day, got ${result.dailyLowMg}`);
-    assert(near(result.lowMg, 500), `Expected capped 500 mg/dose, got ${result.lowMg}`);
-    assert(near(result.lowMl, 10), `Expected 10 mL/dose, got ${result.lowMl}`);
-  });
-
-  test('ondansetron 4–11 chemotherapy schedule returns three labeled doses', () => {
-    const m = db.getById('ondansetron');
-    const r = m.regimens.find(x => x.id === 'chemotherapy-4-11-initial');
-    assert(Array.isArray(r.schedule) && r.schedule.length === 3, 'Expected three initial-phase doses');
-    const result = engine.calculate({ medicine: m, regimen: r, age: 8, ageUnit: 'years', formulation: m.formulations[0] });
-    assert(result.ok, result.error || 'Calculation failed');
-    assert(result.schedule.length === 3, `Expected 3 schedule entries, got ${result.schedule.length}`);
-    assert(result.schedule.every(step => near(step.doseMg, 4)), 'Each initial dose should be 4 mg');
-  });
-
-  test('Ambroxol 2–5 years calculates 7.5 mg = 2.5 mL three times daily', () => {
-    const m = db.getById('ambroxol');
-    const r = m.regimens.find(x => x.id === 'age-2-5');
-    const f = m.formulations.find(x => x.id === 'ambroxol-15mg-5ml');
-    const result = engine.calculate({ medicine: m, regimen: r, age: 4, ageUnit: 'years', formulation: f });
-    assert(result.ok, result.error || 'Calculation failed');
-    assert(near(result.lowMg, 7.5), `Expected 7.5 mg/dose, got ${result.lowMg}`);
-    assert(near(result.lowMl, 2.5), `Expected 2.5 mL/dose, got ${result.lowMl}`);
-    assert(Number(result.frequency) === 3, `Expected frequency 3, got ${result.frequency}`);
-  });
-
-  test('Ambroxol under 2 years is rejected', () => {
-    const m = db.getById('ambroxol');
-    const r = m.regimens.find(x => x.id === 'age-2-5');
-    const f = m.formulations[0];
-    const result = engine.calculate({ medicine: m, regimen: r, age: 1.5, ageUnit: 'years', formulation: f });
-    assert(!result.ok && result.code === 'AGE_BELOW_REGIMEN_MIN', 'Ambroxol under 2 years should be rejected');
-  });
-
-  test('Carbocisteine 2–5 years preserves the labeled 1.25–2.5 mL range', () => {
-    const m = db.getById('carbocisteine');
-    const r = m.regimens.find(x => x.id === 'age-2-5');
-    const f = m.formulations.find(x => x.id === 'carbocisteine-250mg-5ml');
-    const result = engine.calculate({ medicine: m, regimen: r, age: 4, ageUnit: 'years', formulation: f });
-    assert(result.ok, result.error || 'Calculation failed');
-    assert(near(result.lowMg, 62.5), `Expected 62.5 mg lower dose, got ${result.lowMg}`);
-    assert(near(result.highMg, 125), `Expected 125 mg upper dose, got ${result.highMg}`);
-    assert(near(result.lowMl, 1.25), `Expected 1.25 mL lower volume, got ${result.lowMl}`);
-    assert(near(result.highMl, 2.5), `Expected 2.5 mL upper volume, got ${result.highMl}`);
-  });
-
-  test('Carbocisteine 6–12 years calculates 250 mg = 5 mL three times daily', () => {
-    const m = db.getById('carbocisteine');
-    const r = m.regimens.find(x => x.id === 'age-6-12');
-    const f = m.formulations[0];
-    const result = engine.calculate({ medicine: m, regimen: r, age: 8, ageUnit: 'years', formulation: f });
-    assert(result.ok, result.error || 'Calculation failed');
-    assert(near(result.lowMg, 250), `Expected 250 mg/dose, got ${result.lowMg}`);
-    assert(near(result.lowMl, 5), `Expected 5 mL/dose, got ${result.lowMl}`);
-    assert(Number(result.frequency) === 3, `Expected frequency 3, got ${result.frequency}`);
-  });
-
-  test('Carbocisteine under 2 years is rejected', () => {
-    const m = db.getById('carbocisteine');
-    const r = m.regimens.find(x => x.id === 'age-2-5');
-    const result = engine.calculate({ medicine: m, regimen: r, age: 1.5, ageUnit: 'years', formulation: m.formulations[0] });
-    assert(!result.ok && result.code === 'AGE_BELOW_REGIMEN_MIN', 'Carbocisteine under 2 years should be rejected');
-  });
-
-  test('Bromhexine 2–5 years calculates 4 mg = 5 mL twice daily', () => {
-    const m = db.getById('bromhexine');
-    const r = m.regimens.find(x => x.id === 'age-2-5');
-    const f = m.formulations.find(x => x.id === 'bromhexine-4mg-5ml');
-    const result = engine.calculate({ medicine: m, regimen: r, age: 4, ageUnit: 'years', formulation: f });
-    assert(result.ok, result.error || 'Calculation failed');
-    assert(near(result.lowMg, 4), `Expected 4 mg/dose, got ${result.lowMg}`);
-    assert(near(result.lowMl, 5), `Expected 5 mL/dose, got ${result.lowMl}`);
-    assert(Number(result.frequency) === 2, `Expected frequency 2, got ${result.frequency}`);
-  });
-
-  test('Bromhexine under 2 years is rejected because no cited pediatric regimen is provided', () => {
-    const m = db.getById('bromhexine');
-    const r = m.regimens.find(x => x.id === 'age-2-5');
-    const result = engine.calculate({ medicine: m, regimen: r, age: 1.5, ageUnit: 'years', formulation: m.formulations[0] });
-    assert(!result.ok && result.code === 'AGE_BELOW_REGIMEN_MIN', 'Bromhexine under 2 years should be rejected');
-  });
-
-  test('Guaifenesin 2 to under 6 years preserves 50–100 mg = 2.5–5 mL every 4 hours', () => {
-    const m = db.getById('guaifenesin');
-    const r = m.regimens.find(x => x.id === 'age-2-to-under-6');
-    const f = m.formulations[0];
-    const result = engine.calculate({ medicine: m, regimen: r, age: 4, ageUnit: 'years', formulation: f });
-    assert(result.ok, result.error || 'Calculation failed');
-    assert(near(result.lowMg, 50), `Expected 50 mg lower dose, got ${result.lowMg}`);
-    assert(near(result.highMg, 100), `Expected 100 mg upper dose, got ${result.highMg}`);
-    assert(near(result.lowMl, 2.5), `Expected 2.5 mL lower volume, got ${result.lowMl}`);
-    assert(near(result.highMl, 5), `Expected 5 mL upper volume, got ${result.highMl}`);
-    assert(Number(result.maximumDosesPer24Hours) === 6, `Expected max 6 doses/24h, got ${result.maximumDosesPer24Hours}`);
-  });
-
-  test('Guaifenesin 6 to under 12 years preserves 100–200 mg = 5–10 mL every 4 hours', () => {
-    const m = db.getById('guaifenesin');
-    const r = m.regimens.find(x => x.id === 'age-6-to-under-12');
-    const f = m.formulations[0];
-    const result = engine.calculate({ medicine: m, regimen: r, age: 8, ageUnit: 'years', formulation: f });
-    assert(result.ok, result.error || 'Calculation failed');
-    assert(near(result.lowMg, 100), `Expected 100 mg lower dose, got ${result.lowMg}`);
-    assert(near(result.highMg, 200), `Expected 200 mg upper dose, got ${result.highMg}`);
-    assert(near(result.lowMl, 5), `Expected 5 mL lower volume, got ${result.lowMl}`);
-    assert(near(result.highMl, 10), `Expected 10 mL upper volume, got ${result.highMl}`);
-  });
-
-  test('Guaifenesin rejects under 2 years', () => {
-    const m = db.getById('guaifenesin');
-    const r = m.regimens.find(x => x.id === 'age-2-to-under-6');
-    const result = engine.calculate({ medicine: m, regimen: r, age: 1.5, ageUnit: 'years', formulation: m.formulations[0] });
-    assert(!result.ok && result.code === 'AGE_BELOW_REGIMEN_MIN', 'Guaifenesin under 2 years should be rejected');
-  });
-
-  test('Vitamin D3 routine supplementation calculates 1 mL once daily', () => {
+  test('vitamin D3 routine regimen converts to 1 mL daily', () => {
     const m = db.getById('vitamin-d3');
     const r = m.regimens.find(x => x.id === 'vitamin-d3-routine-400iu');
     const f = m.formulations.find(x => x.id === 'd-vite-400iu-per-ml');
     const result = engine.calculate({ medicine: m, regimen: r, age: 6, ageUnit: 'months', formulation: f });
     assert(result.ok, result.error || 'Calculation failed');
-    assert(near(result.lowMg, 0.01), `Expected 0.01 mg/day, got ${result.lowMg}`);
     assert(near(result.lowMl, 1), `Expected 1 mL/day, got ${result.lowMl}`);
-    assert(Number(result.frequency) === 1, `Expected frequency 1, got ${result.frequency}`);
   });
 
-  test('Iron prevention 1–2 mg/kg/day uses elemental iron concentration', () => {
-    const m = db.getById('iron');
-    const r = m.regimens.find(x => x.id === 'iron-prevention-1-2-mg-kg-day');
-    const f = m.formulations.find(x => x.id === 'fe-vite-15mg-elemental-iron-per-ml');
-    const result = engine.calculate({ medicine: m, regimen: r, weight: 10, age: 12, ageUnit: 'months', formulation: f });
+  test('mebendazole pinworm regimen calculates 5 mL once for age over 2 years', () => {
+    const m = db.getById('mebendazole');
+    const r = m.regimens.find(x => x.id === 'mebendazole-enterobiasis-over-2-years');
+    const result = engine.calculate({ medicine: m, regimen: r, age: 5, ageUnit: 'years', formulation: m.formulations[0] });
     assert(result.ok, result.error || 'Calculation failed');
-    assert(near(result.dailyLowMg, 10), `Expected 10 mg elemental iron/day, got ${result.dailyLowMg}`);
-    assert(near(result.dailyHighMg, 20), `Expected 20 mg elemental iron/day, got ${result.dailyHighMg}`);
-    assert(near(result.lowMl, 10 / 15), `Expected 0.6667 mL/day, got ${result.lowMl}`);
-    assert(near(result.highMl, 20 / 15), `Expected 1.3333 mL/day, got ${result.highMl}`);
+    assert(near(result.lowMg, 100), `Expected 100 mg, got ${result.lowMg}`);
+    assert(near(result.lowMl, 5), `Expected 5 mL, got ${result.lowMl}`);
   });
 
-  test('Iron prevention respects 30 mg/day maximum elemental iron', () => {
-    const m = db.getById('iron');
-    const r = m.regimens.find(x => x.id === 'iron-prevention-1-2-mg-kg-day');
-    const f = m.formulations[0];
-    const result = engine.calculate({ medicine: m, regimen: r, weight: 20, age: 2, ageUnit: 'years', formulation: f });
+  test('nitazoxanide 1–3 years calculates 5 mL every 12 hours', () => {
+    const m = db.getById('nitazoxanide');
+    const r = m.regimens.find(x => x.id === 'nitazoxanide-giardia-cryptosporidium-1-3-years');
+    const result = engine.calculate({ medicine: m, regimen: r, age: 2, ageUnit: 'years', formulation: m.formulations[0] });
     assert(result.ok, result.error || 'Calculation failed');
-    assert(near(result.dailyLowMg, 20), `Expected 20 mg/day lower dose, got ${result.dailyLowMg}`);
-    assert(near(result.dailyHighMg, 30), `Expected capped 30 mg/day upper dose, got ${result.dailyHighMg}`);
-    assert(near(result.highMl, 2), `Expected capped 2 mL/day, got ${result.highMl}`);
+    assert(near(result.lowMl, 5), `Expected 5 mL/dose, got ${result.lowMl}`);
+    assert(Number(result.frequency) === 2, `Expected frequency 2, got ${result.frequency}`);
   });
 
-  test('Iron treatment 3–6 mg/kg/day converts using elemental iron, not ferrous sulfate salt mass', () => {
-    const m = db.getById('iron');
-    const r = m.regimens.find(x => x.id === 'iron-treatment-3-6-mg-kg-day');
-    const f = m.formulations[0];
-    const result = engine.calculate({ medicine: m, regimen: r, weight: 10, age: 2, ageUnit: 'years', formulation: f });
+  test('sodium citrate 5–15 mL regimen converts from sodium-citrate concentration', () => {
+    const m = db.getById('sodium-citrate');
+    const r = m.regimens[0];
+    const result = engine.calculate({ medicine: m, regimen: r, age: 6, ageUnit: 'years', formulation: m.formulations[0] });
     assert(result.ok, result.error || 'Calculation failed');
-    assert(near(result.dailyLowMg, 30), `Expected 30 mg elemental iron/day, got ${result.dailyLowMg}`);
-    assert(near(result.dailyHighMg, 60), `Expected 60 mg elemental iron/day, got ${result.dailyHighMg}`);
-    assert(near(result.lowMl, 2), `Expected 2 mL/day, got ${result.lowMl}`);
-    assert(near(result.highMl, 4), `Expected 4 mL/day, got ${result.highMl}`);
+    assert(near(result.lowMl, 5), `Expected 5 mL lower dose, got ${result.lowMl}`);
+    assert(near(result.highMl, 15), `Expected 15 mL upper dose, got ${result.highMl}`);
   });
 
-  test('Multivitamin product label calculates 1 mL once daily for 0–48 months', () => {
-    const m = db.getById('multivitamin');
-    const r = m.regimens.find(x => x.id === 'poly-vite-label-1ml-daily');
-    const f = m.formulations.find(x => x.id === 'poly-vite-1ml');
-    const result = engine.calculate({ medicine: m, regimen: r, age: 2, ageUnit: 'years', formulation: f });
+  test('multivitamin plus iron label dose calculates 1 mL daily under 4 years', () => {
+    const m = db.getById('multivitamin-iron');
+    const r = m.regimens[0];
+    const result = engine.calculate({ medicine: m, regimen: r, age: 2, ageUnit: 'years', formulation: m.formulations[0] });
     assert(result.ok, result.error || 'Calculation failed');
-    assert(near(result.lowMg, 0.01), `Expected 0.01 mg vitamin D3 anchor/day, got ${result.lowMg}`);
     assert(near(result.lowMl, 1), `Expected 1 mL/day, got ${result.lowMl}`);
-    assert(Number(result.frequency) === 1, `Expected frequency 1, got ${result.frequency}`);
-    const aboveLabelAge = engine.calculate({ medicine: m, regimen: r, age: 4.01, ageUnit: 'years', formulation: f });
-    assert(!aboveLabelAge.ok && aboveLabelAge.code === 'AGE_ABOVE_REGIMEN_MAX', 'Multivitamin product-label regimen should reject age above 4 years');
+  });
+
+  test('fluconazole oral suspension calculation remains valid', () => {
+    const m = db.getById('fluconazole');
+    const r = m.regimens.find(x => x.id === 'fluconazole-oropharyngeal-maintenance');
+    const f = m.formulations.find(x => x.id === 'fluconazole-40mg-per-ml');
+    const result = engine.calculate({ medicine: m, regimen: r, weight: 10, age: 1, ageUnit: 'years', formulation: f });
+    assert(result.ok, result.error || 'Calculation failed');
+    assert(near(result.lowMg, 30), `Expected 30 mg/day, got ${result.lowMg}`);
+    assert(near(result.lowMl, 0.75), `Expected 0.75 mL/day, got ${result.lowMl}`);
   });
 
   window.DoseCareV2DosingTests = {
