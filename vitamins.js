@@ -56,14 +56,13 @@ function getVitaminsMedicineCount() { return vitaminsMedicines.length; }
 /* =========================================================
    FIXED-DOSE CALCULATION BRIDGE
    Supports only explicitly configured fixed-dose regimens.
-   This does not create or modify medical dosing data.
 ========================================================= */
 
 window.addEventListener("load", function () {
     const button = document.getElementById("calculate-button");
     if (!button) return;
 
-    button.addEventListener("click", function () {
+    button.addEventListener("click", function (event) {
         const medicineSelect = document.getElementById("medicine-select");
         const regimenSelect = document.getElementById("regimen-select");
         const concentrationSelect = document.getElementById("concentration-select");
@@ -79,28 +78,42 @@ window.addEventListener("load", function () {
         const regimen = regimens[Number(regimenSelect.value)] || regimens.find(r => String(r.id || "") === String(regimenSelect.value));
         if (!regimen || regimen.type !== "fixed_dose") return;
 
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
         const age = Number(ageInput?.value);
         const months = ageUnit?.value === "years" ? age * 12 : age;
-        if (!Number.isFinite(age) || age < 0) return;
-        if (regimen.minimumAgeMonths != null && months < Number(regimen.minimumAgeMonths)) return;
-        if (regimen.maximumAgeMonths != null && months > Number(regimen.maximumAgeMonths)) return;
+        if (!Number.isFinite(age) || age < 0) {
+            showFixedDoseValidation("Patient age is required for this fixed-dose regimen.");
+            return;
+        }
+        if (regimen.minimumAgeMonths != null && months < Number(regimen.minimumAgeMonths)) {
+            showFixedDoseValidation(`This regimen is not configured for patients younger than ${regimen.minimumAgeMonths} months.`);
+            return;
+        }
+        if (regimen.maximumAgeMonths != null && months > Number(regimen.maximumAgeMonths)) {
+            showFixedDoseValidation(`This regimen is not configured for patients older than ${regimen.maximumAgeMonths} months.`);
+            return;
+        }
 
         let concentration;
-        try { concentration = JSON.parse(concentrationSelect.value); } catch { return; }
+        try { concentration = JSON.parse(concentrationSelect.value); } catch { showFixedDoseValidation("Select a valid oral-liquid concentration."); return; }
         const mg = Number(concentration?.mg);
         const ml = Number(concentration?.ml);
         const dose = Number(regimen.dose);
         const frequency = Number(regimen.frequency) || 1;
-        if (!(mg > 0) || !(ml > 0) || !(dose >= 0)) return;
+        if (!(mg > 0) || !(ml > 0) || !(dose >= 0)) {
+            showFixedDoseValidation("The configured concentration or dose is invalid.");
+            return;
+        }
 
         const mgPerMl = mg / ml;
         const doseMg = String(regimen.doseUnit || "").toLowerCase().includes("/day") ? dose / frequency : dose;
         const volumeMl = doseMg / mgPerMl;
-
         const displayDose = Number.isFinite(Number(regimen.displayDose)) ? Number(regimen.displayDose) : doseMg;
         const displayUnit = regimen.displayDoseUnit || "mg/dose";
-
         const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+
         set("dose-result", String(Number(displayDose.toFixed(2))));
         set("dose-unit", displayUnit);
         set("dose-result-ml", String(Number(volumeMl.toFixed(2))));
@@ -133,5 +146,13 @@ window.addEventListener("load", function () {
         if (validation) validation.style.display = "none";
     }, true);
 });
+
+function showFixedDoseValidation(message) {
+    const box = document.getElementById("validation-message");
+    if (!box) return;
+    const paragraph = box.querySelector("p");
+    if (paragraph) paragraph.textContent = message;
+    box.style.display = "flex";
+}
 
 console.log("DoseCare Vitamins Loaded:", vitaminsMedicines.map(medicine => medicine.id));
