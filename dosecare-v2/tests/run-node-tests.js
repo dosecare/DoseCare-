@@ -10,17 +10,14 @@ function loadScript(filePath) { vm.runInThisContext(fs.readFileSync(filePath, 'u
 function loadCoreRegressionTests(filePath) {
   let source = fs.readFileSync(filePath, 'utf8');
   source = source.replace("'iron','multivitamin'", "'iron','multivitamin','folic-acid','fluconazole'");
-  source = source.replaceAll('all 43 active V2 oral-liquid medicines', 'all 45 active V2 oral-liquid medicines');
-  source = source.replaceAll('Expected 43 medicines', 'Expected 45 medicines');
-  source = source.replaceAll('all.length === 43', 'all.length === 45');
-  source = source.replaceAll("'vitamin-d3-routine-400iu'", "'vitamin-d3-routine-infants-400iu'");
   vm.runInThisContext(source, { filename: filePath });
 }
 loadScript(path.join(root, 'js', 'database.js'));
 global.DoseCareV2Database = global.window.DoseCareV2Database;
 const expectedFiles = [
   'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js','metronidazole.js',
-  'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js','carbocisteine.js','bromhexine.js','guaifenesin.js','dextromethorphan.js','cetirizine.js','loratadine.js','desloratadine.js','chlorpheniramine.js','fexofenadine.js','diphenhydramine.js','ondansetron.js','prednisolone.js','salbutamol.js','lactulose.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js','hyoscine-butylbromide.js','vitamin-d3.js','iron.js','multivitamin.js','folic-acid.js','fluconazole.js'
+  'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js','carbocisteine.js','bromhexine.js','guaifenesin.js','dextromethorphan.js','cetirizine.js','loratadine.js','desloratadine.js','chlorpheniramine.js','fexofenadine.js','diphenhydramine.js','hydroxyzine.js','ondansetron.js','prednisolone.js','salbutamol.js',
+  'lactulose.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js','hyoscine-butylbromide.js','sodium-citrate.js','vitamin-d3.js','iron.js','multivitamin.js','multivitamin-iron.js','folic-acid.js','fluconazole.js','mebendazole.js','nitazoxanide.js'
 ];
 const archivedFiles = new Set(['macrogol.js','probiotics.js','ors.js']);
 const actualFiles = fs.readdirSync(dataDir).filter(name => name.endsWith('.js')).sort();
