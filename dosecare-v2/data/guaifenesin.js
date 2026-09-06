@@ -10,9 +10,7 @@ window.DoseCareV2Database?.register({
   dosageForm: 'Oral Solution',
   route: 'Oral',
   category: 'Expectorant',
-  dosing: {
-    calculatorReady: true
-  },
+  dosing: { calculatorReady: true },
   formulations: [
     {
       id: 'guaifenesin-100mg-5ml',
@@ -26,39 +24,37 @@ window.DoseCareV2Database?.register({
       id: 'age-2-to-under-6',
       type: 'label_age_based',
       condition: 'Cough with chest congestion / excessive mucus',
-      doseMin: 2.5,
-      doseMax: 5,
+      doseMin: 50,
+      doseMax: 100,
       volumeMin: 2.5,
       volumeMax: 5,
-      doseUnit: 'mL/dose',
+      doseUnit: 'mg/dose',
       frequency: 6,
       frequencyText: 'Every 4 hours; do not exceed 6 doses in 24 hours',
       minAgeYears: 2,
-      maxAgeYears: 6,
-      maxAgeExclusive: true,
+      maxAgeYears: 5.999,
       requiresAge: true,
       requiresWeight: false,
       allowedFormulations: ['guaifenesin-100mg-5ml'],
-      maximumDailyDoses: 6
+      maxDosesPer24h: 6
     },
     {
       id: 'age-6-to-under-12',
       type: 'label_age_based',
       condition: 'Cough with chest congestion / excessive mucus',
-      doseMin: 5,
-      doseMax: 10,
+      doseMin: 100,
+      doseMax: 200,
       volumeMin: 5,
       volumeMax: 10,
-      doseUnit: 'mL/dose',
+      doseUnit: 'mg/dose',
       frequency: 6,
       frequencyText: 'Every 4 hours; do not exceed 6 doses in 24 hours',
       minAgeYears: 6,
-      maxAgeYears: 12,
-      maxAgeExclusive: true,
+      maxAgeYears: 11.999,
       requiresAge: true,
       requiresWeight: false,
       allowedFormulations: ['guaifenesin-100mg-5ml'],
-      maximumDailyDoses: 6
+      maxDosesPer24h: 6
     }
   ],
   information: {
