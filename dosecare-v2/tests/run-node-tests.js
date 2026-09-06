@@ -20,9 +20,14 @@ const sortedExpectedFiles = expectedFiles.slice().sort();
 if (activeActualFiles.length !== sortedExpectedFiles.length || sortedExpectedFiles.some((name, index) => name !== activeActualFiles[index])) throw new Error(`Medicine file manifest mismatch. Expected ${sortedExpectedFiles.length} active files, found ${activeActualFiles.length}: ${activeActualFiles.join(', ')}`);
 sortedExpectedFiles.forEach(name => loadScript(path.join(dataDir, name)));
 loadScript(path.join(root, 'js', 'dosing-engine.js'));
-global.DoseCareV2DosingEngine = global.window.DoseCareV2DosingEngine;
-// Backward-compatible alias for the existing V2 regression test suite.
-global.window.DoseCareDosingEngine = global.window.DoseCareV2DosingEngine;
+// dosing-engine.js currently exports the engine as DoseCareDosingEngine.
+// Expose that canonical object under the V2 test name before loading tests.
+const dosingEngine = global.window.DoseCareV2DosingEngine || global.window.DoseCareDosingEngine;
+if (!dosingEngine) throw new Error('DoseCare dosing engine failed to initialize.');
+global.window.DoseCareV2DosingEngine = dosingEngine;
+global.DoseCareV2DosingEngine = dosingEngine;
+global.window.DoseCareDosingEngine = dosingEngine;
+global.DoseCareDosingEngine = dosingEngine;
 loadScript(path.join(__dirname, 'dosing-engine.test.js'));
 loadScript(path.join(__dirname, 'dextromethorphan.test.js'));
 loadScript(path.join(__dirname, 'audit-manifest.js'));
