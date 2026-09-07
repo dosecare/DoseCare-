@@ -1,56 +1,89 @@
 /* DoseCare V2 — Omeprazole oral suspension
- * Oral liquid only. Pediatric regimen is evidence-based and limited to GERD/acid-related disease.
- * Formulation: 2 mg/mL oral suspension. Pediatric dose: 1–4 mg/kg/day once daily, maximum 40 mg/day.
- * Dose source: NASPGHAN/ESPGHAN pediatric GERD guideline; formulation source: Nationwide Children's Hospital pediatric GERD guideline.
+ * Oral liquid only. Pediatric regimens are product-specific and indication-specific.
+ * Formulation: 2 mg/mL powder for oral suspension after constitution.
+ * Primary current formulation source: 2026 emc SmPC for Omeprazole 2 mg/mL oral suspension.
  */
 window.DoseCareV2Database?.register({
   id: 'omeprazole',
   name: 'Omeprazole',
   genericName: 'Omeprazole',
   activeIngredient: 'Omeprazole',
-  dosageForm: 'Oral Suspension',
+  dosageForm: 'Powder for Oral Suspension',
   route: 'Oral',
   formulations: [
-    { display: '2 mg/mL', concentration: { amount: 2, unit: 'mg', volume: 1, volumeUnit: 'mL' }, mgPerMl: 2 }
+    { id: '2mg-1mL', display: '2 mg/mL after constitution', concentration: { amount: 2, unit: 'mg', volume: 1, volumeUnit: 'mL' }, mgPerMl: 2 }
   ],
   regimens: [
     {
-      id: 'gerd-pediatric-1-4-mgkg-day',
-      condition: 'GERD / reflux-related acid disease',
+      id: 'reflux-1m-1y-1mgkg',
+      condition: 'Reflux oesophagitis / symptomatic GERD — children 1 month to <1 year',
       type: 'mg_per_kg_per_day',
       minDose: 1,
-      maxDose: 4,
-      unit: 'mg/kg/day',
+      maxDose: 1,
+      doseUnit: 'mg/kg/day',
       frequency: 1,
       frequencyText: 'Once daily',
       requiresAge: true,
       requiresWeight: true,
+      minAgeMonths: 1,
+      maxAgeMonths: 11,
+      maximumDailyDose: 10
+    },
+    {
+      id: 'reflux-1y-10-20kg',
+      condition: 'Reflux oesophagitis / symptomatic GERD — children ≥1 year, 10–20 kg',
+      type: 'fixed_dose',
+      dose: 10,
+      minDose: 10,
+      maxDose: 10,
+      doseUnit: 'mg/day',
+      frequency: 1,
+      frequencyText: 'Once daily; may be increased to 20 mg once daily if needed',
+      requiresAge: true,
+      requiresWeight: true,
       minAgeYears: 1,
-      maximumDailyDose: 40
+      minWeightKg: 10,
+      maxWeightKg: 20,
+      maximumDailyDose: 15,
+      alternativeDose: 20,
+      alternativeDoseUnit: 'mg/day',
+      alternativeNote: '20 mg/day requires a higher-strength omeprazole formulation; this 2 mg/mL product is limited to 15 mg/day.'
+    },
+    {
+      id: 'reflux-2y-over20kg',
+      condition: 'Reflux oesophagitis / symptomatic GERD — children ≥2 years, >20 kg',
+      type: 'fixed_dose',
+      dose: 20,
+      minDose: 20,
+      maxDose: 20,
+      doseUnit: 'mg/day',
+      frequency: 1,
+      frequencyText: 'Once daily; higher doses require another strength/formulation',
+      requiresAge: true,
+      requiresWeight: true,
+      minAgeYears: 2,
+      minWeightKg: 20,
+      maximumDailyDose: 15,
+      formulationNote: 'This 2 mg/mL product is not suitable for the labeled 20 mg dose because its product-specific maximum is 15 mg/day.'
     }
   ],
   information: {
     class: 'Proton pump inhibitor (PPI)',
-    mechanismOfAction: 'Omeprazole irreversibly inhibits the gastric H+/K+-ATPase proton pump in gastric parietal cells, suppressing the final step of gastric acid secretion.',
-    indications: ['GERD and reflux-related acid disease when acid suppression is clinically indicated', 'Reflux-related erosive esophagitis'],
-    contraindications: ['Hypersensitivity to omeprazole or other substituted benzimidazoles', 'Concomitant use with rilpivirine-containing products where contraindicated by product labeling'],
-    adverseEffects: ['Headache', 'Abdominal pain', 'Diarrhea', 'Nausea', 'Constipation', 'With prolonged use, clinically important risks can include hypomagnesemia, vitamin B12 deficiency and enteric infections'],
-    warningsPrecautions: ['PPIs should not be used for isolated physiologic infant regurgitation without an appropriate indication.', 'Reassess the need for ongoing acid suppression regularly.', 'Consider infectious, nutritional and electrolyte risks with prolonged therapy.', 'Administer before meals when directed; timing should follow the product and clinical regimen used.'],
-    interactions: ['Omeprazole can interact with medicines whose absorption depends on gastric pH.', 'CYP2C19-mediated interactions may occur with some medicines.', 'Check the current product label for clinically important interactions before use.'],
-    administration: 'Administer the oral suspension using an accurate oral syringe. For maximal PPI effect, administer before a meal when specified by the product or clinical regimen.',
-    pediatricUse: 'The NASPGHAN/ESPGHAN pediatric GERD guideline lists omeprazole at 1–4 mg/kg/day with an adult-based maximum of 40 mg/day. The selected pediatric formulation reference provides a 2 mg/mL suspension. DoseCare limits this configured regimen to children aged 1 year and older and does not extrapolate it to otherwise healthy infants with physiologic regurgitation.',
-    notes: 'DoseCare includes an oral suspension formulation only. Capsules, tablets and orally disintegrating tablets are excluded by project scope. PPIs are recommended for reflux-related erosive esophagitis and may be used for typical GERD symptoms; they should not be used solely for uncomplicated infant regurgitation.',
-    sources: [
-      { organization: 'Nationwide Children’s Hospital', title: 'Gastroesophageal Reflux Guidelines — Omeprazole suspension 2 mg/mL', url: 'https://www.nationwidechildrens.org/-/media/nch/for-medical-professionals/practice-tools-new/gastroesophageal-reflux-guidelines.ashx' },
-      { organization: 'NASPGHAN / ESPGHAN', title: 'Pediatric Gastroesophageal Reflux Clinical Practice Guidelines — omeprazole 1–4 mg/kg/day; maximum 40 mg/day', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5958910/' },
-      { organization: 'American Academy of Pediatrics', title: 'Gastroesophageal Reflux: Management Guidance for the Pediatrician', url: 'https://publications.aap.org/pediatrics/article/131/5/e1684/31266/Gastroesophageal-Reflux-Management-Guidance-for' },
-      { organization: 'NICE', title: 'Gastro-oesophageal reflux disease in children and young people: diagnosis and management', url: 'https://www.nice.org.uk/guidance/ng1/chapter/Recommendations' }
-    ]
+    mechanism: 'Omeprazole inhibits the gastric H+/K+-ATPase proton pump in gastric parietal cells, suppressing the final step of gastric acid secretion.',
+    indications: ['Treatment of reflux oesophagitis in children over 1 month of age', 'Symptomatic treatment of heartburn and acid regurgitation in gastro-oesophageal reflux disease in children over 1 month of age'],
+    contraindications: ['Hypersensitivity to omeprazole, substituted benzimidazoles, or formulation excipients', 'Concomitant use with rilpivirine-containing medicines where contraindicated by product labeling'],
+    adverseEffects: ['Headache', 'Abdominal pain', 'Diarrhea', 'Constipation', 'Nausea', 'Vomiting', 'Flatulence', 'Long-term PPI therapy may be associated with gastrointestinal infections and other clinically relevant effects'],
+    precautions: ['Reassess prolonged therapy periodically.', 'PPI treatment can slightly increase susceptibility to gastrointestinal infections such as Salmonella and Campylobacter.', 'Use with attention to the product sodium and potassium content, particularly in patients with renal impairment or controlled electrolyte intake.', 'Do not use this formulation to administer doses above 15 mg/day; use an appropriate higher-strength formulation instead.'],
+    interactions: ['Omeprazole can alter absorption of medicines whose absorption is pH-dependent.', 'CYP2C19-mediated interactions can occur with some medicines.', 'Check the current product information for clinically important interactions before use.'],
+    administration: 'The constituted suspension should be administered orally using the supplied or an accurate oral syringe. Take on an empty stomach at least 30 minutes before a meal. Reconstitution must be performed according to the product instructions before dispensing/administration.',
+    pediatricUse: 'The current 2 mg/mL SmPC specifies 1 mg/kg once daily for children 1 month to 1 year (maximum 10 mg/day), 10 mg once daily for children ≥1 year weighing 10–20 kg with possible increase to 20 mg using an appropriate higher-strength formulation, and 20 mg once daily for children ≥2 years weighing >20 kg; this 2 mg/mL product itself is limited to a maximum of 15 mg/day.',
+    hepaticImpairment: 'The selected SmPC states that dose adjustment is not needed in hepatic impairment.',
+    renalImpairment: 'The selected SmPC states that dose adjustment is not needed in renal impairment.',
+    notes: 'This entry represents a specific 2 mg/mL powder-for-oral-suspension product. Higher labeled doses require another omeprazole strength/formulation and are not converted using this formulation.'
   },
   sources: [
-    { organization: 'Nationwide Children’s Hospital', title: 'Gastroesophageal Reflux Guidelines — Omeprazole suspension 2 mg/mL', url: 'https://www.nationwidechildrens.org/-/media/nch/for-medical-professionals/practice-tools-new/gastroesophageal-reflux-guidelines.ashx' },
-    { organization: 'NASPGHAN / ESPGHAN', title: 'Pediatric Gastroesophageal Reflux Clinical Practice Guidelines — omeprazole 1–4 mg/kg/day; maximum 40 mg/day', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5958910/' },
-    { organization: 'American Academy of Pediatrics', title: 'Gastroesophageal Reflux: Management Guidance for the Pediatrician', url: 'https://publications.aap.org/pediatrics/article/131/5/e1684/31266/Gastroesophageal-Reflux-Management-Guidance-for' },
+    { organization: 'emc / Rosemont Pharmaceuticals', title: 'Omeprazole 2 mg/ml, Powder for Oral Suspension — SmPC, updated 17 April 2026', url: 'https://www.medicines.org.uk/emc/product/11031/smpc' },
+    { organization: 'emc / Rosemont Pharmaceuticals', title: 'Omeprazole 4 mg/ml, Powder for Oral Suspension — SmPC', url: 'https://www.medicines.org.uk/emc/product/11032/smpc' },
     { organization: 'NICE', title: 'Gastro-oesophageal reflux disease in children and young people: diagnosis and management', url: 'https://www.nice.org.uk/guidance/ng1/chapter/Recommendations' }
   ]
 });
