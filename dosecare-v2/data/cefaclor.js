@@ -10,29 +10,34 @@ window.DoseCareV2Database?.register({
   route: 'Oral',
   formulations: [
     { display: '125 mg/5 mL', concentration: { amount: 125, unit: 'mg', volume: 5, volumeUnit: 'mL' }, mgPer5mL: 125 },
-    { display: '250 mg/5 mL', concentration: { amount: 250, unit: 'mg', volume: 5, volumeUnit: 'mL' }, mgPer5mL: 250 }
+    { display: '250 mg/5 mL', concentration: { amount: 250, unit: 'mg', volume: 5, volumeUnit: 'mL' }, mgPer5mL: 250 },
+    { display: '375 mg/5 mL', concentration: { amount: 375, unit: 'mg', volume: 5, volumeUnit: 'mL' }, mgPer5mL: 375 }
   ],
   regimens: [
     {
       id: 'usual-infections-q8h', condition: 'Usual susceptible bacterial infections', type: 'mg_per_kg_per_day',
       minDose: 20, maxDose: 20, unit: 'mg/kg/day', frequency: 3,
-      frequencyText: 'Every 8 hours', requiresAge: true, requiresWeight: true, maximumDailyDose: 1000
+      frequencyText: 'Every 8 hours', requiresAge: true, requiresWeight: true, maximumDailyDose: 1000,
+      formulationRefs: ['125 mg/5 mL', '250 mg/5 mL']
     },
     {
       id: 'serious-infections-otitis-q8h', condition: 'More serious infection / otitis media', type: 'mg_per_kg_per_day',
       minDose: 40, maxDose: 40, unit: 'mg/kg/day', frequency: 3,
-      frequencyText: 'Every 8 hours', requiresAge: true, requiresWeight: true, maximumDailyDose: 1000
+      frequencyText: 'Every 8 hours', requiresAge: true, requiresWeight: true, maximumDailyDose: 1000,
+      formulationRefs: ['125 mg/5 mL', '250 mg/5 mL']
     },
     {
       id: 'pharyngitis-q12h', condition: 'Pharyngitis', type: 'mg_per_kg_per_day',
       minDose: 20, maxDose: 20, unit: 'mg/kg/day', frequency: 2,
       frequencyText: 'Every 12 hours', requiresAge: true, requiresWeight: true, maximumDailyDose: 1000,
-      durationText: 'At least 10 days for beta-hemolytic streptococcal infection'
+      durationText: 'At least 10 days for beta-hemolytic streptococcal infection',
+      formulationRefs: ['187 mg/5 mL', '375 mg/5 mL']
     },
     {
       id: 'otitis-q12h', condition: 'Otitis media', type: 'mg_per_kg_per_day',
       minDose: 40, maxDose: 40, unit: 'mg/kg/day', frequency: 2,
-      frequencyText: 'Every 12 hours', requiresAge: true, requiresWeight: true, maximumDailyDose: 1000
+      frequencyText: 'Every 12 hours', requiresAge: true, requiresWeight: true, maximumDailyDose: 1000,
+      formulationRefs: ['187 mg/5 mL', '375 mg/5 mL']
     }
   ],
   information: {
@@ -44,13 +49,15 @@ window.DoseCareV2Database?.register({
     warningsPrecautions: ['Use only for bacterial infections with an appropriate indication.', 'Assess beta-lactam allergy history before administration.', 'Adjust therapy appropriately in significant renal impairment when clinically indicated.'],
     interactions: ['Warfarin and other anticoagulants may require monitoring.', 'Probenecid can affect beta-lactam concentrations.'],
     administration: 'Shake the oral suspension well before each dose and use an accurate measuring device. Follow product storage instructions after reconstitution.',
-    pediatricUse: 'DailyMed labeling recommends 20 mg/kg/day divided every 8 hours for usual pediatric infections and 40 mg/kg/day for more serious infections and otitis media, with a maximum of 1 g/day. For otitis media and pharyngitis, the total daily dose may be divided every 12 hours.',
+    pediatricUse: 'DailyMed labeling recommends 20 mg/kg/day divided every 8 hours for usual pediatric infections and 40 mg/kg/day for more serious infections and otitis media, with a maximum of 1 g/day. For otitis media and pharyngitis, the total daily dose may be divided every 12 hours. The BID tables specifically use 187 mg/5 mL and 375 mg/5 mL formulations.',
     notes: 'Cefaclor is included as oral suspension only. The selected DailyMed labeling is older than some other DoseCare sources, so this medicine should be re-reviewed if a newer authoritative pediatric label becomes available.',
     sources: [
-      { organization: 'DailyMed', title: 'Cefaclor Suspension — pediatric dosage and maximum 1 g/day', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9e8890f0-e04a-4555-ac8d-d1b792a5c276' }
+      { organization: 'DailyMed', title: 'Cefaclor Suspension — pediatric dosage and maximum 1 g/day', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9e8890f0-e04a-4555-ac8d-d1b792a5c276' },
+      { organization: 'DailyMed', title: 'Cefaclor Suspension — 125/250/375 mg per 5 mL pediatric dosing', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=224af904-38f3-4210-a750-e21006db4c66' }
     ]
   },
   sources: [
-    { organization: 'DailyMed', title: 'Cefaclor Suspension — pediatric dosage and maximum 1 g/day', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9e8890f0-e04a-4555-ac8d-d1b792a5c276' }
+    { organization: 'DailyMed', title: 'Cefaclor Suspension — pediatric dosage and maximum 1 g/day', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9e8890f0-e04a-4555-ac8d-d1b792a5c276' },
+    { organization: 'DailyMed', title: 'Cefaclor Suspension — 125/250/375 mg per 5 mL pediatric dosing', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=224af904-38f3-4210-a750-e21006db4c66' }
   ]
 });
