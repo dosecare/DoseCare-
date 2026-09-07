@@ -10,6 +10,7 @@ window.DoseCareV2Database?.register({
   route: 'Oral',
   formulations: [
     { display: '125 mg/5 mL', concentration: { amount: 125, unit: 'mg', volume: 5, volumeUnit: 'mL' }, mgPer5mL: 125 },
+    { display: '187 mg/5 mL', concentration: { amount: 187, unit: 'mg', volume: 5, volumeUnit: 'mL' }, mgPer5mL: 187 },
     { display: '250 mg/5 mL', concentration: { amount: 250, unit: 'mg', volume: 5, volumeUnit: 'mL' }, mgPer5mL: 250 },
     { display: '375 mg/5 mL', concentration: { amount: 375, unit: 'mg', volume: 5, volumeUnit: 'mL' }, mgPer5mL: 375 }
   ],
@@ -53,11 +54,12 @@ window.DoseCareV2Database?.register({
     notes: 'Cefaclor is included as oral suspension only. The selected DailyMed labeling is older than some other DoseCare sources, so this medicine should be re-reviewed if a newer authoritative pediatric label becomes available.',
     sources: [
       { organization: 'DailyMed', title: 'Cefaclor Suspension — pediatric dosage and maximum 1 g/day', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9e8890f0-e04a-4555-ac8d-d1b792a5c276' },
-      { organization: 'DailyMed', title: 'Cefaclor Suspension — 125/250/375 mg per 5 mL pediatric dosing', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=224af904-38f3-4210-a750-e21006db4c66' }
+      { organization: 'DailyMed', title: 'Cefaclor Suspension — 125/187/250/375 mg per 5 mL pediatric dosing', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9e8890f0-e04a-4555-ac8d-d1b792a5c276' },
+      { organization: 'DailyMed', title: 'Cefaclor Suspension — current 125/250 mg per 5 mL label', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=224af904-38f3-4210-a750-e21006db4c66' }
     ]
   },
   sources: [
     { organization: 'DailyMed', title: 'Cefaclor Suspension — pediatric dosage and maximum 1 g/day', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9e8890f0-e04a-4555-ac8d-d1b792a5c276' },
-    { organization: 'DailyMed', title: 'Cefaclor Suspension — 125/250/375 mg per 5 mL pediatric dosing', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=224af904-38f3-4210-a750-e21006db4c66' }
+    { organization: 'DailyMed', title: 'Cefaclor Suspension — current 125/250 mg per 5 mL label', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=224af904-38f3-4210-a750-e21006db4c66' }
   ]
 });
