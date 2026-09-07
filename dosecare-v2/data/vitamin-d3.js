@@ -19,48 +19,35 @@ window.DoseCareV2Database.register({
   ],
   regimens: [
     {
-      id: 'vitamin-d3-routine-infants-400iu',
+      id: 'vitamin-d3-routine-400iu',
       type: 'fixed_dose',
-      condition: 'Routine vitamin D supplementation — infants',
+      condition: 'Routine vitamin D supplementation — D-VITE product dose',
       minAgeMonths: 0,
-      maxAgeMonths: 12,
+      maxAgeYears: 4,
       minDose: 0.01,
       maxDose: 0.01,
       unit: 'mg/day',
       frequency: 1,
       frequencyText: 'Once daily',
       allowedFormulations: ['d-vite-400iu-per-ml']
-    },
-    {
-      id: 'vitamin-d3-routine-children-600iu',
-      type: 'fixed_dose',
-      condition: 'Routine vitamin D supplementation — children 1–13 years',
-      minAgeYears: 1,
-      maxAgeYears: 13,
-      minDose: 0.015,
-      maxDose: 0.015,
-      unit: 'mg/day',
-      frequency: 1,
-      frequencyText: 'Once daily',
-      allowedFormulations: ['d-vite-400iu-per-ml'],
-      clinicalNote: 'NIH recommended intake is 600 IU/day for children 1–13 years. With the configured 400 IU/mL product, this equals 1.5 mL/day. The D-VITE product label states not to exceed 1 mL/day unless a physician recommends otherwise; this regimen therefore represents the general recommended intake rather than an unrestricted product-label dose.'
     }
   ],
   information: {
     mechanism: 'Vitamin D3 increases intestinal calcium and phosphate absorption and supports normal bone mineralization.',
-    indications: 'Routine pediatric vitamin D supplementation.',
+    indications: 'Routine pediatric vitamin D supplementation with the configured D-VITE oral liquid.',
     precautions: [
-      'Do not exceed the configured product dose unless directed by a clinician.',
-      'Keep out of reach of children because excessive vitamin D can cause toxicity.',
-      'For children 1–13 years, the 600 IU/day regimen is based on NIH recommended intake; the configured product label states not to exceed 1 mL/day unless a physician recommends otherwise.'
+      'Do not exceed 1 mL (400 IU) per day unless a physician recommends another dosage.',
+      'Shake well and administer using the supplied dosing device.',
+      'Keep out of reach of children because excessive vitamin D intake can cause toxicity.',
+      'This record represents the configured product label dose; it is not a vitamin D deficiency treatment regimen.'
     ],
     adverseEffects: [
-      'Excessive intake can cause hypercalcemia and vitamin D toxicity.'
+      'Excessive vitamin D intake can cause hypercalcemia and vitamin D toxicity.'
     ],
     interactions: [
-      'Clinically important interactions can occur with medicines affecting calcium balance or vitamin D metabolism; verify concomitant therapy before use.'
+      'Vitamin D supplements may interact with or affect medicines such as thiazide diuretics, corticosteroids, or orlistat; review concomitant therapy when clinically relevant.'
     ],
-    pediatricUse: 'Routine supplementation: 400 IU/day for infants 0–12 months and 600 IU/day for children 1–13 years, using the configured 400 IU/mL oral solution. This is not a vitamin D deficiency treatment regimen.'
+    pediatricUse: 'D-VITE provides 400 IU (10 mcg) vitamin D3 per 1 mL. The product directions specify 1 mL daily for infants through 12 months and children 1 through 4 years, with doses above 1 mL/day only when recommended by a doctor.'
   },
   sources: [
     {
@@ -69,7 +56,7 @@ window.DoseCareV2Database.register({
     },
     {
       title: 'NIH Office of Dietary Supplements — Vitamin D Fact Sheet for Health Professionals',
-      url: 'https://ods.od.nih.gov/factsheets/VITAMIND/HealthProfessional/'
+      url: 'https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/'
     }
   ]
 });
