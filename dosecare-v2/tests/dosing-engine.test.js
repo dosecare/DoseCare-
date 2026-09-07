@@ -123,6 +123,30 @@
     assert(near(result.lowMl, 0.75), `Expected 0.75 mL/day, got ${result.lowMl}`);
   });
 
+  test('diphenhydramine auto-calculates only the labeled 6–11 year range', () => {
+    const m = db.getById('diphenhydramine');
+    const r = m.regimens[0];
+    const f = m.formulations[0];
+    const child = engine.calculate({ medicine: m, regimen: r, age: 8, ageUnit: 'years', formulation: f });
+    assert(child.ok, child.error || 'Calculation failed');
+    assert(near(child.lowMl, 5), `Expected 5 mL lower dose, got ${child.lowMl}`);
+    assert(near(child.highMl, 10), `Expected 10 mL upper dose, got ${child.highMl}`);
+    const younger = engine.calculate({ medicine: m, regimen: r, age: 4, ageUnit: 'years', formulation: f });
+    assert(!younger.ok && younger.code === 'AGE_BELOW_REGIMEN_MIN', 'Ages 2–5 must not receive an automatic diphenhydramine dose');
+  });
+
+  test('magnesium hydroxide follows the current label and does not auto-calculate under 6 years', () => {
+    const m = db.getById('magnesium-hydroxide');
+    const laxative = m.regimens.find(x => x.id === 'laxative-6-11y');
+    const f = m.formulations[0];
+    const child = engine.calculate({ medicine: m, regimen: laxative, age: 8, ageUnit: 'years', formulation: f });
+    assert(child.ok, child.error || 'Calculation failed');
+    assert(near(child.lowMl, 15), `Expected 15 mL lower dose, got ${child.lowMl}`);
+    assert(near(child.highMl, 30), `Expected 30 mL upper dose, got ${child.highMl}`);
+    const younger = engine.calculate({ medicine: m, regimen: laxative, age: 5, ageUnit: 'years', formulation: f });
+    assert(!younger.ok && younger.code === 'AGE_BELOW_REGIMEN_MIN', 'Children under 6 must not receive an automatic magnesium hydroxide dose');
+  });
+
   window.DoseCareV2DosingTests = {
     run() {
       const results = tests.map(({ name, fn }) => {
