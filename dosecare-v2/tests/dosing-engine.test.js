@@ -71,7 +71,7 @@
 
   test('vitamin D3 routine regimen converts to 1 mL daily', () => {
     const m = db.getById('vitamin-d3');
-    const r = m.regimens.find(x => x.id === 'vitamin-d3-routine-400iu');
+    const r = m.regimens.find(x => x.id === 'vitamin-d3-routine-infants-400iu');
     const f = m.formulations.find(x => x.id === 'd-vite-400iu-per-ml');
     const result = engine.calculate({ medicine: m, regimen: r, age: 6, ageUnit: 'months', formulation: f });
     assert(result.ok, result.error || 'Calculation failed');
