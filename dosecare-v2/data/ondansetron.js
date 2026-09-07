@@ -57,19 +57,19 @@ window.DoseCareV2Database?.register({
     indications: ['Prevention of nausea and vomiting associated with moderately emetogenic cancer chemotherapy'],
     contraindications: ['Hypersensitivity to ondansetron or formulation components', 'Concomitant apomorphine use'],
     adverseEffects: ['Headache', 'Constipation', 'Diarrhea', 'Fatigue/malaise', 'QT interval prolongation and serious arrhythmias are important rare risks'],
-    warningsPrecautions: ['Avoid in congenital long-QT syndrome.', 'Consider ECG monitoring in patients with electrolyte abnormalities, heart failure, bradyarrhythmias, or concomitant QT-prolonging medicines.', 'Hypersensitivity reactions including anaphylaxis and bronchospasm may occur.', 'Serotonin syndrome has been reported with serotonergic medicines.'],
+    warningsPrecautions: ['Avoid in congenital long-QT syndrome.', 'Consider ECG monitoring in patients with electrolyte abnormalities, heart failure, bradyarrhythmias, or concomitant QT-prolonging medicines.', 'Hypersensitivity reactions including anaphylaxis and bronchospasm may occur.', 'Serotonin syndrome has been reported with serotonergic medicines.', 'In severe hepatic impairment, do not exceed 8 mg total daily dose.'],
     interactions: ['Apomorphine — contraindicated.', 'Other QT-prolonging medicines may increase arrhythmia risk.', 'Serotonergic medicines may increase serotonin-syndrome risk.'],
     administration: 'Administer the oral solution using an accurate oral measuring device. For chemotherapy, select the appropriate initial or post-chemotherapy phase.',
     pediatricUse: 'Current ondansetron oral-solution labeling specifies 4 mg for ages 4–11 years and 8 mg for ages 12–17 years for moderately emetogenic chemotherapy, with different initial and post-chemotherapy schedules.',
-    hepaticImpairment: 'In severe hepatic impairment, total daily dose should not exceed 8 mg.',
+    hepaticImpairment: 'In severe hepatic impairment, total daily dose should not exceed 8 mg. This restriction is clinically important because standard pediatric chemotherapy regimens can otherwise exceed 8 mg/day.',
     notes: 'DoseCare deliberately does not extrapolate ondansetron dosing to acute gastroenteritis. Tablets and orally disintegrating tablets are excluded; this entry is oral solution only.',
     sources: [
-      { organization: 'DailyMed', title: 'Ondansetron Oral Solution USP 4 mg/5 mL — current prescribing information', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=04800a86-2391-44e6-8763-d65e8a916c26' },
+      { organization: 'DailyMed', title: 'Ondansetron Oral Solution USP 4 mg/5 mL — effective March 31, 2026', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=68a4d845-0c1c-4867-bfca-c0fb11dc93cd' },
       { organization: 'FDA', title: 'ZOFRAN (ondansetron) prescribing information', url: 'https://www.accessdata.fda.gov/drugsatfda_docs/label/2016/020103s035_020605s019_020781s019lbl.pdf' }
     ]
   },
   sources: [
-    { organization: 'DailyMed', title: 'Ondansetron Oral Solution USP 4 mg/5 mL — current prescribing information', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=04800a86-2391-44e6-8763-d65e8a916c26' },
+    { organization: 'DailyMed', title: 'Ondansetron Oral Solution USP 4 mg/5 mL — effective March 31, 2026', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=68a4d845-0c1c-4867-bfca-c0fb11dc93cd' },
     { organization: 'FDA', title: 'ZOFRAN (ondansetron) prescribing information', url: 'https://www.accessdata.fda.gov/drugsatfda_docs/label/2016/020103s035_020605s019_020781s019lbl.pdf' }
   ]
 });
