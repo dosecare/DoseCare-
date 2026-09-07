@@ -55,6 +55,23 @@ window.DoseCareV2Database?.register({
       requiresWeight: false,
       allowedFormulations: ['guaifenesin-100mg-5ml'],
       maxDosesPer24h: 6
+    },
+    {
+      id: 'age-12-and-over',
+      type: 'label_age_based',
+      condition: 'Cough with chest congestion / excessive mucus',
+      doseMin: 200,
+      doseMax: 400,
+      volumeMin: 10,
+      volumeMax: 20,
+      doseUnit: 'mg/dose',
+      frequency: 6,
+      frequencyText: 'Every 4 hours; do not exceed 6 doses in 24 hours',
+      minAgeYears: 12,
+      requiresAge: true,
+      requiresWeight: false,
+      allowedFormulations: ['guaifenesin-100mg-5ml'],
+      maxDosesPer24h: 6
     }
   ],
   information: {
@@ -65,7 +82,7 @@ window.DoseCareV2Database?.register({
     adverseEffects: ['Nausea', 'Vomiting', 'Stomach discomfort', 'Dizziness', 'Headache'],
     contraindications: ['Hypersensitivity to guaifenesin or any ingredient in the formulation.'],
     administration: 'Administer orally using the supplied measuring device. The cited product is an oral solution containing 100 mg guaifenesin per 5 mL.',
-    pediatricUse: 'For the selected 100 mg/5 mL oral solution: ages 2 to under 6 years receive 2.5–5 mL every 4 hours; ages 6 to under 12 years receive 5–10 mL every 4 hours. Children under 2 years should be referred to a physician rather than assigned an extrapolated dose.',
+    pediatricUse: 'For the selected 100 mg/5 mL oral solution: ages 2 to under 6 years receive 2.5–5 mL every 4 hours; ages 6 to under 12 years receive 5–10 mL every 4 hours; ages 12 years and over receive 10–20 mL every 4 hours. Children under 2 years should be referred to a physician rather than assigned an extrapolated dose.',
     notes: 'DoseCare preserves the labeled volume ranges rather than selecting an arbitrary single volume. Combination products containing dextromethorphan or other actives are not represented by this single-ingredient record.'
   },
   sources: [
