@@ -69,18 +69,35 @@ window.DoseCareV2Database?.register({
       minAgeYears: 6,
       maxAgeYears: 11.999,
       allowedFormulations: ['chlorpheniramine-2mg-5ml-syrup']
+    },
+    {
+      id: 'allergy-12y-plus',
+      condition: 'Allergic conditions responsive to antihistamines',
+      type: 'fixed_dose',
+      dose: 4,
+      minDose: 4,
+      maxDose: 4,
+      unit: 'mg/dose',
+      frequency: 4,
+      frequencyText: '4 mg (10 mL) every 4–6 hours as required',
+      maximumDailyDose: 24,
+      maximumDailyDoseUnit: 'mg/day',
+      requiresAge: true,
+      requiresWeight: false,
+      minAgeYears: 12,
+      allowedFormulations: ['chlorpheniramine-2mg-5ml-syrup']
     }
   ],
   information: {
     class: 'First-generation H1 antihistamine',
-    mechanismOfAction: 'H1-receptor antagonist with anticholinergic and sedating effects.',
+    mechanism: 'H1-receptor antagonist with anticholinergic and sedating effects.',
     indications: ['Hay fever / allergic rhinitis', 'Urticaria and other allergic conditions responsive to antihistamines', 'Itch associated with chickenpox'],
-    contraindications: ['Hypersensitivity to antihistamines or formulation ingredients', 'Premature infants or neonates', 'Concurrent MAOI treatment or within 14 days of stopping an MAOI'],
+    contraindications: ['Hypersensitivity to antihistamines or formulation ingredients', 'Concurrent MAOI treatment or within 14 days of stopping an MAOI'],
     adverseEffects: ['Drowsiness', 'Dizziness', 'Blurred vision', 'Dry mouth and other anticholinergic effects', 'Paradoxical excitation may occur in children'],
-    warningsPrecautions: ['Use caution in children because paradoxical excitation and neurological anticholinergic effects can occur.', 'Minimum interval between doses is 4 hours.', 'Do not combine with other antihistamine-containing products without clinical advice.', 'Renal or hepatic impairment requires medical advice.'],
-    interactions: ['MAO inhibitors may intensify anticholinergic effects.', 'Sedatives and hypnotics may increase sedation.', 'Alcohol may increase sedative effects.'],
+    precautions: ['Not recommended for children below 1 year.', 'Use caution in epilepsy, glaucoma or raised intra-ocular pressure, prostatic hypertrophy, severe hypertension or cardiovascular disease, bronchitis/bronchiectasis/asthma, and hepatic or renal impairment.', 'Children are more susceptible to neurological anticholinergic effects and paradoxical excitation.', 'Minimum interval between doses is 4 hours.', 'Do not use continuously for more than two weeks without consulting a doctor.', 'Do not combine with other antihistamine-containing products without clinical advice.'],
+    interactions: ['MAO inhibitors intensify anticholinergic effects.', 'Sedatives and hypnotics may increase sedation.', 'Alcohol may increase sedative effects.', 'Chlorphenamine inhibits phenytoin metabolism and can increase phenytoin toxicity.'],
     administration: 'Oral administration. Use an accurate measuring device. Do not exceed the stated dose or frequency.',
-    pediatricUse: 'This product-specific regimen is for children 1 year and older. It is not recommended below 1 year.',
+    pediatricUse: 'This product-specific oral-syrup regimen is for children 1 year and older. It is not recommended below 1 year.',
     notes: 'Chlorpheniramine is also called chlorphenamine. Concentration: 2 mg/5 mL.'
   },
   sources: [
