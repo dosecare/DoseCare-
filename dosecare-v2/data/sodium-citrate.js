@@ -22,9 +22,9 @@ window.DoseCareV2Database.register({
       condition: 'Systemic alkalization / maintenance of alkaline urine',
       type: 'fixed_dose',
       minAgeYears: 2,
-      doseMin: 500,
-      doseMax: 1500,
-      doseUnit: 'mg sodium citrate/dose',
+      minDose: 500,
+      maxDose: 1500,
+      unit: 'mg sodium citrate/dose',
       frequency: 4,
       frequencyText: '5–15 mL after meals and at bedtime, diluted in water',
       allowedFormulations: ['sodium-citrate-500mg-334mg-per-5ml']
@@ -33,11 +33,21 @@ window.DoseCareV2Database.register({
   information: {
     mechanism: 'Sodium citrate is absorbed and metabolized to sodium bicarbonate and acts as a systemic alkalizer.',
     indications: 'Alkalinization where maintenance of alkaline urine is desirable and for chronic metabolic acidosis such as that associated with chronic renal insufficiency or renal tubular acidosis when potassium salts are undesirable or contraindicated.',
+    contraindications: [
+      'Severe renal impairment or clinically important sodium restriction according to the cited product labeling.'
+    ],
     precautions: [
       'The pediatric label dose is 5–15 mL after meals and at bedtime, diluted in water.',
       'For children under 2 years, the DailyMed label directs use only after consultation with a physician; no automatic DoseCare calculation is provided below age 2 years.',
       'Use caution in patients with abnormal renal mechanisms, especially with hypocalcemia, because sodium bicarbonate generation may contribute to alkalosis.',
       'Shake well before use and dilute in water as directed.'
+    ],
+    adverseEffects: [
+      'Gastrointestinal upset may occur.',
+      'Excessive use can cause metabolic alkalosis and electrolyte disturbances.'
+    ],
+    interactions: [
+      'Concurrent aluminum-containing antacids should be avoided unless specifically directed because urinary alkalinization can increase aluminum absorption.'
     ],
     pediatricUse: 'DailyMed labeling gives 1–3 teaspoonfuls (5–15 mL) after meals and at bedtime for pediatric patients; children under 2 years require physician consultation.'
   },
