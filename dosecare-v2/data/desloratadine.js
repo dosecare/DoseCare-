@@ -77,18 +77,37 @@ window.DoseCareV2Database?.register({
       minAgeMonths: 72,
       maxAgeMonths: 143.999,
       allowedFormulations: ['desloratadine-0-5mg-ml']
+    },
+    {
+      id: 'allergy-12y-plus',
+      condition: 'Allergic rhinitis / chronic idiopathic urticaria',
+      type: 'fixed_dose',
+      dose: 5,
+      minDose: 5,
+      maxDose: 5,
+      unit: 'mg/dose',
+      volume: 10,
+      minVolume: 10,
+      maxVolume: 10,
+      volumeUnit: 'mL/dose',
+      frequency: 1,
+      frequencyText: 'Once daily',
+      requiresAge: true,
+      requiresWeight: false,
+      minAgeMonths: 144,
+      allowedFormulations: ['desloratadine-0-5mg-ml']
     }
   ],
   information: {
     class: 'Second-generation H1 antihistamine',
-    mechanismOfAction: 'Selective H1-receptor antagonist that reduces histamine-mediated allergic symptoms.',
-    indications: ['Perennial allergic rhinitis', 'Chronic idiopathic urticaria'],
+    mechanism: 'Selective H1-receptor antagonist that reduces histamine-mediated allergic symptoms.',
+    indications: ['Perennial allergic rhinitis', 'Seasonal allergic rhinitis (age 2 years and older)', 'Chronic idiopathic urticaria'],
     contraindications: ['Hypersensitivity to desloratadine, loratadine, or any formulation component.'],
     adverseEffects: ['Headache', 'Somnolence', 'Fatigue', 'Dry mouth'],
-    warningsPrecautions: ['Pediatric dosing below 6 months has not been established.', 'Dose adjustment is recommended in adults with renal or hepatic impairment; pediatric recommendations for these impairments cannot be made due to lack of data.', 'Do not increase dose or dosing frequency beyond the labeled regimen.'],
-    interactions: ['CYP3A4/CYP2D6 inhibitors may affect exposure.'],
+    precautions: ['Pediatric dosing below 6 months has not been established.', 'Dose adjustment is recommended in adults with renal or hepatic impairment; pediatric recommendations for these impairments cannot be made due to lack of data.', 'Do not increase dose or dosing frequency beyond the labeled regimen.'],
+    interactions: ['CYP3A4 inhibitors, fluoxetine, and cimetidine can affect desloratadine exposure; clinically important interactions are not generally expected at labeled doses.'],
     administration: 'Measure with an accurate oral syringe or calibrated measuring device. May be taken without regard to meals.',
-    pediatricUse: 'Current oral-solution labeling supports children 6 months to 11 years with age-specific once-daily doses.',
+    pediatricUse: 'Current oral-solution labeling supports children 6 months to 11 years with age-specific once-daily doses; adolescents 12 years and older receive the adult 5 mg once-daily dose.',
     notes: 'Oral solution concentration: 0.5 mg/mL (2.5 mg/5 mL).'
   },
   sources: [
