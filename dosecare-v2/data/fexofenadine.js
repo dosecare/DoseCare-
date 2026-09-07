@@ -1,6 +1,5 @@
 /* DoseCare V2 — Fexofenadine oral suspension
- * Source: DailyMed, fexofenadine hydrochloride oral suspension 30 mg/5 mL.
- * Pediatric labeled directions: children 2 to under 12 years: 5 mL every 12 hours; maximum 10 mL in 24 hours.
+ * Source: current DailyMed labeling, fexofenadine hydrochloride oral suspension 30 mg/5 mL.
  */
 (function(global){
   'use strict';
@@ -43,20 +42,42 @@
       requiresAge:true,
       requiresWeight:false,
       allowedFormulations:['fexofenadine-30mg-5ml']
+    },{
+      id:'allergic-rhinitis-12-plus',
+      condition:'Allergic rhinitis / upper respiratory allergy symptoms',
+      type:'label_age_based',
+      minAgeYears:12,
+      doseMin:60,
+      doseMax:60,
+      doseUnit:'mg/dose',
+      volumeMin:10,
+      volumeMax:10,
+      volumeUnit:'mL/dose',
+      frequency:2,
+      dosesPerDay:2,
+      frequencyText:'10 mL every 12 hours',
+      maximumDailyDose:120,
+      maximumDailyDoseUnit:'mg/day',
+      maximumDailyVolume:20,
+      maximumDailyVolumeUnit:'mL/day',
+      requiresAge:true,
+      requiresWeight:false,
+      allowedFormulations:['fexofenadine-30mg-5ml']
     }],
     information:{
       class:'Second-generation H1 antihistamine',
-      indications:['Symptomatic relief of allergy symptoms such as allergic rhinitis'],
+      indications:['Temporary relief of hay fever and other upper respiratory allergy symptoms'],
       mechanism:'Selective peripheral H1-receptor antagonist that reduces histamine-mediated allergic symptoms.',
-      precautions:['Do not administer with fruit juice because it can reduce absorption.', 'Separate from aluminum- or magnesium-containing antacids according to the product label.', 'Children with kidney disease require medical advice because dosing may differ.'],
+      precautions:['Do not administer with fruit juice because it can reduce absorption.', 'Do not take at the same time as aluminum- or magnesium-containing antacids.', 'Children with kidney disease require medical advice because dosing may differ.'],
       adverseEffects:['Headache','Nausea','Dizziness'],
       contraindications:['Hypersensitivity to fexofenadine or formulation components.'],
-      administration:'Administer orally using the supplied measuring device. Shake the oral suspension before use.',
-      pediatricUse:'Children 2 to under 12 years: 5 mL every 12 hours; do not exceed 10 mL in 24 hours. Children under 2 years: ask a doctor; no regimen is configured in DoseCare.',
+      interactions:['Aluminum- or magnesium-containing antacids can reduce fexofenadine absorption; fruit juice can also reduce absorption.'],
+      administration:'Shake well before use. Administer orally using the supplied measuring device.',
+      pediatricUse:'Children 2 to under 12 years: 5 mL every 12 hours; do not exceed 10 mL in 24 hours. Children 12 years and over: 10 mL every 12 hours; do not exceed 20 mL in 24 hours. Children under 2 years: ask a doctor; no regimen is configured in DoseCare.',
       notes:'DoseCare includes only the 30 mg/5 mL oral suspension formulation.'
     },
     sources:[
-      {organization:'DailyMed',title:'Fexofenadine Hydrochloride Oral Suspension 30 mg/5 mL',url:'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e8e35d7a-a86b-4d37-979b-f454978f070b'},
+      {organization:'DailyMed',title:'Fexofenadine Hydrochloride Oral Suspension 30 mg/5 mL — updated September 1, 2026',url:'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=fe864426-c0d6-492a-96be-cd44fd9ca054'},
       {organization:'DailyMed',title:"Children’s Allergy Fexofenadine HCl Suspension",url:'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=667c87c2-c594-49e5-92a7-f8aa140642d6'}
     ]
   });
