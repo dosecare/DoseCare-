@@ -1,6 +1,6 @@
 /* DoseCare V2 — Ondansetron oral solution
  * Oral liquid only.
- * Pediatric chemotherapy dosing is represented as explicit labeled phases so the calculator does not collapse a time-dependent regimen into one fixed frequency.
+ * Pediatric chemotherapy dosing is represented as explicit scheduled phases so the calculator does not collapse a time-dependent regimen into one fixed frequency.
  */
 window.DoseCareV2Database?.register({
   id: 'ondansetron',
@@ -16,7 +16,7 @@ window.DoseCareV2Database?.register({
     {
       id: 'chemotherapy-4-11-initial',
       condition: 'Moderately emetogenic chemotherapy — initial phase',
-      type: 'fixed_dose', unit: 'mg/dose',
+      type: 'scheduled', unit: 'mg/dose',
       schedule: [
         { timeAfterHours: 0, doseMg: 4, label: '30 minutes before chemotherapy' },
         { timeAfterHours: 4, doseMg: 4, label: '4 hours after the first dose' },
@@ -35,7 +35,7 @@ window.DoseCareV2Database?.register({
     {
       id: 'chemotherapy-12-17-initial',
       condition: 'Moderately emetogenic chemotherapy — initial phase',
-      type: 'fixed_dose', unit: 'mg/dose',
+      type: 'scheduled', unit: 'mg/dose',
       schedule: [
         { timeAfterHours: 0, doseMg: 8, label: '30 minutes before chemotherapy' },
         { timeAfterHours: 8, doseMg: 8, label: '8 hours after the first dose' }
