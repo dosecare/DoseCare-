@@ -27,7 +27,7 @@ window.DoseCareV2Database.register({
       maxDose: 50,
       unit: 'mg/day',
       frequency: 1,
-      frequencyText: '50 mg/day in divided doses',
+      frequencyText: '50 mg/day total, given in divided doses',
       allowedFormulations: ['hydroxyzine-10mg-per-5ml']
     },
     {
@@ -39,7 +39,7 @@ window.DoseCareV2Database.register({
       maxDose: 100,
       unit: 'mg/day',
       frequency: 1,
-      frequencyText: '50–100 mg/day in divided doses',
+      frequencyText: '50–100 mg/day total, given in divided doses',
       allowedFormulations: ['hydroxyzine-10mg-per-5ml']
     }
   ],
@@ -47,12 +47,16 @@ window.DoseCareV2Database.register({
     mechanism: 'Hydroxyzine is an H1 antihistamine with sedative properties.',
     indications: 'Symptomatic management of pruritus associated with allergic conditions including chronic urticaria and atopic or contact dermatoses, and other histamine-mediated pruritus.',
     contraindications: [
-      'Hypersensitivity to hydroxyzine or other piperazine derivatives; pregnancy and breastfeeding restrictions depend on the cited product labeling.'
+      'Known hypersensitivity to hydroxyzine hydrochloride products.',
+      'Known hypersensitivity to cetirizine or levocetirizine.',
+      'Prolonged QT interval.',
+      'Early pregnancy according to the cited product labeling.'
     ],
     precautions: [
-      'The cited DailyMed label expresses the pediatric regimen as a total daily dose given in divided doses; the calculator displays the labeled daily total and does not invent a division schedule.',
-      'Hydroxyzine can cause drowsiness and other CNS effects.',
-      'Use caution with clinically relevant QT-risk factors or interacting medicines.',
+      'The cited DailyMed label expresses the pediatric pruritus regimen as a total daily dose given in divided doses; the calculator displays the labeled daily total and does not invent a specific division schedule.',
+      'Hydroxyzine can cause drowsiness and other CNS effects; concomitant CNS depressants can increase these effects.',
+      'Use caution in patients with risk factors for QT prolongation, congenital long-QT syndrome, electrolyte abnormalities, bradyarrhythmias, uncompensated heart failure, or other ventricular-arrhythmia risk.',
+      'Use caution with medicines known to prolong the QT interval.',
       'Use the minimum effective dose appropriate to the clinical situation.'
     ],
     adverseEffects: [
@@ -64,9 +68,12 @@ window.DoseCareV2Database.register({
     ],
     interactions: [
       'Other CNS depressants may increase sedation.',
-      'Other medicines that prolong the QT interval may increase arrhythmia risk.'
+      'Medicines that prolong the QT interval may increase the risk of QT prolongation and torsade de pointes.',
+      'Hydroxyzine may potentiate meperidine and barbiturates when used as a pre-anesthetic adjunct.'
     ],
-    pediatricUse: 'DailyMed labeling gives 50 mg/day in divided doses for children under 6 years and 50–100 mg/day in divided doses for children over 6 years for pruritus.'
+    administration: 'Administer orally. For the pediatric pruritus indication, the labeled total daily dose is given in divided doses. The oral solution is 10 mg/5 mL.',
+    pediatricUse: 'DailyMed labeling gives 50 mg/day in divided doses for children under 6 years and 50–100 mg/day in divided doses for children over 6 years for pruritus. The current DoseCare regimen is limited to the oral solution and does not calculate the separate 0.6 mg/kg pediatric premedication regimen.',
+    notes: 'This calculator record intentionally does not extrapolate a weight-based regimen or specify an unlabelled division schedule.'
   },
   sources: [
     {
