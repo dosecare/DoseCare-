@@ -18,11 +18,11 @@ window.DoseCareV2Database?.register({
       condition: 'Acute otitis media'
     },
     {
-      id: 'aom-3-day', type: 'condition_based', frequency: 1, frequencyText: 'Once daily for 3 days', minAgeMonths: 6,
+      id: 'aom-3-day', type: 'scheduled', frequency: 1, frequencyText: 'Once daily for 3 days', minAgeMonths: 6,
       condition: 'Acute otitis media', schedule: [{ dayRange: 'Days 1–3', doseMgPerKg: 10, maxDoseMg: 500 }]
     },
     {
-      id: 'aom-5-day', type: 'condition_based', frequency: 1, frequencyText: 'Once daily for 5 days', minAgeMonths: 6,
+      id: 'aom-5-day', type: 'scheduled', frequency: 1, frequencyText: 'Once daily for 5 days', minAgeMonths: 6,
       condition: 'Acute otitis media', schedule: [
         { dayRange: 'Day 1', doseMgPerKg: 10, maxDoseMg: 500 },
         { dayRange: 'Days 2–5', doseMgPerKg: 5, maxDoseMg: 250 }
@@ -34,7 +34,7 @@ window.DoseCareV2Database?.register({
       condition: 'Acute bacterial sinusitis'
     },
     {
-      id: 'cap-5-day', type: 'condition_based', frequency: 1, frequencyText: 'Once daily for 5 days', minAgeMonths: 6,
+      id: 'cap-5-day', type: 'scheduled', frequency: 1, frequencyText: 'Once daily for 5 days', minAgeMonths: 6,
       condition: 'Community-acquired pneumonia', schedule: [
         { dayRange: 'Day 1', doseMgPerKg: 10, maxDoseMg: 500 },
         { dayRange: 'Days 2–5', doseMgPerKg: 5, maxDoseMg: 250 }
