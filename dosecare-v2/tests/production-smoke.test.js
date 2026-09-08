@@ -84,7 +84,7 @@ check('Capacitor app shell is configured for DoseCare', () => {
 });
 
 check('Android build workflow is present and artifact-producing', () => {
-  const workflow = '.github/workflows/mobile-android-build.yml';
+  const workflow = '.github/workflows/mobile-android.yml';
   if (!existsRepo(workflow)) throw new Error(`Missing ${workflow}.`);
   const yaml = readRepo(workflow);
   requireText(yaml, 'workflow_dispatch', 'manual Android build trigger');
