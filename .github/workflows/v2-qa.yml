@@ -5,6 +5,7 @@ on:
     branches: [dosecare-v2-rebuild]
   pull_request:
     branches: [dosecare-v2-rebuild]
+  workflow_dispatch:
 
 jobs:
   dosing-engine-tests:
