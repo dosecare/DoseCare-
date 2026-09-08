@@ -66,12 +66,26 @@ window.DoseCareV2Database.register({
   information: {
     mechanism: 'Folic acid is required for tetrahydrofolate-dependent one-carbon transfer reactions involved in nucleic-acid synthesis and normal erythropoiesis.',
     indications: 'Treatment of megaloblastic anaemia due to folic acid deficiency in pediatric patients, with label-defined maintenance dosing after clinical and haematologic response.',
+    contraindications: [
+      'Hypersensitivity to folic acid or any ingredient of the oral solution.'
+    ],
     precautions: [
-      'Exclude pernicious anaemia before using doses greater than 0.4 mg/day except where the label provides a specific exception.',
+      'Rule out pernicious anaemia before using doses greater than 0.4 mg/day except where the label provides a specific exception.',
       'Folic acid alone is not recommended for pernicious anaemia or other megaloblastic anaemias caused by vitamin B12 deficiency.',
-      'Higher doses can obscure the haematologic manifestations of vitamin B12 deficiency while neurologic injury progresses.',
+      'Doses above 0.1 mg/day can obscure the hematologic manifestations of vitamin B12 deficiency while neurologic injury progresses.',
       'Protect the oral solution from light and store in the original container; discard unused solution 30 days after first opening.'
     ],
+    adverseEffects: [
+      'Hypersensitivity reactions including rash, itching, malaise, and bronchospasm.',
+      'Gastrointestinal reactions including nausea, anorexia, abdominal distension, flatulence, and dysgeusia.',
+      'Neurological reactions including altered sleep patterns, difficulty concentrating, irritability, overactivity, excitement, depression, confusion, or impaired judgement.',
+      'Decreased vitamin B12 serum levels with prolonged folic acid therapy; increased seizures have been reported in patients with epilepsy receiving phenobarbital, primidone, or phenytoin.'
+    ],
+    interactions: [
+      'Phenytoin and other anticonvulsants may have altered effects or folate levels with folic acid therapy.',
+      'Valproate, sulfasalazine, isoniazid, cycloserine, trimethoprim, pyrimethamine, methotrexate, triamterene, and some GI-binding or acid-suppressing agents may reduce folate availability or absorption; review concomitant therapy clinically.'
+    ],
+    administration: 'Take orally once daily. The solution may be taken with or without food. Use an oral dosing syringe for accurate measurement. For the 0.2 mg/mL formulation, 1 mg equals 5 mL, 0.4 mg equals 2 mL, 0.3 mg equals 1.5 mL, and 0.1 mg equals 0.5 mL.',
     pediatricUse: 'DailyMed label provides pediatric initial treatment up to 1 mg/day regardless of age, followed by maintenance dosing of 0.1 mg/day from birth to 23 months, up to 0.3 mg/day from 2 to under 4 years, and 0.4 mg/day from 4 years and older.'
   },
   sources: [
