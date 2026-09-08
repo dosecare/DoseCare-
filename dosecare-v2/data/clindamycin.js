@@ -7,7 +7,11 @@ window.DoseCareV2Database?.register({
   route: 'Oral',
   category: 'Antibiotic',
   formulations: [
-    { id: '75-mg-5mL', concentration: { amount: 75, unit: 'mg', volume: 5, volumeUnit: 'mL' }, display: '75 mg/5 mL' }
+    {
+      id: '75mg-5mL',
+      concentration: { amount: 75, unit: 'mg', volume: 5, volumeUnit: 'mL' },
+      display: '75 mg/5 mL'
+    }
   ],
   regimens: [
     {
@@ -19,7 +23,8 @@ window.DoseCareV2Database?.register({
       doseUnit: 'mg/kg/day',
       frequency: 3,
       alternativeFrequency: 4,
-      frequencyText: 'Divided into 3 or 4 equal doses per day',
+      frequencyText: 'Divide the total daily dose into 3 or 4 equal doses',
+      allowedFormulations: ['75mg-5mL'],
       requiresWeight: true,
       requiresAge: false,
       minimumRecommendedDoseMgPerAdministration: 37.5,
@@ -34,7 +39,8 @@ window.DoseCareV2Database?.register({
       doseUnit: 'mg/kg/day',
       frequency: 3,
       alternativeFrequency: 4,
-      frequencyText: 'Divided into 3 or 4 equal doses per day',
+      frequencyText: 'Divide the total daily dose into 3 or 4 equal doses',
+      allowedFormulations: ['75mg-5mL'],
       requiresWeight: true,
       requiresAge: false,
       minimumRecommendedDoseMgPerAdministration: 37.5,
@@ -49,7 +55,8 @@ window.DoseCareV2Database?.register({
       doseUnit: 'mg/kg/day',
       frequency: 3,
       alternativeFrequency: 4,
-      frequencyText: 'Divided into 3 or 4 equal doses per day',
+      frequencyText: 'Divide the total daily dose into 3 or 4 equal doses',
+      allowedFormulations: ['75mg-5mL'],
       requiresWeight: true,
       requiresAge: false,
       minimumRecommendedDoseMgPerAdministration: 37.5,
@@ -60,11 +67,14 @@ window.DoseCareV2Database?.register({
     class: 'Lincosamide antibacterial',
     mechanism: 'Lincosamide antibacterial that binds to the 50S ribosomal subunit and inhibits bacterial protein synthesis.',
     indications: ['Serious bacterial infections caused by susceptible organisms'],
+    contraindications: ['Hypersensitivity to clindamycin or lincomycin.'],
     adverseEffects: ['Diarrhea', 'Abdominal pain', 'Nausea', 'Vomiting', 'Clostridioides difficile-associated diarrhea and colitis'],
-    precautions: ['Clindamycin has a boxed warning for Clostridioides difficile-associated diarrhea and colitis, which can be severe or fatal.', 'Discontinue the antibacterial if significant diarrhea occurs and evaluate appropriately.', 'Use only for confirmed or strongly suspected bacterial infections caused by susceptible organisms.'],
-    notes: 'The pediatric oral solution is 75 mg/5 mL after reconstitution. The 37.5 mg three-times-daily recommendation for children weighing 10 kg or less is a minimum recommended dose consideration, not a universal mg/kg minimum and not a hard engine override. For beta-hemolytic streptococcal infections, treatment should continue for at least 10 days.'
+    interactions: ['Clindamycin has neuromuscular blocking properties and may enhance the action of other neuromuscular blocking agents.'],
+    precautions: ['Clindamycin carries a boxed warning for Clostridioides difficile-associated diarrhea and colitis, which can be severe or fatal.', 'Use only for confirmed or strongly suspected bacterial infections caused by susceptible organisms.', 'Dose based on total body weight regardless of obesity.', 'For beta-hemolytic streptococcal infections, treatment should continue for at least 10 days.'],
+    pediatricUse: 'The pediatric oral solution is 75 mg/5 mL after reconstitution. The selected pediatric label provides 8–25 mg/kg/day divided into 3 or 4 equal doses depending on infection severity. For children weighing 10 kg or less, 37.5 mg (2.5 mL) three times daily should be considered the minimum recommended dose.',
+    administration: 'Shake well before each use. Reconstitute according to the product instructions. Store at 20–25°C and do not refrigerate the reconstituted solution; discard unused solution after 2 weeks.'
   },
   sources: [
-    { organization: 'DailyMed', title: 'Clindamycin Palmitate Hydrochloride for Oral Solution, USP (Pediatric) — current pediatric label', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a85e28ea-03be-471f-ad7f-f5c55c67ac97' }
+    { organization: 'DailyMed / U.S. National Library of Medicine', title: 'Clindamycin Palmitate Hydrochloride for Oral Solution, USP (Pediatric) — current pediatric label', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=faf67eb8-1fd7-4b2c-a55b-24ba664c0dce' }
   ]
 });
