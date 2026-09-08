@@ -3,7 +3,7 @@ name: DoseCare Android Release Check
 on:
   workflow_dispatch:
   push:
-    branches: [dosecare-v2-rebuild]
+    branches: [dosecare-v2-production-hardening]
     paths:
       - 'dosecare-v2/**'
       - 'package.json'
