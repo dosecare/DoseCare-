@@ -15,28 +15,29 @@
     assert(m.formulations[0].equivalentIU === 400, `Expected 400 IU/mL, got ${m.formulations[0].equivalentIU}`);
   });
 
-  test('vitamin D3 infants 0–12 months calculates 1 mL daily', () => {
+  test('vitamin D3 configured product regimen calculates 1 mL daily', () => {
     const m = db.getById('vitamin-d3');
-    const r = m.regimens.find(x => x.id === 'vitamin-d3-routine-infants-400iu');
+    const r = m.regimens.find(x => x.id === 'vitamin-d3-routine-400iu');
+    assert(r, 'Configured Vitamin D3 regimen missing');
     const result = engine.calculate({ medicine: m, regimen: r, age: 6, ageUnit: 'months', formulation: m.formulations[0] });
     assert(result.ok, result.error || 'Calculation failed');
     assert(near(result.lowMg, 0.01), `Expected 0.01 mg/day, got ${result.lowMg}`);
     assert(near(result.lowMl, 1), `Expected 1 mL/day, got ${result.lowMl}`);
   });
 
-  test('vitamin D3 children 1–13 years calculates 1.5 mL daily', () => {
+  test('vitamin D3 configured product regimen calculates 1 mL daily at 4 years', () => {
     const m = db.getById('vitamin-d3');
-    const r = m.regimens.find(x => x.id === 'vitamin-d3-routine-children-600iu');
-    const result = engine.calculate({ medicine: m, regimen: r, age: 6, ageUnit: 'years', formulation: m.formulations[0] });
+    const r = m.regimens.find(x => x.id === 'vitamin-d3-routine-400iu');
+    const result = engine.calculate({ medicine: m, regimen: r, age: 4, ageUnit: 'years', formulation: m.formulations[0] });
     assert(result.ok, result.error || 'Calculation failed');
-    assert(near(result.lowMg, 0.015), `Expected 0.015 mg/day, got ${result.lowMg}`);
-    assert(near(result.lowMl, 1.5), `Expected 1.5 mL/day, got ${result.lowMl}`);
+    assert(near(result.lowMg, 0.01), `Expected 0.01 mg/day, got ${result.lowMg}`);
+    assert(near(result.lowMl, 1), `Expected 1 mL/day, got ${result.lowMl}`);
   });
 
-  test('vitamin D3 rejects an age outside all configured regimens', () => {
+  test('vitamin D3 rejects an age outside configured product range', () => {
     const m = db.getById('vitamin-d3');
-    const r = m.regimens.find(x => x.id === 'vitamin-d3-routine-children-600iu');
-    const result = engine.calculate({ medicine: m, regimen: r, age: 14, ageUnit: 'years', formulation: m.formulations[0] });
+    const r = m.regimens.find(x => x.id === 'vitamin-d3-routine-400iu');
+    const result = engine.calculate({ medicine: m, regimen: r, age: 5, ageUnit: 'years', formulation: m.formulations[0] });
     assert(!result.ok, 'Expected out-of-range Vitamin D3 regimen to be rejected');
     assert(result.code === 'AGE_ABOVE_REGIMEN_MAX', `Expected AGE_ABOVE_REGIMEN_MAX, got ${result.code}`);
   });
