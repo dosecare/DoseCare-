@@ -48,23 +48,6 @@ window.DoseCareV2Database?.register({
       alternativeDose: 20,
       alternativeDoseUnit: 'mg/day',
       alternativeNote: '20 mg/day requires a higher-strength omeprazole formulation; this 2 mg/mL product is limited to 15 mg/day.'
-    },
-    {
-      id: 'reflux-2y-over20kg',
-      condition: 'Reflux oesophagitis / symptomatic GERD — children ≥2 years, >20 kg',
-      type: 'fixed_dose',
-      dose: 20,
-      minDose: 20,
-      maxDose: 20,
-      doseUnit: 'mg/day',
-      frequency: 1,
-      frequencyText: 'Once daily; higher doses require another strength/formulation',
-      requiresAge: true,
-      requiresWeight: true,
-      minAgeYears: 2,
-      minWeightKg: 20,
-      maximumDailyDose: 15,
-      formulationNote: 'This 2 mg/mL product is not suitable for the labeled 20 mg dose because its product-specific maximum is 15 mg/day.'
     }
   ],
   information: {
@@ -76,7 +59,7 @@ window.DoseCareV2Database?.register({
     precautions: ['Reassess prolonged therapy periodically.', 'PPI treatment can slightly increase susceptibility to gastrointestinal infections such as Salmonella and Campylobacter.', 'Use with attention to the product sodium and potassium content, particularly in patients with renal impairment or controlled electrolyte intake.', 'Do not use this formulation to administer doses above 15 mg/day; use an appropriate higher-strength formulation instead.'],
     interactions: ['Omeprazole can alter absorption of medicines whose absorption is pH-dependent.', 'CYP2C19-mediated interactions can occur with some medicines.', 'Check the current product information for clinically important interactions before use.'],
     administration: 'The constituted suspension should be administered orally using the supplied or an accurate oral syringe. Take on an empty stomach at least 30 minutes before a meal. Reconstitution must be performed according to the product instructions before dispensing/administration.',
-    pediatricUse: 'The current 2 mg/mL SmPC specifies 1 mg/kg once daily for children 1 month to 1 year (maximum 10 mg/day), 10 mg once daily for children ≥1 year weighing 10–20 kg with possible increase to 20 mg using an appropriate higher-strength formulation, and 20 mg once daily for children ≥2 years weighing >20 kg; this 2 mg/mL product itself is limited to a maximum of 15 mg/day.',
+    pediatricUse: 'The current 2 mg/mL SmPC specifies 1 mg/kg once daily for children 1 month to 1 year (maximum 10 mg/day), and 10 mg once daily for children ≥1 year weighing 10–20 kg with possible increase to 20 mg using an appropriate higher-strength formulation. This 2 mg/mL product itself is limited to a maximum of 15 mg/day, so the 20 mg regimen is not represented as calculable with this formulation.',
     hepaticImpairment: 'The selected SmPC states that dose adjustment is not needed in hepatic impairment.',
     renalImpairment: 'The selected SmPC states that dose adjustment is not needed in renal impairment.',
     notes: 'This entry represents a specific 2 mg/mL powder-for-oral-suspension product. Higher labeled doses require another omeprazole strength/formulation and are not converted using this formulation.'
