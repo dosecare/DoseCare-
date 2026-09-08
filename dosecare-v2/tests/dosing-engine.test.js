@@ -71,7 +71,7 @@
 
   test('vitamin D3 routine regimen converts to 1 mL daily', () => {
     const m = db.getById('vitamin-d3');
-    const r = m.regimens.find(x => x.id === 'vitamin-d3-routine-infants-400iu');
+    const r = m.regimens.find(x => x.id === 'vitamin-d3-routine-400iu');
     const f = m.formulations.find(x => x.id === 'd-vite-400iu-per-ml');
     const result = engine.calculate({ medicine: m, regimen: r, age: 6, ageUnit: 'months', formulation: f });
     assert(result.ok, result.error || 'Calculation failed');
@@ -142,7 +142,7 @@
     const child = engine.calculate({ medicine: m, regimen: laxative, age: 8, ageUnit: 'years', formulation: f });
     assert(child.ok, child.error || 'Calculation failed');
     assert(near(child.lowMl, 15), `Expected 15 mL lower dose, got ${child.lowMl}`);
-    assert(near(child.highMl, 30), `Expected 30 mL upper dose, got ${child.highMl}`);
+    assert(near(child.highMl, 30), `Expected 30 mL higher dose, got ${child.highMl}`);
     const younger = engine.calculate({ medicine: m, regimen: laxative, age: 5, ageUnit: 'years', formulation: f });
     assert(!younger.ok && younger.code === 'AGE_BELOW_REGIMEN_MIN', 'Children under 6 must not receive an automatic magnesium hydroxide dose');
   });
