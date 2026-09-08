@@ -1,0 +1,56 @@
+name: DoseCare Android Release Check
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [dosecare-v2-rebuild]
+    paths:
+      - 'dosecare-v2/**'
+      - 'package.json'
+      - 'capacitor.config.json'
+      - '.github/workflows/mobile-android-release-check.yml'
+
+jobs:
+  android-release-check:
+    name: Validate Android release AAB
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install Capacitor dependencies
+        run: npm install
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Sync web assets into Android project
+        run: npx cap sync android
+
+      - name: Verify Android SDK configuration
+        working-directory: android
+        run: |
+          echo "Checking generated Capacitor Android configuration..."
+          grep -R "targetSdkVersion\|compileSdkVersion" -n variables.gradle app/build.gradle
+
+      - name: Build release AAB
+        working-directory: android
+        run: ./gradlew bundleRelease --no-daemon
+
+      - name: Upload release AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: dosecare-release-aab-check
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
