@@ -4,8 +4,11 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
+const repoRoot = path.resolve(root, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
+const readRepo = file => fs.readFileSync(path.join(repoRoot, file), 'utf8');
 const exists = file => fs.existsSync(path.join(root, file));
+const existsRepo = file => fs.existsSync(path.join(repoRoot, file));
 const results = [];
 function check(name, fn) {
   try { fn(); results.push({ name, passed: true }); }
@@ -66,6 +69,29 @@ check('Production source assets exist', () => {
   for (const file of ['js/database.js', 'js/database-loader.js', 'js/dosing-engine.js', 'js/calculator.js', 'js/result.js', 'css/style.css']) {
     if (!exists(file)) throw new Error(`Missing production asset: ${file}`);
   }
+});
+
+check('Capacitor app shell is configured for DoseCare', () => {
+  if (!existsRepo('package.json')) throw new Error('Missing root package.json.');
+  if (!existsRepo('capacitor.config.json')) throw new Error('Missing capacitor.config.json.');
+  const pkg = readRepo('package.json');
+  const config = readRepo('capacitor.config.json');
+  requireText(pkg, '"@capacitor/core"', '@capacitor/core dependency');
+  requireText(pkg, '"@capacitor/android"', '@capacitor/android dependency');
+  requireText(pkg, '"@capacitor/ios"', '@capacitor/ios dependency');
+  requireText(config, '"appId": "com.dosecare.app"', 'DoseCare app ID');
+  requireText(config, '"webDir": "dosecare-v2"', 'DoseCare web directory');
+});
+
+check('Android build workflow is present and artifact-producing', () => {
+  const workflow = '.github/workflows/mobile-android-build.yml';
+  if (!existsRepo(workflow)) throw new Error(`Missing ${workflow}.`);
+  const yaml = readRepo(workflow);
+  requireText(yaml, 'workflow_dispatch', 'manual Android build trigger');
+  requireText(yaml, 'npx cap add android', 'Capacitor Android platform generation');
+  requireText(yaml, 'npx cap sync android', 'Capacitor Android sync');
+  requireText(yaml, 'assembleDebug', 'Android debug build');
+  requireText(yaml, 'actions/upload-artifact@v4', 'APK artifact upload');
 });
 
 const passed = results.every(item => item.passed);
