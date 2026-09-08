@@ -38,6 +38,7 @@ loadScript(path.join(__dirname, 'vitamin-d3.test.js'));
 loadScript(path.join(__dirname, 'folic-acid.test.js'));
 loadScript(path.join(__dirname, 'fluconazole.test.js'));
 loadScript(path.join(__dirname, 'calculator-readiness.test.js'));
+loadScript(path.join(__dirname, 'arithmetic-integrity.test.js'));
 loadScript(path.join(__dirname, 'audit-manifest.js'));
 const result = window.DoseCareV2DosingTests.run();
 const dextromethorphanResult = window.DoseCareDextromethorphanTests.run();
@@ -45,18 +46,20 @@ const vitaminD3Result = window.DoseCareVitaminD3Tests.run();
 const folicAcidResult = window.DoseCareFolicAcidTests.run();
 const fluconazoleResult = window.DoseCareFluconazoleTests.run();
 const readinessResult = window.DoseCareCalculatorReadinessTests.run();
+const arithmeticResult = window.DoseCareArithmeticIntegrityTests.run();
 for (const item of result.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 for (const item of dextromethorphanResult.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 for (const item of vitaminD3Result.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 for (const item of folicAcidResult.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 for (const item of fluconazoleResult.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 for (const item of readinessResult.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
+for (const item of arithmeticResult.results) { console.log(`${item.passed ? 'PASS' : 'FAIL'} — ${item.name}`); if (!item.passed) console.error(`       ${item.error}`); }
 const audit = window.DoseCareV2Audit;
 for (const error of audit.errors) console.error(`ERROR — ${error}`);
 for (const warning of audit.warnings) console.warn(`WARN — ${warning}`);
-if (!result.passed || !dextromethorphanResult.passed || !vitaminD3Result.passed || !folicAcidResult.passed || !fluconazoleResult.passed || !readinessResult.passed || !audit.passed) {
+if (!result.passed || !dextromethorphanResult.passed || !vitaminD3Result.passed || !folicAcidResult.passed || !fluconazoleResult.passed || !readinessResult.passed || !arithmeticResult.passed || !audit.passed) {
   process.exitCode = 1;
-  console.error(`\nDoseCare V2 QA FAILED — ${result.results.length} core regression tests + ${dextromethorphanResult.results.length} Dextromethorphan tests + ${vitaminD3Result.results.length} Vitamin D3 tests + ${folicAcidResult.results.length} Folic acid tests + ${fluconazoleResult.results.length} Fluconazole tests + ${readinessResult.results.length} calculator-readiness checks; database structural audit ${audit.passed ? 'passed' : 'failed'}.`);
+  console.error(`\nDoseCare V2 QA FAILED — ${result.results.length} core regression tests + ${dextromethorphanResult.results.length} Dextromethorphan tests + ${vitaminD3Result.results.length} Vitamin D3 tests + ${folicAcidResult.results.length} Folic acid tests + ${fluconazoleResult.results.length} Fluconazole tests + ${readinessResult.results.length} calculator-readiness checks + ${arithmeticResult.results.length} arithmetic-integrity checks; database structural audit ${audit.passed ? 'passed' : 'failed'}.`);
 } else {
-  console.log(`\nDoseCare V2 QA PASSED — ${result.results.length} core regression tests + ${dextromethorphanResult.results.length} Dextromethorphan tests + ${vitaminD3Result.results.length} Vitamin D3 tests + ${folicAcidResult.results.length} Folic acid tests + ${fluconazoleResult.results.length} Fluconazole tests + ${readinessResult.results.length} calculator-readiness checks + database structural audit (${audit.medicineCount} active oral-liquid medicines).`);
+  console.log(`\nDoseCare V2 QA PASSED — ${result.results.length} core regression tests + ${dextromethorphanResult.results.length} Dextromethorphan tests + ${vitaminD3Result.results.length} Vitamin D3 tests + ${folicAcidResult.results.length} Folic acid tests + ${fluconazoleResult.results.length} Fluconazole tests + ${readinessResult.results.length} calculator-readiness checks + ${arithmeticResult.results.length} arithmetic-integrity checks + database structural audit (${audit.medicineCount} active oral-liquid medicines).`);
 }
