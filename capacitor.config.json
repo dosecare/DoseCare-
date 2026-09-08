@@ -1,0 +1,9 @@
+{
+  "appId": "com.dosecare.app",
+  "appName": "DoseCare",
+  "webDir": "dosecare-v2",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
