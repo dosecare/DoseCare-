@@ -1,4 +1,7 @@
-/* DoseCare V2 — Dextromethorphan polistirex extended-release oral suspension */
+/* DoseCare V2 — Dextromethorphan polistirex extended-release oral suspension
+ * Pediatric dosing source: current DailyMed label for Dextromethorphan Polistirex 30 mg/5 mL oral suspension.
+ * Oral liquid only. DoseCare encodes only the labeled pediatric regimens for this formulation.
+ */
 DoseCareV2Database.register({
   id: 'dextromethorphan',
   name: 'Dextromethorphan',
@@ -7,6 +10,7 @@ DoseCareV2Database.register({
   dosageForm: 'Extended-release oral suspension',
   route: 'Oral',
   category: 'Cough suppressant',
+  dosing: { calculatorReady: true },
   formulations: [
     {
       id: 'dextromethorphan-polistirex-30mg-5ml',
@@ -29,9 +33,12 @@ DoseCareV2Database.register({
       frequency: 2,
       frequencyText: 'Every 12 hours',
       maxDosesPer24h: 2,
+      maxDailyVolume: 5,
+      maxDailyVolumeUnit: 'mL/day',
       requiresAge: true,
       requiresWeight: false,
-      condition: 'Cough — age 4 to under 6 years'
+      allowedFormulations: ['dextromethorphan-polistirex-30mg-5ml'],
+      condition: 'Temporary relief of cough due to minor throat and bronchial irritation'
     },
     {
       id: 'age-6-to-under-12',
@@ -46,9 +53,12 @@ DoseCareV2Database.register({
       frequency: 2,
       frequencyText: 'Every 12 hours',
       maxDosesPer24h: 2,
+      maxDailyVolume: 10,
+      maxDailyVolumeUnit: 'mL/day',
       requiresAge: true,
       requiresWeight: false,
-      condition: 'Cough — age 6 to under 12 years'
+      allowedFormulations: ['dextromethorphan-polistirex-30mg-5ml'],
+      condition: 'Temporary relief of cough due to minor throat and bronchial irritation'
     },
     {
       id: 'age-12-and-over',
@@ -62,28 +72,41 @@ DoseCareV2Database.register({
       frequency: 2,
       frequencyText: 'Every 12 hours',
       maxDosesPer24h: 2,
+      maxDailyVolume: 20,
+      maxDailyVolumeUnit: 'mL/day',
       requiresAge: true,
       requiresWeight: false,
-      condition: 'Cough — age 12 years and over'
+      allowedFormulations: ['dextromethorphan-polistirex-30mg-5ml'],
+      condition: 'Temporary relief of cough due to minor throat and bronchial irritation'
     }
   ],
   information: {
     class: 'Antitussive',
-    indications: ['Temporary relief of cough due to minor throat and bronchial irritation'],
+    indications: ['Temporary relief of cough due to minor throat and bronchial irritation, such as with the common cold or inhaled irritants.'],
     mechanism: 'Dextromethorphan is a centrally acting cough suppressant that reduces the cough reflex.',
+    contraindications: [
+      'Do not use with a prescription monoamine oxidase inhibitor (MAOI) or within 2 weeks after stopping an MAOI.',
+      'Do not use in children under 4 years for the cited 30 mg/5 mL extended-release suspension.'
+    ],
     precautions: [
-      'Do not use with a monoamine oxidase inhibitor (MAOI) or within 2 weeks after stopping an MAOI.',
-      'Ask a doctor before use with chronic cough associated with smoking, asthma or emphysema, or cough with excessive phlegm.',
+      'Ask a doctor before use for chronic cough associated with smoking, asthma or emphysema, or cough with excessive phlegm.',
       'Contains sodium metabisulfite, which may cause allergic-type reactions in susceptible patients.',
+      'Do not exceed the labeled dose.',
       'Stop use and seek medical advice if cough lasts more than 7 days, returns, or occurs with fever, rash or persistent headache.'
     ],
     adverseEffects: ['Drowsiness', 'Dizziness', 'Nausea', 'Vomiting'],
-    notes: 'This V2 record represents the single-ingredient dextromethorphan polistirex extended-release oral suspension only. Combination cough/cold products are intentionally excluded.'
+    interactions: [
+      'Monoamine oxidase inhibitors (MAOIs) are contraindicated during use and for 2 weeks after stopping the MAOI.',
+      'Other medicines that cause central nervous system depression may increase drowsiness or sedation; use caution.'
+    ],
+    administration: 'Shake well before use. Measure only with the supplied dosing cup and do not use the cup with other products.',
+    pediatricUse: 'For 30 mg/5 mL extended-release suspension: ages 4–<6 years 2.5 mL every 12 hours (maximum 5 mL/24 h); ages 6–<12 years 5 mL every 12 hours (maximum 10 mL/24 h); ages ≥12 years 10 mL every 12 hours (maximum 20 mL/24 h). Do not use under 4 years.',
+    notes: 'This V2 record represents single-ingredient dextromethorphan polistirex extended-release oral suspension only. Combination cough/cold products and other formulations are intentionally excluded.'
   },
   sources: [
     {
       organization: 'DailyMed',
-      title: 'Cough DM — Dextromethorphan Polistirex Extended-Release Oral Suspension',
+      title: 'COUGH DM — Dextromethorphan Polistirex Suspension, 30 mg/5 mL',
       url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=cdb5616e-0f04-4b9e-a82b-994e9ba3b515'
     }
   ]
