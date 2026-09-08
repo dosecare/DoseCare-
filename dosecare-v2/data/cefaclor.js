@@ -19,26 +19,26 @@ window.DoseCareV2Database?.register({
     {
       id: 'usual-infections-q8h', condition: 'Usual susceptible bacterial infections', type: 'mg_per_kg_per_day',
       minDose: 20, maxDose: 20, doseUnit: 'mg/kg/day', frequency: 3,
-      frequencyText: 'Every 8 hours', requiresAge: true, requiresWeight: true, maximumDailyDose: 1000,
+      frequencyText: 'Every 8 hours', requiresAge: true, requiresWeight: true, minAgeMonths: 1, maximumDailyDose: 1000,
       allowedFormulations: ['125mg-5mL', '250mg-5mL']
     },
     {
       id: 'serious-infections-otitis-q8h', condition: 'More serious infection / otitis media', type: 'mg_per_kg_per_day',
       minDose: 40, maxDose: 40, doseUnit: 'mg/kg/day', frequency: 3,
-      frequencyText: 'Every 8 hours', requiresAge: true, requiresWeight: true, maximumDailyDose: 1000,
+      frequencyText: 'Every 8 hours', requiresAge: true, requiresWeight: true, minAgeMonths: 1, maximumDailyDose: 1000,
       allowedFormulations: ['125mg-5mL', '250mg-5mL']
     },
     {
       id: 'pharyngitis-q12h', condition: 'Pharyngitis', type: 'mg_per_kg_per_day',
       minDose: 20, maxDose: 20, doseUnit: 'mg/kg/day', frequency: 2,
-      frequencyText: 'Every 12 hours', requiresAge: true, requiresWeight: true, maximumDailyDose: 1000,
+      frequencyText: 'Every 12 hours', requiresAge: true, requiresWeight: true, minAgeMonths: 1, maximumDailyDose: 1000,
       durationText: 'At least 10 days for beta-hemolytic streptococcal infection',
       allowedFormulations: ['187mg-5mL', '375mg-5mL']
     },
     {
       id: 'otitis-q12h', condition: 'Otitis media', type: 'mg_per_kg_per_day',
       minDose: 40, maxDose: 40, doseUnit: 'mg/kg/day', frequency: 2,
-      frequencyText: 'Every 12 hours', requiresAge: true, requiresWeight: true, maximumDailyDose: 1000,
+      frequencyText: 'Every 12 hours', requiresAge: true, requiresWeight: true, minAgeMonths: 1, maximumDailyDose: 1000,
       allowedFormulations: ['187mg-5mL', '375mg-5mL']
     }
   ],
