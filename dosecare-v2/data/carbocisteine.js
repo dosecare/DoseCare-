@@ -1,5 +1,6 @@
 /* DoseCare V2 — Carbocisteine pediatric oral liquid
  * Pediatric dosing source: Typharm Carbocisteine 250 mg/5 mL syrup SmPC (emc), revised 06 Mar 2025.
+ * Cross-checked against current emc Carbocisteine 250 mg/5 mL oral solution SmPC.
  * Oral liquid only. The 2–5 year dose is intentionally represented as a labeled volume range rather than an invented single dose.
  */
 window.DoseCareV2Database?.register({
@@ -19,6 +20,7 @@ window.DoseCareV2Database?.register({
       concentration: { amount: 250, unit: 'mg', volume: 5, volumeUnit: 'mL' }
     }
   ],
+  allowedFormulations: ['carbocisteine-250mg-5ml'],
   regimens: [
     {
       id: 'age-2-5',
@@ -62,9 +64,10 @@ window.DoseCareV2Database?.register({
     precautions: ['Use cautiously in patients with asthma and a history of bronchospasm.', 'Use cautiously in severe respiratory failure and debilitated patients.', 'Use cautiously in patients with a history of gastroduodenal ulceration or medicines associated with gastrointestinal bleeding.', 'Concomitant antitussives are not recommended because mucus clearance depends on an intact cough reflex.'],
     adverseEffects: ['Gastrointestinal discomfort', 'Nausea', 'Vomiting', 'Diarrhea', 'Hypersensitivity reactions may occur'],
     contraindications: ['Hypersensitivity to carbocisteine or formulation excipients.', 'Active peptic ulceration.', 'Children under 2 years.'],
+    interactions: ['Antitussives: concomitant use is not recommended because suppression of the cough reflex can impair clearance of the less-viscous mucus and increase risk of airway obstruction.'],
     administration: 'For oral use. Use the supplied calibrated measuring device; the cited syrup syringe is graduated in 0.25 mL increments.',
     pediatricUse: 'For 250 mg/5 mL syrup: ages 2–5 years 1.25–2.5 mL four times daily; ages 6–12 years 5 mL three times daily. Children under 2 years are contraindicated for the cited product.',
-    notes: 'The 2–5 year regimen is a labeled volume range. DoseCare does not select an arbitrary point within that range.'
+    notes: 'The 2–5 year regimen is a labeled volume range. DoseCare does not select an arbitrary point within that range. The current selected formulation is 250 mg/5 mL; higher-strength carbocisteine products with different age restrictions are excluded.'
   },
   sources: [
     { organization: 'electronic Medicines Compendium (emc)', title: 'Carbocisteine 250 mg/5 ml syrup — Summary of Product Characteristics', url: 'https://www.medicines.org.uk/emc/product/8602/smpc' },
