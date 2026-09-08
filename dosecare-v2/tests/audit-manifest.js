@@ -4,7 +4,21 @@ window.DoseCareV2Audit = (() => {
     'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','bromhexine','guaifenesin','dextromethorphan','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','hydroxyzine','ondansetron','prednisolone','salbutamol',
     'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide','sodium-citrate','vitamin-d3','iron','multivitamin','multivitamin-iron','folic-acid','fluconazole','mebendazole','nitazoxanide'
   ];
-  const validTypes = new Set(['mg_per_kg_per_day','mg_per_kg_per_dose','condition_based','fixed_dose','age_based','label_age_based','label_weight_age_based','scheduled','weight_based']);
+
+  // These are the only regimen types with deterministic implementations in dosing-engine.js.
+  // Clinical conditions belong on the regimen as metadata (for example `condition`), not as a
+  // calculator type. Generic `weight_based` is intentionally rejected because it is ambiguous
+  // between mg/kg/dose, mg/kg/day, and weight-band dosing.
+  const validTypes = new Set([
+    'mg_per_kg_per_day',
+    'mg_per_kg_per_dose',
+    'fixed_dose',
+    'age_based',
+    'label_age_based',
+    'label_weight_age_based',
+    'scheduled'
+  ]);
+
   const errors = [], warnings = [];
   const db = window.DoseCareV2Database;
   if (!db) return { passed:false, errors:['Database is not loaded'], warnings:[] };
@@ -15,6 +29,7 @@ window.DoseCareV2Audit = (() => {
   if (missing.length) errors.push(`Missing expected medicines: ${missing.join(', ')}`);
   if (extra.length) errors.push(`Unexpected medicine IDs: ${extra.join(', ')}`);
   if (actualIds.length !== expectedIds.length) errors.push(`Expected ${expectedIds.length} medicines, found ${actualIds.length}`);
+
   for (const m of medicines) {
     for (const field of ['id','name','dosageForm','route','formulations','regimens','information','sources']) {
       if (m[field] == null) errors.push(`${m.id}: missing required field ${field}`);
@@ -22,12 +37,14 @@ window.DoseCareV2Audit = (() => {
     if (m.route !== 'Oral') errors.push(`${m.id}: route must be Oral`);
     if (!/suspension|solution|syrup|drops|liquid/i.test(String(m.dosageForm || ''))) errors.push(`${m.id}: dosageForm is not an oral liquid`);
     if (!Array.isArray(m.formulations) || !m.formulations.length) errors.push(`${m.id}: no formulations`);
+
     for (const f of (m.formulations || [])) {
       const c = f.concentration || {};
       const amount = Number(c.amount ?? f.amount ?? f.mgPer5mL ?? f.strengthMg ?? 0);
       const volume = Number(c.volume ?? f.volume ?? (f.mgPer5mL ? 5 : 0));
       if (!(amount > 0) || !(volume > 0)) errors.push(`${m.id}: invalid formulation concentration`);
     }
+
     if (!Array.isArray(m.regimens) || !m.regimens.length) errors.push(`${m.id}: no regimens`);
     const formulationIds = new Set((m.formulations || []).map(f => f.id).filter(Boolean));
     for (const r of (m.regimens || [])) {
@@ -38,11 +55,13 @@ window.DoseCareV2Audit = (() => {
         if (formulationIds.size && !formulationIds.has(fid)) errors.push(`${m.id}/${r.id}: unknown allowedFormulation ${fid}`);
       }
     }
+
     const info = m.information || {};
     if (info.mechanism == null) warnings.push(`${m.id}: missing canonical information.mechanism`);
     if (info.precautions == null) warnings.push(`${m.id}: missing canonical information.precautions`);
     if (info.mechanismOfAction != null || info.warningsPrecautions != null || info.source != null || info.sourceUrl != null) errors.push(`${m.id}: legacy metadata key leaked into runtime`);
     if (!Array.isArray(m.sources) || !m.sources.length) errors.push(`${m.id}: no sources`);
   }
+
   return { passed: errors.length === 0, errors, warnings, medicineCount: medicines.length };
 })();
