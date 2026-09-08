@@ -22,13 +22,16 @@ window.DoseCareV2Database.register({
       id: 'vitamin-d3-routine-400iu',
       type: 'fixed_dose',
       condition: 'Routine vitamin D supplementation — D-VITE product dose',
-      minAgeMonths: 0,
-      maxAgeYears: 4,
+      dose: 0.01,
       minDose: 0.01,
       maxDose: 0.01,
       unit: 'mg/day',
       frequency: 1,
       frequencyText: 'Once daily',
+      minAgeMonths: 0,
+      maxAgeYears: 4,
+      requiresAge: true,
+      requiresWeight: false,
       allowedFormulations: ['d-vite-400iu-per-ml']
     }
   ],
