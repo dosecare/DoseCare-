@@ -58,17 +58,54 @@
     ],
     information: {
       class: 'Antimuscarinic antispasmodic',
-      mechanism: 'Antimuscarinic antispasmodic that reduces smooth-muscle spasm in the gastrointestinal tract.',
+      mechanism: 'Quaternary ammonium anticholinergic that exerts a peripheral antispasmodic action on smooth muscle of the gastrointestinal, biliary and urinary tracts; it does not readily cross the blood-brain barrier.',
       indications: ['Symptomatic relief of conditions associated with gastrointestinal spasm.'],
+      contraindications: [
+        'Hypersensitivity to hyoscine butylbromide or any excipient.',
+        'Myasthenia gravis.',
+        'Mechanical gastrointestinal stenosis.',
+        'Paralytic or obstructive ileus.',
+        'Megacolon.',
+        'Narrow-angle glaucoma.',
+        'Porphyria.',
+        'Enlarged prostate.',
+        'Fever.',
+        'Tachycardia.'
+      ],
       precautions: [
         'Do not use continuously or for extended periods without investigating the cause of abdominal pain.',
-        'Severe or unexplained abdominal pain with red flags requires medical assessment.',
-        'The lowest recommended dose for the age should be used initially.'
+        'Severe or unexplained abdominal pain that persists or worsens, especially with fever, vomiting, bowel changes, abdominal tenderness, fainting, hypotension or blood in stool, requires immediate medical assessment.',
+        'Use caution in patients susceptible to intestinal or urinary obstruction or tachyarrhythmia.',
+        'Use caution in pyrexia because anticholinergics may reduce sweating.',
+        'Use caution in impaired metabolic, hepatic or renal function because adverse effects may be more likely.',
+        'Use the lowest recommended dose for the age initially.'
       ],
-      contraindications: [
-        'Hypersensitivity to hyoscine butylbromide.', 'Myasthenia gravis.',
-        'Mechanical gastrointestinal stenosis or paralytic/obstructive ileus.', 'Megacolon.',
-        'Narrow-angle glaucoma.', 'Porphyria.', 'Tachycardia or other listed product-specific contraindications.'
+      adverseEffects: [
+        'Dry mouth.',
+        'Tachycardia.',
+        'Skin reactions such as urticaria or pruritus.',
+        'Abnormal sweating.',
+        'Urinary retention.',
+        'Hypersensitivity reactions including anaphylaxis.',
+        'Rare or post-marketing bradycardia, palpitations and arrhythmias.'
+      ],
+      interactions: [
+        'Tricyclic and tetracyclic antidepressants may intensify anticholinergic effects.',
+        'Antihistamines may intensify anticholinergic effects.',
+        'Quinidine, amantadine, antipsychotics and other anticholinergic medicines may intensify anticholinergic effects.',
+        'Metoclopramide may reduce the gastrointestinal effects of both medicines.',
+        'Beta-adrenergic medicines may have enhanced tachycardic effects.',
+        'Other central nervous system depressants may enhance CNS depression.'
+      ],
+      administration: 'Administer orally using an accurate measuring device. Start with the lowest recommended dose for the child’s age. Do not use continuously or for prolonged periods without evaluating the cause of abdominal pain.',
+      pediatricUse: 'The referenced BUSCOPAN 0.1% syrup label provides age-based dosing from babies older than 1 month through 12 years. Children older than 12 years and adults use 20 mL four times daily, but that adult/adolescent regimen is intentionally not included in this pediatric calculator record.',
+      notes: 'This record is product-specific to BUSCOPAN 0.1% syrup containing 5 mg/5 mL. DoseCare must not extrapolate these age-based doses to other hyoscine butylbromide liquid concentrations. The referenced label is from SAHPRA and was revised 13 April 2022.',
+      sources: [
+        {
+          organization: 'SAHPRA',
+          title: 'BUSCOPAN 0.1% syrup — Approved Professional Information',
+          url: 'https://pi-pil-repository.sahpra.org.za/wp-content/uploads/2022/05/pi_buscopan-01-syrup-13-04-2022_APPROVED.pdf'
+        }
       ]
     },
     sources: [
