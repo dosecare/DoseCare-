@@ -22,11 +22,30 @@ DoseCareV2Database.register({
   ],
   information: {
     class: 'Aminopenicillin/beta-lactamase inhibitor antibacterial',
-    indications: ['Selected susceptible bacterial infections for which the labeled pediatric regimen is appropriate'],
+    indications: [
+      'Recurrent or persistent acute otitis media in appropriately selected pediatric patients',
+      'Acute bacterial sinusitis when the formulation-specific pediatric regimen is appropriate',
+      'Other susceptible bacterial infections only when a validated formulation-specific pediatric regimen is selected'
+    ],
     mechanism: 'Amoxicillin inhibits bacterial cell-wall synthesis; clavulanate inhibits selected beta-lactamases.',
-    precautions: ['Formulations are not interchangeable because their amoxicillin-to-clavulanate ratios differ.', 'Dose regimens are based on the amoxicillin component.', 'The 600 mg/42.9 mg per 5 mL formulation has a distinct 90 mg/kg/day regimen and must not be substituted with the 200 mg/28.5 mg or 400 mg/57 mg formulations.', 'Administer at the start of a meal to improve tolerability and clavulanate absorption.'],
-    adverseEffects: ['Diarrhea', 'Nausea', 'Rash', 'Hypersensitivity reactions'],
-    notes: 'For pediatric patients 3 months to 12 years weighing 40 kg or less, the formulation-specific regimen must be followed. The 600 mg/42.9 mg per 5 mL formulation is labeled at 90 mg/kg/day divided every 12 hours for 10 days.'
+    contraindications: [
+      'Serious hypersensitivity reaction to amoxicillin, clavulanate, penicillins, or other beta-lactam antibacterials',
+      'History of cholestatic jaundice or hepatic dysfunction associated with amoxicillin/clavulanate'
+    ],
+    precautions: [
+      'Formulations are not interchangeable because their amoxicillin-to-clavulanate ratios differ.',
+      'Dose regimens are based on the amoxicillin component.',
+      'The 600 mg/42.9 mg per 5 mL formulation has a distinct 90 mg/kg/day regimen and must not be substituted with the 200 mg/28.5 mg or 400 mg/57 mg formulations.',
+      'Administer at the start of a meal to improve gastrointestinal tolerability and clavulanate absorption.',
+      'Use caution in patients with hepatic impairment and monitor hepatic function when clinically indicated.',
+      'Consider antibiotic-associated diarrhea and severe hypersensitivity reactions, including anaphylaxis.',
+      'The 600 mg/42.9 mg per 5 mL product contains aspartame/phenylalanine and should be considered in patients with phenylketonuria.'
+    ],
+    adverseEffects: ['Diarrhea', 'Nausea', 'Rash', 'Hypersensitivity reactions', 'Hepatic dysfunction/cholestatic jaundice', 'Antibiotic-associated colitis'],
+    interactions: ['Warfarin and other oral anticoagulants may require monitoring of anticoagulant effect.', 'Probenecid may increase and prolong amoxicillin exposure.', 'Allopurinol may increase the likelihood of rash with amoxicillin.'],
+    administration: 'Take the suspension at the start of a meal or snack. Shake well before each dose. Reconstituted suspension should be refrigerated and discarded after 10 days for the cited 600 mg/42.9 mg per 5 mL product.',
+    pediatricUse: 'Safety and effectiveness of the cited 600 mg/42.9 mg per 5 mL suspension are not established below 3 months or above 40 kg. For 3 months to 12 years and ≤40 kg, the formulation-specific regimen must be followed.',
+    notes: 'For the 600 mg/42.9 mg per 5 mL formulation, current DailyMed labeling specifies 90 mg/kg/day based on amoxicillin, divided every 12 hours for 10 days, providing 6.4 mg/kg/day clavulanic acid. Do not interchange formulations solely by calculated mL because their clavulanate exposure differs.'
   },
   sources: [
     { organization: 'DailyMed', title: 'Amoxicillin and Clavulanate Potassium 600 mg/42.9 mg per 5 mL Oral Suspension', url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6339bcdb-060f-4558-9f42-6bf7f935e138' },
