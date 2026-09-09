@@ -2,6 +2,8 @@
 :root{--soft-glass:rgba(12,34,68,.30);--soft-border:rgba(205,231,255,.22);--soft-glow:rgba(88,190,255,.12)}
 html,body{min-height:100%;background:#06152f!important}
 body{background:radial-gradient(circle at 12% 18%,rgba(69,151,218,.13),transparent 30%),radial-gradient(circle at 88% 78%,rgba(105,87,205,.11),transparent 32%),linear-gradient(145deg,#06142d,#0a2144 52%,#06152f)!important}
+/* Native HTML [hidden] must win over the older V2 field display rules. */
+[hidden]{display:none!important}
 .glass-panel,.glass-card{background:linear-gradient(135deg,rgba(40,76,120,.25),rgba(6,25,52,.18))!important;border:1px solid var(--soft-border)!important;box-shadow:0 24px 70px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(255,255,255,.025),0 0 45px rgba(80,180,255,.055)!important;backdrop-filter:blur(16px) saturate(125%)!important;-webkit-backdrop-filter:blur(16px) saturate(125%)!important;overflow:hidden!important}
 .glass-panel::before,.glass-card::before{background:linear-gradient(125deg,rgba(255,255,255,.09),transparent 28%,transparent 70%,rgba(120,205,255,.025))!important}
 .glass-panel::after,.glass-card::after{content:"";position:absolute;inset:-45%;pointer-events:none;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.10) 48%,rgba(130,215,255,.07) 50%,transparent 56%);transform:translateX(-55%) rotate(8deg);animation:glassShimmer 9s ease-in-out infinite;opacity:.55}
