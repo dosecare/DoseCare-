@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DoseCare — Calculator</title>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/legacy-visual.css">
+<link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/legacy-visual.css"><link rel="stylesheet" href="css/language.css">
 </head>
 <body>
 <div class="bubbles" aria-hidden="true"><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span></div>
@@ -28,8 +27,6 @@
     </form>
   </section>
 </main>
-<script src="js/language.js"></script>
-<script src="js/database.js"></script>
-<script src="js/database-loader.js"></script>
+<script src="js/language.js"></script><script src="js/database.js"></script><script src="js/database-loader.js"></script>
 <script>(function(){const search=document.getElementById('medicine-search'),select=document.getElementById('medicine-select');if(!search||!select)return;function filterMedicines(){const query=search.value.trim().toLowerCase(),current=select.value;Array.from(select.options).forEach((option,index)=>{if(index===0)return;option.hidden=!!query&&!option.textContent.trim().toLowerCase().startsWith(query)});if(current&&select.options[select.selectedIndex]&&select.options[select.selectedIndex].hidden)select.value=''}search.addEventListener('input',filterMedicines)})();</script>
 </body></html>
