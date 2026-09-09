@@ -14,5 +14,14 @@
   <section id="result-stack" class="result-stack" aria-live="polite"></section>
 </main>
 <script src="js/language.js"></script><script src="js/result.js"></script><script src="js/macrogol-result-adapter.js"></script><script src="js/probiotic-result-adapter.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function (error) {
+      console.warn('DoseCare offline support could not be registered:', error);
+    });
+  });
+}
+</script>
 </body>
 </html>
