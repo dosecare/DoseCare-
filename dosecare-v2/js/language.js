@@ -53,9 +53,27 @@
     'The calculation could not be read safely.': 'تعذر قراءة نتيجة الحساب بشكل آمن.'
   };
 
+  function isWelcome() {
+    return !!document.querySelector('.welcome');
+  }
+
+  function readSavedLanguage() {
+    let saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (_) {}
+    if (saved !== 'ar' && saved !== 'en') {
+      try { saved = sessionStorage.getItem(KEY); } catch (_) {}
+    }
+    return saved === 'ar' ? 'ar' : 'en';
+  }
+
+  function saveLanguage(lang) {
+    try { localStorage.setItem(KEY, lang); } catch (_) {}
+    try { sessionStorage.setItem(KEY, lang); } catch (_) {}
+  }
+
   function addSwitcher() {
     // The welcome page is intentionally English-only and has no language control.
-    if (document.querySelector('.welcome')) return;
+    if (isWelcome()) return;
 
     document.querySelectorAll('.topbar').forEach(topbar => {
       if (topbar.querySelector('.language-switcher')) return;
@@ -87,31 +105,34 @@
     });
   }
 
-  function setLanguage(lang) {
+  function setLanguage(lang, persist) {
     const normalized = lang === 'ar' ? 'ar' : 'en';
     document.documentElement.lang = normalized;
     document.documentElement.dir = normalized === 'ar' ? 'rtl' : 'ltr';
     document.body.classList.toggle('arabic-ui', normalized === 'ar');
-    try { localStorage.setItem(KEY, normalized); } catch (_) {}
+    if (persist !== false) saveLanguage(normalized);
     translateStatic(document.body);
     document.querySelectorAll('.language-switcher button').forEach(button => {
       button.classList.toggle('active', button.dataset.lang === normalized);
       button.setAttribute('aria-pressed', String(button.dataset.lang === normalized));
     });
+    window.dispatchEvent(new CustomEvent('dosecare:language-changed', { detail: { language: normalized } }));
   }
 
   function init() {
     // Welcome remains English regardless of the last selected language.
-    if (document.querySelector('.welcome')) return;
+    if (isWelcome()) return;
 
     addSwitcher();
     document.addEventListener('click', event => {
       const button = event.target.closest('.language-switcher button');
-      if (button) setLanguage(button.dataset.lang);
+      if (button) setLanguage(button.dataset.lang, true);
     });
-    let saved = 'en';
-    try { saved = localStorage.getItem(KEY) || 'en'; } catch (_) {}
-    setLanguage(saved);
+
+    // Read the last selected language every time Calculator or Result loads.
+    // This prevents navigation/reload from silently falling back to English.
+    setLanguage(readSavedLanguage(), false);
+
     const observer = new MutationObserver(mutations => {
       if (document.documentElement.lang !== 'ar') return;
       mutations.forEach(m => m.addedNodes.forEach(node => {
