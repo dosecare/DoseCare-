@@ -12,7 +12,7 @@ on:
 
 jobs:
   android-release-check:
-    name: Validate Android release AAB
+    name: Validate Android release AAB + APK
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -48,9 +48,20 @@ jobs:
         working-directory: android
         run: ./gradlew bundleRelease --no-daemon
 
+      - name: Build release APK
+        working-directory: android
+        run: ./gradlew assembleRelease --no-daemon
+
       - name: Upload release AAB
         uses: actions/upload-artifact@v4
         with:
           name: dosecare-release-aab-check
           path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+
+      - name: Upload release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: dosecare-release-apk-v2
+          path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
