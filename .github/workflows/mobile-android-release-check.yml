@@ -52,16 +52,23 @@ jobs:
         working-directory: android
         run: ./gradlew assembleRelease --no-daemon
 
+      - name: Show Android release outputs
+        run: |
+          echo "AAB outputs:"
+          find android/app/build/outputs/bundle -type f -maxdepth 3 -print
+          echo "APK outputs:"
+          find android/app/build/outputs/apk -type f -maxdepth 3 -print
+
       - name: Upload release AAB
         uses: actions/upload-artifact@v4
         with:
           name: dosecare-release-aab-check
-          path: android/app/build/outputs/bundle/release/app-release.aab
+          path: android/app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
 
       - name: Upload release APK
         uses: actions/upload-artifact@v4
         with:
           name: dosecare-release-apk-v2
-          path: android/app/build/outputs/apk/release/app-release.apk
+          path: android/app/build/outputs/apk/release/*.apk
           if-no-files-found: error
