@@ -9,9 +9,10 @@
     const db = window.DoseCareV2Database;
     const medicine = document.getElementById('medicine-select');
     const condition = document.getElementById('condition-select');
+    const form = document.getElementById('dose-form');
     const ageField = document.getElementById('age-value')?.closest('.field');
     const weightField = document.getElementById('weight-value')?.closest('.field');
-    if (!db || !medicine || !condition || !ageField || !weightField) return;
+    if (!db || !medicine || !condition || !form || !ageField || !weightField) return;
 
     const age = document.getElementById('age-value');
     const weight = document.getElementById('weight-value');
@@ -60,17 +61,16 @@
 
     function requirements(r) {
       if (!r) return { age: false, weight: false, alternative: false };
+      if (r.type === 'label_weight_age_based') return { age: true, weight: true, alternative: true };
       if (r.requiresAge !== undefined || r.requiresWeight !== undefined) {
         return { age: r.requiresAge === true, weight: r.requiresWeight === true, alternative: false };
       }
-      if (r.type === 'label_weight_age_based') return { age: true, weight: true, alternative: true };
-      if (['mg_per_kg_per_day','mg_per_kg_day','mg_per_kg_per_dose','mg_per_kg_single_dose','weight_based'].includes(r.type)) {
+      if (['mg_per_kg_per_day','mg_per_kg_day','mg_per_kg_per_dose','mg_per_kg_single_dose','weight_based','volume_per_kg'].includes(r.type)) {
         return { age: false, weight: true, alternative: false };
       }
       if (['age_based','label_age_based','volume_by_age','sachet_age_based','sachet_schedule','probiotic_product'].includes(r.type)) {
         return { age: true, weight: false, alternative: false };
       }
-      if (r.type === 'volume_per_kg') return { age: false, weight: true, alternative: false };
       return { age: false, weight: false, alternative: false };
     }
 
@@ -79,8 +79,8 @@
       const q = requirements(r);
       ageField.hidden = !q.age;
       weightField.hidden = !q.weight;
-      if (!q.age && age) age.value = '';
-      if (!q.weight && weight) weight.value = '';
+      if (!q.age && !q.alternative && age) age.value = '';
+      if (!q.weight && !q.alternative && weight) weight.value = '';
       ageField.dataset.requirement = q.alternative ? 'age-or-weight' : q.age ? 'age' : 'none';
       weightField.dataset.requirement = q.alternative ? 'age-or-weight' : q.weight ? 'weight' : 'none';
     }
@@ -91,6 +91,19 @@
       if (e.target === document.getElementById('age-unit') || e.target === frequency()) setTimeout(apply, 0);
     });
     age?.addEventListener('input', () => setTimeout(apply, 0));
+
+    // calculator.js uses its own requirements() during submit. For regimens where
+    // the label permits AGE OR WEIGHT (e.g. acetaminophen), expose exactly the
+    // entered input to that submit handler without changing any dose logic.
+    form.addEventListener('submit', () => {
+      const r = selectedRegimen();
+      if (!r || r.type !== 'label_weight_age_based') return;
+      const hasAge = Number.isFinite(Number(age?.value)) && Number(age.value) >= 0 && !!document.getElementById('age-unit')?.value;
+      const hasWeight = Number.isFinite(Number(weight?.value)) && Number(weight.value) > 0;
+      r.requiresAge = hasAge;
+      r.requiresWeight = hasWeight;
+    }, true);
+
     apply();
   }
 
