@@ -20,5 +20,14 @@
     <p class="developer welcome-item welcome-item-4">Developed by <strong>Duaa Kareem</strong></p>
     <a class="primary-button welcome-item welcome-item-5" href="calculator.html">START CALCULATOR</a>
   </main>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./sw.js').catch(function (error) {
+          console.warn('DoseCare offline support could not be registered:', error);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
