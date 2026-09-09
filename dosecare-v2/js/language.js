@@ -54,6 +54,9 @@
   };
 
   function addSwitcher() {
+    // The welcome page is intentionally English-only and has no language control.
+    if (document.querySelector('.welcome')) return;
+
     document.querySelectorAll('.topbar').forEach(topbar => {
       if (topbar.querySelector('.language-switcher')) return;
       const wrap = document.createElement('div');
@@ -62,15 +65,6 @@
       wrap.innerHTML = '<button type="button" data-lang="ar">عربي</button><span aria-hidden="true">|</span><button type="button" data-lang="en">EN</button>';
       topbar.appendChild(wrap);
     });
-
-    const welcome = document.querySelector('.welcome');
-    if (welcome && !welcome.querySelector('.language-switcher')) {
-      const wrap = document.createElement('div');
-      wrap.className = 'language-switcher welcome-language-switcher';
-      wrap.setAttribute('aria-label', 'Language');
-      wrap.innerHTML = '<button type="button" data-lang="ar">عربي</button><span aria-hidden="true">|</span><button type="button" data-lang="en">EN</button>';
-      welcome.appendChild(wrap);
-    }
   }
 
   function translateStatic(root) {
@@ -107,6 +101,9 @@
   }
 
   function init() {
+    // Welcome remains English regardless of the last selected language.
+    if (document.querySelector('.welcome')) return;
+
     addSwitcher();
     document.addEventListener('click', event => {
       const button = event.target.closest('.language-switcher button');
