@@ -16,6 +16,7 @@ DoseCareV2Database.register({
   regimens: [{
     id: 'label-weight-age-chart',
     type: 'label_weight_age_based',
+    ageOrWeight: true,
     allowedFormulations: ['160mg-5mL'],
     frequencyText: 'Every 4 hours as needed',
     maximumDosesPer24Hours: 5,
