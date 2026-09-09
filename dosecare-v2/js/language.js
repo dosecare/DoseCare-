@@ -1,147 +1,16 @@
 /* DoseCare V2 — bilingual UI controller. */
 (function () {
   'use strict';
-
-  const KEY = 'dosecareLanguage';
-  const translations = {
-    'WELCOME': 'مرحبًا',
-    'Pediatric Dose Calculator': 'حاسبة جرعات أدوية الأطفال',
-    'Developed by': 'تطوير',
-    'START CALCULATOR': 'ابدأ الحساب',
-    'DOSE CALCULATOR': 'حاسبة الجرعة',
-    'Select the medicine to begin.': 'اختر الدواء للبدء.',
-    'Search medicine': 'البحث عن الدواء',
-    'Type the first letters of a medicine…': 'اكتب الأحرف الأولى من اسم الدواء…',
-    'Treatment': 'الدواء',
-    'Select treatment': 'اختر الدواء',
-    'Condition': 'الحالة',
-    'Select condition / regimen': 'اختر الحالة / نظام الجرعة',
-    'Recommended pediatric dose': 'جرعة الأطفال الموصى بها',
-    'Select a treatment first': 'اختر الدواء أولًا',
-    'Age': 'العمر',
-    'Weight': 'الوزن',
-    'Weeks': 'أسابيع',
-    'Months': 'أشهر',
-    'Years': 'سنوات',
-    'Oral-liquid concentration': 'تركيز المستحضر الفموي السائل',
-    'CALCULATE DOSE': 'احسب الجرعة',
-    'Calculation result': 'نتيجة الحساب',
-    'Back to calculator': 'العودة إلى الحاسبة',
-    'PATIENT INFORMATION': 'معلومات المريض',
-    'Medicine': 'الدواء',
-    'Condition / regimen': 'الحالة / نظام الجرعة',
-    'Formulation': 'الشكل والتركيز',
-    'Regimen': 'نظام الجرعة',
-    'STEP-BY-STEP CALCULATION': 'الحساب خطوة بخطوة',
-    'ADDITIONAL DETAILS': 'تفاصيل إضافية',
-    'Active ingredient': 'المادة الفعالة',
-    'Drug class': 'الفئة الدوائية',
-    'Maximum daily dose': 'الحد الأقصى للجرعة اليومية',
-    'Calculated daily dose': 'الجرعة اليومية المحسوبة',
-    'Mechanism of action': 'آلية العمل',
-    'Indications': 'دواعي الاستعمال',
-    'Precautions & warnings': 'الاحتياطات والتحذيرات',
-    'Adverse effects': 'الآثار الجانبية',
-    'Interactions': 'التداخلات الدوائية',
-    'Notes': 'ملاحظات',
-    'SOURCES & REFERENCES': 'المصادر والمراجع',
-    'No source record attached.': 'لا يوجد مصدر مرفق.',
-    'No calculation found': 'لم يتم العثور على عملية حساب',
-    'Return to the calculator and enter patient information.': 'ارجع إلى الحاسبة وأدخل معلومات المريض.',
-    'BACK TO CALCULATOR': 'العودة إلى الحاسبة',
-    'Result unavailable': 'النتيجة غير متاحة',
-    'The calculation could not be read safely.': 'تعذر قراءة نتيجة الحساب بشكل آمن.'
-  };
-
-  function isWelcome() {
-    return !!document.querySelector('.welcome');
-  }
-
-  function readSavedLanguage() {
-    let saved = null;
-    try { saved = localStorage.getItem(KEY); } catch (_) {}
-    if (saved !== 'ar' && saved !== 'en') {
-      try { saved = sessionStorage.getItem(KEY); } catch (_) {}
-    }
-    return saved === 'ar' ? 'ar' : 'en';
-  }
-
-  function saveLanguage(lang) {
-    try { localStorage.setItem(KEY, lang); } catch (_) {}
-    try { sessionStorage.setItem(KEY, lang); } catch (_) {}
-  }
-
-  function addSwitcher() {
-    // The welcome page is intentionally English-only and has no language control.
-    if (isWelcome()) return;
-
-    document.querySelectorAll('.topbar').forEach(topbar => {
-      if (topbar.querySelector('.language-switcher')) return;
-      const wrap = document.createElement('div');
-      wrap.className = 'language-switcher';
-      wrap.setAttribute('aria-label', 'Language');
-      wrap.innerHTML = '<button type="button" data-lang="ar">عربي</button><span aria-hidden="true">|</span><button type="button" data-lang="en">EN</button>';
-      topbar.appendChild(wrap);
-    });
-  }
-
-  function translateStatic(root) {
-    const walker = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT);
-    const nodes = [];
-    while (walker.nextNode()) nodes.push(walker.currentNode);
-    nodes.forEach(node => {
-      const text = node.nodeValue.trim();
-      if (!text || !translations[text]) return;
-      if (!node.__dosecareOriginal) node.__dosecareOriginal = text;
-      if (document.documentElement.lang === 'ar') node.nodeValue = node.nodeValue.replace(text, translations[text]);
-      else node.nodeValue = node.nodeValue.replace(text, node.__dosecareOriginal);
-    });
-
-    document.querySelectorAll('[placeholder]').forEach(el => {
-      if (!el.dataset.enPlaceholder) el.dataset.enPlaceholder = el.placeholder;
-      if (document.documentElement.lang === 'ar') {
-        if (el.id === 'medicine-search') el.placeholder = 'اكتب الأحرف الأولى من اسم الدواء…';
-      } else el.placeholder = el.dataset.enPlaceholder;
-    });
-  }
-
-  function setLanguage(lang, persist) {
-    const normalized = lang === 'ar' ? 'ar' : 'en';
-    document.documentElement.lang = normalized;
-    document.documentElement.dir = normalized === 'ar' ? 'rtl' : 'ltr';
-    document.body.classList.toggle('arabic-ui', normalized === 'ar');
-    if (persist !== false) saveLanguage(normalized);
-    translateStatic(document.body);
-    document.querySelectorAll('.language-switcher button').forEach(button => {
-      button.classList.toggle('active', button.dataset.lang === normalized);
-      button.setAttribute('aria-pressed', String(button.dataset.lang === normalized));
-    });
-    window.dispatchEvent(new CustomEvent('dosecare:language-changed', { detail: { language: normalized } }));
-  }
-
-  function init() {
-    // Welcome remains English regardless of the last selected language.
-    if (isWelcome()) return;
-
-    addSwitcher();
-    document.addEventListener('click', event => {
-      const button = event.target.closest('.language-switcher button');
-      if (button) setLanguage(button.dataset.lang, true);
-    });
-
-    // Read the last selected language every time Calculator or Result loads.
-    // This prevents navigation/reload from silently falling back to English.
-    setLanguage(readSavedLanguage(), false);
-
-    const observer = new MutationObserver(mutations => {
-      if (document.documentElement.lang !== 'ar') return;
-      mutations.forEach(m => m.addedNodes.forEach(node => {
-        if (node.nodeType === Node.ELEMENT_NODE) translateStatic(node);
-      }));
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
+  const KEY='dosecareLanguage';
+  const translations={
+    'Calculation result':'نتيجة الحساب','Back to calculator':'العودة إلى الحاسبة','PATIENT INFORMATION':'معلومات المريض','Medicine':'الدواء','Condition / regimen':'الحالة / نظام الجرعة','Formulation':'الشكل والتركيز','Regimen':'نظام الجرعة','Age':'العمر','Weight':'الوزن','STEP-BY-STEP CALCULATION':'الحساب خطوة بخطوة','ADDITIONAL DETAILS':'تفاصيل إضافية','Active ingredient':'المادة الفعالة','Drug class':'الفئة الدوائية','Maximum daily dose':'الحد الأقصى للجرعة اليومية','Calculated daily dose':'الجرعة اليومية المحسوبة','Mechanism of action':'آلية العمل','Indications':'دواعي الاستعمال','Precautions & warnings':'الاحتياطات والتحذيرات','Adverse effects':'الآثار الجانبية','Interactions':'التداخلات الدوائية','Notes':'ملاحظات','SOURCES & REFERENCES':'المصادر والمراجع','No source record attached.':'لا يوجد مصدر مرفق.','No calculation found':'لم يتم العثور على عملية حساب','Return to the calculator and enter patient information.':'ارجع إلى الحاسبة وأدخل معلومات المريض.','BACK TO CALCULATOR':'العودة إلى الحاسبة','Result unavailable':'النتيجة غير متاحة','The calculation could not be read safely.':'تعذر قراءة نتيجة الحساب بشكل آمن','DOSE CALCULATOR':'حاسبة الجرعة','Select the medicine to begin.':'اختر الدواء للبدء.','Search medicine':'البحث عن الدواء','Type the first letters of a medicine…':'اكتب الأحرف الأولى من اسم الدواء…','Treatment':'الدواء','Select treatment':'اختر الدواء','Condition':'الحالة','Recommended pediatric dose':'جرعة الأطفال الموصى بها','Select a treatment first':'اختر الدواء أولًا','Weeks':'أسابيع','Months':'أشهر','Years':'سنوات','Oral-liquid concentration':'تركيز المستحضر الفموي السائل','CALCULATE DOSE':'احسب الجرعة'};
+  const isWelcome=()=>!!document.querySelector('.welcome');
+  function read(){try{const x=localStorage.getItem(KEY);if(x==='ar'||x==='en')return x}catch(_){}try{const x=sessionStorage.getItem(KEY);if(x==='ar'||x==='en')return x}catch(_){}return'en'}
+  function save(lang){try{localStorage.setItem(KEY,lang)}catch(_){}try{sessionStorage.setItem(KEY,lang)}catch(_){} }
+  function addSwitcher(){if(isWelcome())return;document.querySelectorAll('.topbar').forEach(t=>{if(t.querySelector('.language-switcher'))return;const w=document.createElement('div');w.className='language-switcher';w.innerHTML='<button type="button" data-lang="ar">عربي</button><span aria-hidden="true">|</span><button type="button" data-lang="en">EN</button>';t.appendChild(w)})}
+  function translateText(root,lang){const walker=document.createTreeWalker(root||document.body,NodeFilter.SHOW_TEXT);while(walker.nextNode()){const n=walker.currentNode;if(!n.__dcEn)n.__dcEn=n.nodeValue;const original=n.__dcEn.trim();if(!original)continue;if(lang==='ar'&&translations[original])n.nodeValue=n.nodeValue.replace(original,translations[original]);else if(lang==='en')n.nodeValue=n.nodeValue.replace(n.nodeValue.trim(),original)}
+    document.querySelectorAll('[placeholder]').forEach(el=>{if(!el.dataset.dcEnPlaceholder)el.dataset.dcEnPlaceholder=el.placeholder;el.placeholder=lang==='ar'?(el.id==='medicine-search'?'اكتب الأحرف الأولى من اسم الدواء…':el.dataset.dcEnPlaceholder):el.dataset.dcEnPlaceholder})}
+  function setLanguage(lang,persist=true){lang=lang==='ar'?'ar':'en';document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';document.body.classList.toggle('arabic-ui',lang==='ar');if(persist)save(lang);translateText(document.body,lang);document.querySelectorAll('.language-switcher button').forEach(b=>{b.classList.toggle('active',b.dataset.lang===lang);b.setAttribute('aria-pressed',String(b.dataset.lang===lang))});window.dispatchEvent(new CustomEvent('dosecare:language-changed',{detail:{language:lang}}))}
+  function init(){if(isWelcome())return;addSwitcher();document.addEventListener('click',e=>{const b=e.target.closest('.language-switcher button');if(b)setLanguage(b.dataset.lang,true)});setLanguage(read(),false);const observer=new MutationObserver(ms=>{const lang=read();ms.forEach(m=>m.addedNodes.forEach(node=>{if(node.nodeType===Node.ELEMENT_NODE)translateText(node,lang)})});observer.observe(document.body,{childList:true,subtree:true})}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
