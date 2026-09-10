@@ -25,6 +25,7 @@
     <span class="star-group star-group-b"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
     <span class="star-group star-group-c"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
   </div>
+
   <main class="welcome">
     <div class="welcome-content">
       <p class="eyebrow welcome-item welcome-item-1">WELCOME</p>
@@ -33,17 +34,14 @@
       <p class="developer welcome-item welcome-item-4"><strong>Duaa Kareem</strong></p>
     </div>
   </main>
+
   <script>
     (function () {
-      var entered = false;
-      function enterCalculator() {
-        if (entered) return;
-        entered = true;
+      window.setTimeout(function () {
         window.location.replace('calculator.html');
-      }
-      window.setTimeout(enterCalculator, 4000);
-      document.addEventListener('click', enterCalculator, { once: true });
+      }, 4000);
     })();
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
         navigator.serviceWorker.register('./sw.js').catch(function (error) {
