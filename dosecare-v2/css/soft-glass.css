@@ -2,7 +2,6 @@
 :root{--soft-glass:rgba(12,34,68,.30);--soft-border:rgba(205,231,255,.22);--soft-glow:rgba(88,190,255,.12)}
 html,body{min-height:100%;background:#06152f!important}
 body{background:radial-gradient(circle at 12% 18%,rgba(69,151,218,.13),transparent 30%),radial-gradient(circle at 88% 78%,rgba(105,87,205,.11),transparent 32%),linear-gradient(145deg,#06142d,#0a2144 52%,#06152f)!important}
-/* Native HTML [hidden] must win over the older V2 field display rules. */
 [hidden]{display:none!important}
 .glass-panel,.glass-card{background:linear-gradient(135deg,rgba(40,76,120,.25),rgba(6,25,52,.18))!important;border:1px solid var(--soft-border)!important;box-shadow:0 24px 70px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(255,255,255,.025),0 0 45px rgba(80,180,255,.055)!important;backdrop-filter:blur(16px) saturate(125%)!important;-webkit-backdrop-filter:blur(16px) saturate(125%)!important;overflow:hidden!important}
 .glass-panel::before,.glass-card::before{background:linear-gradient(125deg,rgba(255,255,255,.09),transparent 28%,transparent 70%,rgba(120,205,255,.025))!important}
@@ -15,13 +14,16 @@ body{background:radial-gradient(circle at 12% 18%,rgba(69,151,218,.13),transpare
 @keyframes bubbleDrift{0%,100%{transform:translate3d(0,0,0) scale(1);opacity:.38}25%{transform:translate3d(22px,-18px,0) scale(1.04);opacity:.52}50%{transform:translate3d(-8px,-38px,0) scale(.97);opacity:.62}75%{transform:translate3d(-25px,8px,0) scale(1.02);opacity:.48}}
 .dosecare-title{background:linear-gradient(110deg,#dceeff 0%,#9edbff 20%,#f4f9ff 38%,#78c5f2 56%,#dceeff 74%,#a9ddff 90%,#dceeff 100%)!important;background-size:260% 100%!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;color:transparent!important;animation:dosecareColorFlow 11s ease-in-out infinite!important;text-shadow:0 0 18px rgba(102,194,255,.10)!important}
 @keyframes dosecareColorFlow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-/* Welcome text: crisp entrance, no blur */
 .welcome .eyebrow,.welcome h1,.welcome .description,.welcome .developer,.welcome .primary-button{animation-name:welcomeCrispAppear!important;animation-duration:1.05s!important;animation-timing-function:cubic-bezier(.22,1,.36,1)!important;animation-fill-mode:both!important}.welcome .eyebrow{animation-delay:.04s!important}.welcome h1{animation-delay:.14s!important}.welcome .description{animation-delay:.24s!important}.welcome .developer{animation-delay:.34s!important}.welcome .primary-button{animation-delay:.44s!important}
 @keyframes welcomeCrispAppear{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
 .star-groups{z-index:1!important}.star-group i{width:2px!important;height:2px!important;background:rgba(238,250,255,.98)!important;box-shadow:0 0 6px rgba(150,230,255,.95),0 0 15px rgba(105,195,255,.55)!important;animation:starTwinkle 2.8s ease-in-out infinite!important}.star-group i:nth-child(2),.star-group i:nth-child(5){width:3px!important;height:3px!important}.star-group-a{animation:starA 10s ease-in-out infinite!important}.star-group-b{animation:starB 12s ease-in-out infinite!important}.star-group-c{animation:starC 14s ease-in-out infinite!important}@keyframes starTwinkle{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.7)}}
 .page,.welcome>*{position:relative;z-index:2}.topbar{position:relative;z-index:4}
-.welcome .eyebrow{font-size:clamp(3.35rem,11vw,5.8rem)!important;line-height:.98!important;letter-spacing:.105em!important;margin-bottom:12px!important}.welcome h1{font-size:clamp(2.55rem,7.6vw,4.45rem)!important;line-height:1!important}
-/* Lively controls: a restrained medical-blue glow and moving highlight */
+/* Welcome typography: WELCOME medium, DoseCare large, supporting text small. */
+.welcome .eyebrow{font-size:clamp(2.35rem,8vw,4.2rem)!important;line-height:1!important;letter-spacing:.09em!important;margin-bottom:10px!important}
+.welcome h1{font-size:clamp(3.15rem,10.5vw,5.8rem)!important;line-height:.98!important}
+.welcome .description{font-size:clamp(.82rem,2.4vw,1rem)!important;line-height:1.55!important}
+.welcome .developer{font-size:clamp(.75rem,2.2vw,.92rem)!important;line-height:1.4!important}
+.welcome .primary-button{font-size:.78rem!important;letter-spacing:.08em!important}
 .primary-button,.language-switcher button{position:relative!important;overflow:hidden!important;box-shadow:0 10px 28px rgba(35,145,220,.18),inset 0 1px 0 rgba(255,255,255,.16)!important}.primary-button::after,.language-switcher button::after{content:"";position:absolute;top:-60%;bottom:-60%;width:32%;left:-45%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.34),transparent);transform:skewX(-18deg);animation:buttonShine 5.5s ease-in-out infinite;pointer-events:none}@keyframes buttonShine{0%,62%{left:-45%;opacity:0}70%{opacity:.7}82%{left:125%;opacity:0}100%{left:125%;opacity:0}}
 .field input,.field select,.glass-field{transition:box-shadow .35s ease,border-color .35s ease,background .35s ease,transform .25s ease!important}.field input:focus,.field select:focus{border-color:rgba(126,210,255,.58)!important;box-shadow:0 0 0 3px rgba(70,170,235,.10),0 0 24px rgba(70,170,235,.12)!important;transform:translateY(-1px)}
 @media(max-width:640px){.welcome{width:100%!important;min-height:100vh!important;margin:0!important;padding:28px 20px!important}.glass-card{border-radius:24px!important}.bubble:nth-child(3){width:105px!important;height:105px!important}}
