@@ -32,13 +32,28 @@ jobs:
       - name: Sync web assets into iOS project
         run: npx cap sync ios
 
+      - name: Verify generated iOS project
+        working-directory: ios
+        run: |
+          set -euxo pipefail
+          pwd
+          find . -maxdepth 3 -type f \( -name '*.xcworkspace' -o -name '*.xcodeproj' \) -print
+
       - name: Build unsigned iOS simulator app
         working-directory: ios
-        run: xcodebuild -workspace App/App.xcworkspace -scheme App -configuration Debug -sdk iphonesimulator -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+        run: |
+          set -euxo pipefail
+          WORKSPACE="$(find . -maxdepth 3 -name '*.xcworkspace' -print -quit)"
+          if [ -z "$WORKSPACE" ]; then
+            echo "No Xcode workspace was generated."
+            exit 1
+          fi
+          SCHEME="$(basename "$WORKSPACE" .xcworkspace)"
+          xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Debug -sdk iphonesimulator -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
       - name: Upload iOS simulator app
         uses: actions/upload-artifact@v4
         with:
           name: dosecare-ios-simulator-app
-          path: ios/build/Build/Products/Debug-iphonesimulator/App.app
+          path: ios/build/Build/Products/Debug-iphonesimulator/*.app
           if-no-files-found: error
