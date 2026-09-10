@@ -1,5 +1,4 @@
 name: DoseCare Android Build
-
 on:
   workflow_dispatch:
   push:
