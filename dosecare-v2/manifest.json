@@ -1,0 +1,13 @@
+{
+  "name": "DoseCare — Pediatric Dose Calculator",
+  "short_name": "DoseCare",
+  "description": "Pediatric oral-liquid dose calculator for accurate, transparent dose calculations.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#06152f",
+  "theme_color": "#06152f",
+  "lang": "en",
+  "dir": "ltr"
+}
