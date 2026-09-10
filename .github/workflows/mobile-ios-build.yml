@@ -44,12 +44,20 @@ jobs:
         run: |
           set -euxo pipefail
           WORKSPACE="$(find . -maxdepth 3 -name '*.xcworkspace' -print -quit)"
-          if [ -z "$WORKSPACE" ]; then
-            echo "No Xcode workspace was generated."
+          PROJECT="$(find . -maxdepth 3 -name '*.xcodeproj' -print -quit)"
+
+          if [ -n "$WORKSPACE" ]; then
+            SCHEME="$(basename "$WORKSPACE" .xcworkspace)"
+            echo "Building Xcode workspace: $WORKSPACE"
+            xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Debug -sdk iphonesimulator -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+          elif [ -n "$PROJECT" ]; then
+            SCHEME="$(basename "$PROJECT" .xcodeproj)"
+            echo "Building Xcode project: $PROJECT"
+            xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration Debug -sdk iphonesimulator -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+          else
+            echo "No Xcode workspace or project was generated."
             exit 1
           fi
-          SCHEME="$(basename "$WORKSPACE" .xcworkspace)"
-          xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Debug -sdk iphonesimulator -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
       - name: Upload iOS simulator app
         uses: actions/upload-artifact@v4
