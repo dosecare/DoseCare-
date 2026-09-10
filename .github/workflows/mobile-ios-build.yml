@@ -1,0 +1,44 @@
+name: DoseCare iOS Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [dosecare-v2-rebuild]
+    paths:
+      - 'dosecare-v2/**'
+      - 'package.json'
+      - 'capacitor.config.json'
+      - '.github/workflows/mobile-ios-build.yml'
+
+jobs:
+  ios-build:
+    name: Build iOS app bundle
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Capacitor dependencies
+        run: npm install
+
+      - name: Add iOS platform
+        run: npx cap add ios
+
+      - name: Sync web assets into iOS project
+        run: npx cap sync ios
+
+      - name: Build unsigned iOS simulator app
+        working-directory: ios
+        run: xcodebuild -workspace App/App.xcworkspace -scheme App -configuration Debug -sdk iphonesimulator -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+      - name: Upload iOS simulator app
+        uses: actions/upload-artifact@v4
+        with:
+          name: dosecare-ios-simulator-app
+          path: ios/build/Build/Products/Debug-iphonesimulator/App.app
+          if-no-files-found: error
