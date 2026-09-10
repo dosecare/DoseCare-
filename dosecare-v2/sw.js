@@ -1,7 +1,7 @@
 /* DoseCare V2 — offline-first service worker */
-const CACHE_NAME = 'dosecare-v2-offline-v3';
+const CACHE_NAME = 'dosecare-v2-offline-v4';
 const CORE_FILES = [
-  './','./index.html','./calculator.html','./result.html',
+  './','./index.html','./calculator.html','./result.html','./manifest.json','./icons/icon.svg',
   './css/style.css','./css/legacy-visual.css','./css/language.css','./css/soft-glass.css','./css/author-font.css',
   './js/language.js','./js/database.js','./js/database-loader.js','./js/dosing-engine.js','./js/dosing-engine-guards.js','./js/calculator.js','./js/result.js',
   './js/macrogol-engine-adapter.js','./js/probiotic-engine-adapter.js','./js/ors-engine.js','./js/macrogol-result-adapter.js','./js/probiotic-result-adapter.js',
