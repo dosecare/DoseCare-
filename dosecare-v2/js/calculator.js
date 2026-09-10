@@ -11,8 +11,6 @@
   function normalizeFormulation(f){if(!f)return null;if(f.volumeBased)return {...f,display:f.display||'Volume-based oral solution'};const c=f.concentration||{};let rawAmount=c.amount??f.amount??f.mgPer5mL??f.mgPerMl,rawUnit=c.unit??f.unit??'mg',volume=c.volume??f.volume??(f.mgPer5mL!==undefined?5:1);if((rawAmount===undefined||rawAmount===null)&&typeof f.display==='string'){const match=f.display.match(/([0-9.]+)\s*(mg|g|mcg)\s*\/\s*([0-9.]+)\s*mL/i);if(match){rawAmount=Number(match[1]);rawUnit=match[2];volume=Number(match[3]);}}const amountMg=toMg(rawAmount,rawUnit),volumeMl=Number(volume);if(amountMg===null||!Number.isFinite(volumeMl)||volumeMl<=0)return null;return {...f,mgPerMl:amountMg/volumeMl,display:f.display||`${rawAmount} ${rawUnit}/${volumeMl} mL`,concentration:{amount:amountMg,unit:'mg',volume:volumeMl,volumeUnit:'mL'}};}
   function doseText(r){if(r.type==='sachet_age_based')return `${r.doseMin??r.minDose??r.dose} ${r.doseUnit||'sachet/day'}`;if(r.type==='sachet_schedule')return 'See the 7-day disimpaction schedule';if(r.type==='label_weight_age_based'||r.type==='label_age_based')return `${r.doseMin??r.minDose??r.dose}–${r.doseMax??r.maxDose??r.dose} ${r.doseUnit||r.unit||'mg/dose'}`;if(r.type==='volume_by_age')return `${r.minVolumeMl}–${r.maxVolumeMl} mL after each loose stool`;if(r.type==='volume_per_kg')return `75 mL/kg over ${r.durationHours} hours`;if(r.type==='probiotic_fixed')return `${r.doseMin??r.minDose??r.dose}–${r.doseMax??r.maxDose??r.dose} ${r.doseUnit||'per day'}`;if(r.type==='probiotic_product')return `${r.administrationMin??r.administrationMax} ${r.administrationUnit||'packet/day'}`;if(r.schedule?.length)return r.schedule.map(s=>`${s.dayRange}: ${s.doseMgPerKg??s.doseMgPerKgPerDose} mg/kg`).join(' • ');const a=r.minDose??r.dose??r.doseMgPerKg??r.doseMgPerKgPerDay,b=r.maxDose??r.dose??r.doseMgPerKg??r.doseMgPerKgPerDay;return `${a===b?a:`${a}–${b}`} ${r.unit||(r.type==='mg_per_kg_per_day'||r.type==='mg_per_kg_day'?'mg/kg/day':'mg/kg/dose')}`;}
 
-  // Field requirements are driven by the selected regimen, not by a fixed form.
-  // ageOrWeight=true means the label permits either age OR weight (e.g. acetaminophen label).
   function requirements(r){
     if(!r)return {age:false,weight:false,ageOrWeight:false};
     const ageByBounds=['minAgeWeeks','maxAgeWeeks','minAgeMonths','maxAgeMonths','minAgeYears','maxAgeYears'].some(k=>r[k]!==undefined);
@@ -35,7 +33,21 @@
     frequencySelect=document.createElement('select');frequencySelect.id='frequency-select';label.appendChild(frequencySelect);frequencyField.appendChild(label);
     conditionField.insertAdjacentElement('afterend',frequencyField);frequencyField.hidden=true;
   }
-  function conditionGroups(rs){const map=new Map();rs.forEach(r=>{const key=r.condition||r.conditions?.[0]||r.id;if(!map.has(key))map.set(key,[]);map.get(key).push(r);});return [...map.entries()];}
+
+  // A regimen's `condition` may contain its frequency (for example
+  // "Ear/Nose/Throat — Mild/Moderate — every 12 hours"). The UI must expose
+  // the clinical condition first, then expose frequency/regimen only when there
+  // are multiple choices within that condition.
+  function conditionLabel(r){
+    const raw=String(r?.condition||r?.conditions?.[0]||'General');
+    return raw.replace(/\s*[—-]\s*(?:every|q\d+|once|twice|three times|four times).*$/i,'').trim()||raw;
+  }
+  function conditionKey(r){return conditionLabel(r).toLowerCase();}
+  function conditionGroups(rs){
+    const map=new Map();
+    rs.forEach(r=>{const key=conditionKey(r);if(!map.has(key))map.set(key,{label:conditionLabel(r),regimens:[]});map.get(key).regimens.push(r);});
+    return [...map.values()];
+  }
   function ageInMonths(){const v=Number($('age-value')?.value),u=$('age-unit')?.value;if(!Number.isFinite(v)||v<0)return null;if(u==='years')return v*12;if(u==='weeks')return v/4.34524;return v;}
   function regimenMatchesAge(r){const m=ageInMonths();if(m===null)return false;let min=r.minAgeMonths,max=r.maxAgeMonths;if(r.minAgeYears!==undefined)min=Number(r.minAgeYears)*12;if(r.maxAgeYears!==undefined)max=Number(r.maxAgeYears)*12;if(min!==undefined&&m<Number(min))return false;if(max!==undefined&&m>Number(max))return false;return true;}
   function ageBandText(r){let min=r.minAgeMonths,max=r.maxAgeMonths;if(r.minAgeYears!==undefined)min=Number(r.minAgeYears)*12;if(r.maxAgeYears!==undefined)max=Number(r.maxAgeYears)*12;if(min===undefined&&max===undefined)return '';const fmt=n=>n%12===0?`${n/12} years`:`${n} months`;if(min!==undefined&&max!==undefined)return `${fmt(min)}–${fmt(max)}`;return min!==undefined?`≥ ${fmt(min)}`:`≤ ${fmt(max)}`;}
@@ -47,49 +59,55 @@
     if(!forms.length){concentrationField.hidden=false;const o=document.createElement('option');o.value='';o.textContent='No compatible formulation configured';concentrationSelect.appendChild(o);}
   }
 
-  function chooseRegimen(group){
-    if(!group.length)return null;
-    const ageMatches=group.filter(regimenMatchesAge);
+  function chooseRegimen(regimens){
+    if(!regimens.length)return null;
+    const ageMatches=regimens.filter(regimenMatchesAge);
     if(ageMatches.length===1)return ageMatches[0];
-    if(frequencySelect?.value){const chosen=group.find(r=>r.id===frequencySelect.value);if(chosen)return chosen;}
-    return group[0];
+    if(frequencySelect?.value){const chosen=regimens.find(r=>r.id===frequencySelect.value);if(chosen)return chosen;}
+    return regimens[0];
   }
   function selectedRegimen(m){
     const rs=m?.regimens||[];if(rs.length===1)return rs[0];
-    const groups=conditionGroups(rs);const group=groups.find(([key])=>key===conditionSelect.value)?.[1]||[];
-    return chooseRegimen(group);
+    const groups=conditionGroups(rs);const group=groups.find(g=>g.label===conditionSelect.value);
+    return chooseRegimen(group?.regimens||[]);
   }
 
   function updateFieldState(m,groups){
     const multipleConditions=groups.length>1;
     conditionField.hidden=!multipleConditions;
-    if(!multipleConditions&&groups.length===1)conditionSelect.value=groups[0][0];
-    if(multipleConditions&&!conditionSelect.value){setFieldVisibility(null);if(frequencyField)frequencyField.hidden=true;return null;}
+    // Always populate the condition selector when there is a condition-driven medicine.
+    // A condition is a real user choice even if every condition has only one regimen.
+    if(multipleConditions){
+      const current=conditionSelect.value;
+      conditionSelect.innerHTML='';
+      groups.forEach(g=>{const o=document.createElement('option');o.value=g.label;o.textContent=g.label;conditionSelect.appendChild(o);});
+      conditionSelect.value=groups.some(g=>g.label===current)?current:groups[0].label;
+    } else if(groups.length===1) {
+      conditionSelect.innerHTML='';
+      const o=document.createElement('option');o.value=groups[0].label;o.textContent=groups[0].label;conditionSelect.appendChild(o);
+      conditionSelect.value=groups[0].label;
+    }
 
-    const group=groups.find(([key])=>key===conditionSelect.value)?.[1]||[];
-    const r=chooseRegimen(group);
-    // Frequency/regimen is only exposed when the user genuinely has multiple choices
-    // inside the selected condition. Otherwise it stays hidden and the engine keeps it internally.
-    const needsFrequency=group.length>1 && group.filter(regimenMatchesAge).length!==1;
+    const group=groups.find(g=>g.label===conditionSelect.value)||groups[0];
+    if(!group){setFieldVisibility(null);if(frequencyField)frequencyField.hidden=true;return null;}
+    const r=chooseRegimen(group.regimens);
+    const needsFrequency=group.regimens.length>1;
     frequencyField.hidden=!needsFrequency;
     if(needsFrequency&&frequencySelect){
       frequencySelect.innerHTML='';
-      group.forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=[ageBandText(x),x.frequencyText||x.id].filter(Boolean).join(' — ');frequencySelect.appendChild(o);});
+      group.regimens.forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=[ageBandText(x),x.frequencyText||x.id].filter(Boolean).join(' — ');frequencySelect.appendChild(o);});
       if(r)frequencySelect.value=r.id;
-    }
+    } else if(frequencySelect){frequencySelect.innerHTML='';}
     setFieldVisibility(r);
     return r;
   }
 
   function render(){
     const m=byId(medicineSelect.value);
-    conditionSelect.innerHTML='<option value="">Select condition / regimen</option>';
-    concentrationSelect.innerHTML='';ensureFrequencyField();frequencyField.hidden=true;frequencySelect.innerHTML='';conditionField.hidden=true;concentrationField.hidden=true;
+    conditionSelect.innerHTML='';ensureFrequencyField();frequencyField.hidden=true;frequencySelect.innerHTML='';conditionField.hidden=true;concentrationField.hidden=true;
     if(!m){recommendedDose.textContent='Select a treatment first';setFieldVisibility(null);return;}
     const rs=m.regimens||[],groups=conditionGroups(rs);
-    groups.forEach(([key])=>{const o=document.createElement('option');o.value=key;o.textContent=key;conditionSelect.appendChild(o);});
-    if(groups.length===1)conditionSelect.value=groups[0][0];
-    if(groups.length>1&&!conditionSelect.value){recommendedDose.textContent='Select a condition / regimen to view the dose';setFieldVisibility(null);renderConcentrations(m,null);return;}
+    if(groups.length>1){conditionField.hidden=false;}
     const r=updateFieldState(m,groups);
     recommendedDose.textContent=r?doseText(r):(rs.length?'Select a condition / regimen to view the dose':'Dose not configured');
     renderConcentrations(m,r);
@@ -108,7 +126,6 @@
     const m=byId(medicineSelect.value),r=selectedRegimen(m);if(!m||!r){message.textContent='Select a treatment and required condition.';return;}
     const req=requirements(r);
     const ageValue=req.age?$('age-value').value:null, weightValue=req.weight?$('weight-value').value:null;
-    // ageOrWeight accepts either input. If both are entered, both are passed for cross-checking.
     if(req.ageOrWeight&&!ageValue&&!weightValue){message.textContent='Enter either age or weight to calculate the dose.';return;}
     const index=Math.max(0,Number(concentrationSelect.value)||0),rawFormulation=(m.formulations||[])[index];
     const f=m.id==='ors'||m.id==='macrogol'||m.id==='probiotics'?rawFormulation:normalizeFormulation(rawFormulation);
