@@ -1,8 +1,9 @@
-/* DoseCare V2 — developer name only */
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
-
+/* DoseCare V2 — developer name only.
+ * Deliberately uses a local/system font stack so the APK never needs
+ * an internet request just to render the developer name.
+ */
 .welcome .developer strong {
-  font-family: 'Dancing Script', 'Segoe Script', cursive !important;
+  font-family: 'Segoe Script', 'Brush Script MT', 'URW Chancery L', cursive !important;
   font-weight: 700 !important;
   font-size: 1.18em;
   letter-spacing: 0.02em;
