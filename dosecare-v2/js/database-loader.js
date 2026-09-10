@@ -1,6 +1,6 @@
 /* DoseCare V2 — central database loader.
- * Loads every active pediatric oral-liquid medicine record in one deterministic sequence.
- * Powder/reconstitution-only products are intentionally excluded from the active calculator database.
+ * All medicine records are local application assets.
+ * Load them in parallel, then initialize the engines in dependency order.
  */
 (function (global) {
   'use strict';
@@ -11,27 +11,40 @@
     'ondansetron.js','prednisolone.js','salbutamol.js',
     'lactulose.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js','hyoscine-butylbromide.js','sodium-citrate.js','vitamin-d3.js','iron.js','multivitamin.js','multivitamin-iron.js','folic-acid.js','fluconazole.js','mebendazole.js','nitazoxanide.js'
   ];
+
   function loadScript(src) {
     return new Promise((resolve, reject) => {
-      const script = document.createElement('script'); script.src = src; script.async = false; script.onload = resolve; script.onerror = () => reject(new Error(`Failed to load ${src}`)); document.head.appendChild(script);
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = false;
+      script.onload = resolve;
+      script.onerror = () => reject(new Error(`Failed to load ${src}`));
+      document.head.appendChild(script);
     });
   }
+
   async function boot() {
     try {
-      for (const file of medicineFiles) await loadScript(`data/${file}`);
+      // These files are bundled with the application. Parallel loading avoids
+      // waiting for all ~50 medicine files one-by-one on slower devices.
+      await Promise.all(medicineFiles.map(file => loadScript(`data/${file}`)));
+
+      // Engines are initialized only after every medicine record is registered.
       await loadScript('js/dosing-engine.js');
       await loadScript('js/macrogol-engine-adapter.js');
       await loadScript('js/probiotic-engine-adapter.js');
       await loadScript('js/ors-engine.js');
       await loadScript('js/calculator.js');
+
       global.DoseCareV2Ready = true;
       document.dispatchEvent(new CustomEvent('dosecare:v2-ready'));
     } catch (error) {
       console.error('DoseCare V2 failed to initialize:', error);
       const message = document.getElementById('form-message');
-      if (message) message.textContent = 'DoseCare could not load its medicine database. Please refresh and try again.';
+      if (message) message.textContent = 'DoseCare could not load its local medicine database. Please reopen the app.';
     }
   }
+
   global.DoseCareV2Loader = Object.freeze({ medicineFiles: medicineFiles.slice(), boot });
   boot();
 })(window);
