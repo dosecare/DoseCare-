@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DoseCare — Calculator</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/legacy-visual.css">
 <style>.language-toggle{margin-left:auto;min-height:38px;padding:8px 14px;border:1px solid rgba(220,230,242,.25);border-radius:999px;color:#eaf4ff;background:rgba(20,47,86,.28);font:600 13px Georgia,"Times New Roman",serif;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}html[dir=rtl] .language-toggle{margin-left:0;margin-right:auto}</style>
@@ -33,4 +36,5 @@
 <script src="js/database-loader.js"></script>
 <script>(function(){const search=document.getElementById('medicine-search'),select=document.getElementById('medicine-select');if(!search||!select)return;function filterMedicines(){const query=search.value.trim().toLowerCase(),current=select.value;Array.from(select.options).forEach((option,index)=>{if(index===0)return;option.hidden=!!query&&!option.textContent.trim().toLowerCase().startsWith(query)});if(current&&select.options[select.selectedIndex]&&select.options[select.selectedIndex].hidden)select.value=''}search.addEventListener('input',filterMedicines)})();</script>
 <script src="js/i18n.js"></script>
+<script src="js/pwa.js"></script>
 </body></html>
