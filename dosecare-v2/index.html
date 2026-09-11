@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/legacy-visual.css">
   <style>
-    /* Mobile-safe welcome title fallback. */
+    /* iPad-safe welcome text fallback. */
     .welcome h1.dosecare-title {
       position: relative;
       z-index: 10;
@@ -17,28 +17,14 @@
       color: #dfe9f7;
       -webkit-text-fill-color: #dfe9f7;
       text-shadow: 0 0 10px rgba(120,220,255,.28), 0 0 24px rgba(156,145,255,.18);
-      animation: welcomeAppear 1.15s ease forwards, dosecareColorShift 7s ease-in-out infinite;
-      animation-delay: .25s, 0s;
     }
-    @keyframes dosecareColorShift {
-      0%,100% { color:#eef1f5; -webkit-text-fill-color:#eef1f5; text-shadow:0 0 10px rgba(120,220,255,.30),0 0 26px rgba(120,220,255,.16); }
-      25% { color:#78dcff; -webkit-text-fill-color:#78dcff; text-shadow:0 0 12px rgba(120,220,255,.42),0 0 30px rgba(120,220,255,.20); }
-      50% { color:#a99cff; -webkit-text-fill-color:#a99cff; text-shadow:0 0 12px rgba(169,156,255,.40),0 0 30px rgba(169,156,255,.20); }
-      75% { color:#dce4ef; -webkit-text-fill-color:#dce4ef; text-shadow:0 0 12px rgba(220,228,239,.34),0 0 28px rgba(120,220,255,.18); }
+    .welcome-page .welcome-item {
+      will-change: transform, opacity;
     }
-
-    /* Safari/iPad-safe motion layer: deliberately uses transform/opacity only. */
     .welcome-page .space-scene .planet { will-change: transform; }
     .welcome-page .space-scene .star { will-change: opacity, transform; }
     .welcome-page .space-scene .nebula,
     .welcome-page .space-scene:before { will-change: transform, opacity; }
-
-    /* The global welcome-item animation used to overwrite DoseCare's animation shorthand. */
-    .welcome-page .welcome-item { animation: welcomeIn 1.15s cubic-bezier(.2,.8,.2,1) both; }
-    .welcome-page .welcome-item-1 { animation-delay:.10s; }
-    .welcome-page .welcome-item-2 { animation: welcomeIn 1.15s cubic-bezier(.2,.8,.2,1) both, dosecareColorShift 7s ease-in-out infinite; animation-delay:.25s,0s; }
-    .welcome-page .welcome-item-3 { animation-delay:.42s; }
-    .welcome-page .welcome-item-4 { animation-delay:.58s; }
 
     @media (max-width:600px) {
       .welcome h1.dosecare-title { font-size:clamp(3rem,16vw,4.6rem); line-height:1.05; min-height:1.05em; white-space:nowrap; }
@@ -86,51 +72,101 @@
   <script>
     (function () {
       var scene = document.querySelector('.space-scene');
-      if (!scene) return;
+      var welcome = document.querySelector('.welcome');
+      if (!scene || !welcome) return;
 
       var planets = Array.prototype.slice.call(scene.querySelectorAll('.planet'));
       var stars = Array.prototype.slice.call(scene.querySelectorAll('.star'));
       var nebulae = Array.prototype.slice.call(scene.querySelectorAll('.nebula'));
-      var started = false;
+      var items = Array.prototype.slice.call(welcome.querySelectorAll('.welcome-item'));
+      var logo = document.querySelector('.dosecare-title');
       var start = performance.now();
 
-      /* JS motion fallback keeps the scene alive even when Safari/WebView
-         fails to run a CSS animation on decorative layers. */
+      /*
+         iPad/Safari fallback:
+         do the welcome text motion with requestAnimationFrame instead of
+         relying on CSS animation composition. This avoids the conflict
+         between the legacy welcome animation and the logo animation.
+      */
+      items.forEach(function (item) {
+        item.style.animation = 'none';
+        item.style.opacity = '0';
+      });
+
+      var delays = [100, 250, 420, 580];
+      var colors = [
+        [238,241,245],
+        [120,220,255],
+        [169,156,255],
+        [220,228,239]
+      ];
+
+      function easeOut(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+
+      function colorAt(seconds) {
+        var cycle = (seconds % 7) / 7;
+        var scaled = cycle * (colors.length - 1);
+        var i = Math.floor(scaled);
+        var f = scaled - i;
+        var a = colors[i];
+        var b = colors[Math.min(i + 1, colors.length - 1)];
+        return [
+          Math.round(a[0] + (b[0] - a[0]) * f),
+          Math.round(a[1] + (b[1] - a[1]) * f),
+          Math.round(a[2] + (b[2] - a[2]) * f)
+        ];
+      }
+
       function animate(now) {
-        if (!started) return;
-        var t = (now - start) / 1000;
+        var t = now - start;
+        var seconds = t / 1000;
+
+        items.forEach(function (item, i) {
+          var local = Math.max(0, Math.min(1, (t - delays[i]) / 1150));
+          var p = easeOut(local);
+          var float = local >= 1 ? Math.sin((seconds * 0.9) + i) * 1.4 : 0;
+          item.style.opacity = p.toFixed(3);
+          item.style.transform = 'translate3d(0,' + ((1 - p) * 16 + float).toFixed(2) + 'px,0)';
+        });
+
+        if (logo) {
+          var c = colorAt(seconds);
+          var rgb = 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')';
+          logo.style.color = rgb;
+          logo.style.webkitTextFillColor = rgb;
+          logo.style.textShadow = '0 0 11px rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',.22), 0 0 28px rgba(120,190,255,.12)';
+        }
 
         planets.forEach(function (planet, i) {
           var ampX = [10, 7, 9, 6, 8][i] || 7;
           var ampY = [8, 6, 10, 7, 9][i] || 7;
           var period = [18, 13, 15, 11, 12][i] || 14;
           var phase = i * 1.7;
-          var x = Math.sin((t / period) * Math.PI * 2 + phase) * ampX;
-          var y = Math.cos((t / (period * 1.17)) * Math.PI * 2 + phase) * ampY;
-          var r = Math.sin((t / period) * Math.PI * 2 + phase) * (i === 0 ? 2 : 1.5);
+          var x = Math.sin((seconds / period) * Math.PI * 2 + phase) * ampX;
+          var y = Math.cos((seconds / (period * 1.17)) * Math.PI * 2 + phase) * ampY;
+          var r = Math.sin((seconds / period) * Math.PI * 2 + phase) * (i === 0 ? 2 : 1.5);
           planet.style.transform = 'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0) rotate(' + r.toFixed(2) + 'deg)';
         });
 
         stars.forEach(function (star, i) {
           var period = 2.8 + (i % 7) * .45;
           var phase = i * .83;
-          var wave = (Math.sin((t / period) * Math.PI * 2 + phase) + 1) / 2;
-          var opacity = .38 + wave * .58;
-          var scale = .78 + wave * .28;
-          star.style.opacity = opacity.toFixed(3);
-          star.style.transform = 'scale(' + scale.toFixed(3) + ')';
+          var wave = (Math.sin((seconds / period) * Math.PI * 2 + phase) + 1) / 2;
+          star.style.opacity = (.38 + wave * .58).toFixed(3);
+          star.style.transform = 'scale(' + (.78 + wave * .28).toFixed(3) + ')';
         });
 
         nebulae.forEach(function (nebula, i) {
-          var x = Math.sin(t / (8 + i * 2)) * 6;
-          var y = Math.cos(t / (10 + i * 2)) * 4;
+          var x = Math.sin(seconds / (8 + i * 2)) * 6;
+          var y = Math.cos(seconds / (10 + i * 2)) * 4;
           nebula.style.transform = 'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0) rotate(' + (i ? 24 : -18) + 'deg)';
         });
 
         requestAnimationFrame(animate);
       }
 
-      started = true;
       requestAnimationFrame(animate);
     })();
 
