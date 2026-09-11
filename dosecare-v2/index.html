@@ -7,9 +7,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/legacy-visual.css">
   <style>
-    /* Mobile-safe welcome title fallback.
-       Keeps the Serif font and animated color effect while avoiding
-       transparent-text rendering failures in some Android WebViews. */
+    /* Mobile-safe welcome title fallback. */
     .welcome h1.dosecare-title {
       position: relative;
       z-index: 10;
@@ -18,53 +16,32 @@
       max-width: 92vw;
       color: #dfe9f7;
       -webkit-text-fill-color: #dfe9f7;
-      text-shadow:
-        0 0 10px rgba(120, 220, 255, 0.28),
-        0 0 24px rgba(156, 145, 255, 0.18);
-      animation:
-        welcomeAppear 1.15s ease forwards,
-        dosecareColorShift 7s ease-in-out infinite;
-      animation-delay: 0.25s, 0s;
+      text-shadow: 0 0 10px rgba(120,220,255,.28), 0 0 24px rgba(156,145,255,.18);
+      animation: welcomeAppear 1.15s ease forwards, dosecareColorShift 7s ease-in-out infinite;
+      animation-delay: .25s, 0s;
     }
-
     @keyframes dosecareColorShift {
-      0%, 100% {
-        color: #eef1f5;
-        -webkit-text-fill-color: #eef1f5;
-        text-shadow:
-          0 0 10px rgba(120, 220, 255, 0.30),
-          0 0 26px rgba(120, 220, 255, 0.16);
-      }
-      25% {
-        color: #78dcff;
-        -webkit-text-fill-color: #78dcff;
-        text-shadow:
-          0 0 12px rgba(120, 220, 255, 0.42),
-          0 0 30px rgba(120, 220, 255, 0.20);
-      }
-      50% {
-        color: #a99cff;
-        -webkit-text-fill-color: #a99cff;
-        text-shadow:
-          0 0 12px rgba(169, 156, 255, 0.40),
-          0 0 30px rgba(169, 156, 255, 0.20);
-      }
-      75% {
-        color: #dce4ef;
-        -webkit-text-fill-color: #dce4ef;
-        text-shadow:
-          0 0 12px rgba(220, 228, 239, 0.34),
-          0 0 28px rgba(120, 220, 255, 0.18);
-      }
+      0%,100% { color:#eef1f5; -webkit-text-fill-color:#eef1f5; text-shadow:0 0 10px rgba(120,220,255,.30),0 0 26px rgba(120,220,255,.16); }
+      25% { color:#78dcff; -webkit-text-fill-color:#78dcff; text-shadow:0 0 12px rgba(120,220,255,.42),0 0 30px rgba(120,220,255,.20); }
+      50% { color:#a99cff; -webkit-text-fill-color:#a99cff; text-shadow:0 0 12px rgba(169,156,255,.40),0 0 30px rgba(169,156,255,.20); }
+      75% { color:#dce4ef; -webkit-text-fill-color:#dce4ef; text-shadow:0 0 12px rgba(220,228,239,.34),0 0 28px rgba(120,220,255,.18); }
     }
 
-    @media (max-width: 600px) {
-      .welcome h1.dosecare-title {
-        font-size: clamp(3rem, 16vw, 4.6rem);
-        line-height: 1.05;
-        min-height: 1.05em;
-        white-space: nowrap;
-      }
+    /* Safari/iPad-safe motion layer: deliberately uses transform/opacity only. */
+    .welcome-page .space-scene .planet { will-change: transform; }
+    .welcome-page .space-scene .star { will-change: opacity, transform; }
+    .welcome-page .space-scene .nebula,
+    .welcome-page .space-scene:before { will-change: transform, opacity; }
+
+    /* The global welcome-item animation used to overwrite DoseCare's animation shorthand. */
+    .welcome-page .welcome-item { animation: welcomeIn 1.15s cubic-bezier(.2,.8,.2,1) both; }
+    .welcome-page .welcome-item-1 { animation-delay:.10s; }
+    .welcome-page .welcome-item-2 { animation: welcomeIn 1.15s cubic-bezier(.2,.8,.2,1) both, dosecareColorShift 7s ease-in-out infinite; animation-delay:.25s,0s; }
+    .welcome-page .welcome-item-3 { animation-delay:.42s; }
+    .welcome-page .welcome-item-4 { animation-delay:.58s; }
+
+    @media (max-width:600px) {
+      .welcome h1.dosecare-title { font-size:clamp(3rem,16vw,4.6rem); line-height:1.05; min-height:1.05em; white-space:nowrap; }
     }
   </style>
 </head>
@@ -107,6 +84,56 @@
   </main>
 
   <script>
+    (function () {
+      var scene = document.querySelector('.space-scene');
+      if (!scene) return;
+
+      var planets = Array.prototype.slice.call(scene.querySelectorAll('.planet'));
+      var stars = Array.prototype.slice.call(scene.querySelectorAll('.star'));
+      var nebulae = Array.prototype.slice.call(scene.querySelectorAll('.nebula'));
+      var started = false;
+      var start = performance.now();
+
+      /* JS motion fallback keeps the scene alive even when Safari/WebView
+         fails to run a CSS animation on decorative layers. */
+      function animate(now) {
+        if (!started) return;
+        var t = (now - start) / 1000;
+
+        planets.forEach(function (planet, i) {
+          var ampX = [10, 7, 9, 6, 8][i] || 7;
+          var ampY = [8, 6, 10, 7, 9][i] || 7;
+          var period = [18, 13, 15, 11, 12][i] || 14;
+          var phase = i * 1.7;
+          var x = Math.sin((t / period) * Math.PI * 2 + phase) * ampX;
+          var y = Math.cos((t / (period * 1.17)) * Math.PI * 2 + phase) * ampY;
+          var r = Math.sin((t / period) * Math.PI * 2 + phase) * (i === 0 ? 2 : 1.5);
+          planet.style.transform = 'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0) rotate(' + r.toFixed(2) + 'deg)';
+        });
+
+        stars.forEach(function (star, i) {
+          var period = 2.8 + (i % 7) * .45;
+          var phase = i * .83;
+          var wave = (Math.sin((t / period) * Math.PI * 2 + phase) + 1) / 2;
+          var opacity = .38 + wave * .58;
+          var scale = .78 + wave * .28;
+          star.style.opacity = opacity.toFixed(3);
+          star.style.transform = 'scale(' + scale.toFixed(3) + ')';
+        });
+
+        nebulae.forEach(function (nebula, i) {
+          var x = Math.sin(t / (8 + i * 2)) * 6;
+          var y = Math.cos(t / (10 + i * 2)) * 4;
+          nebula.style.transform = 'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0) rotate(' + (i ? 24 : -18) + 'deg)';
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      started = true;
+      requestAnimationFrame(animate);
+    })();
+
     window.setTimeout(function () {
       window.location.href = "calculator.html";
     }, 4000);
