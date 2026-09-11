@@ -6,6 +6,67 @@
   <title>DoseCare</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/legacy-visual.css">
+  <style>
+    /* Mobile-safe welcome title fallback.
+       Keeps the Serif font and animated color effect while avoiding
+       transparent-text rendering failures in some Android WebViews. */
+    .welcome h1.dosecare-title {
+      position: relative;
+      z-index: 10;
+      display: block;
+      width: max-content;
+      max-width: 92vw;
+      color: #dfe9f7;
+      -webkit-text-fill-color: #dfe9f7;
+      text-shadow:
+        0 0 10px rgba(120, 220, 255, 0.28),
+        0 0 24px rgba(156, 145, 255, 0.18);
+      animation:
+        welcomeAppear 1.15s ease forwards,
+        dosecareColorShift 7s ease-in-out infinite;
+      animation-delay: 0.25s, 0s;
+    }
+
+    @keyframes dosecareColorShift {
+      0%, 100% {
+        color: #eef1f5;
+        -webkit-text-fill-color: #eef1f5;
+        text-shadow:
+          0 0 10px rgba(120, 220, 255, 0.30),
+          0 0 26px rgba(120, 220, 255, 0.16);
+      }
+      25% {
+        color: #78dcff;
+        -webkit-text-fill-color: #78dcff;
+        text-shadow:
+          0 0 12px rgba(120, 220, 255, 0.42),
+          0 0 30px rgba(120, 220, 255, 0.20);
+      }
+      50% {
+        color: #a99cff;
+        -webkit-text-fill-color: #a99cff;
+        text-shadow:
+          0 0 12px rgba(169, 156, 255, 0.40),
+          0 0 30px rgba(169, 156, 255, 0.20);
+      }
+      75% {
+        color: #dce4ef;
+        -webkit-text-fill-color: #dce4ef;
+        text-shadow:
+          0 0 12px rgba(220, 228, 239, 0.34),
+          0 0 28px rgba(120, 220, 255, 0.18);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .welcome h1.dosecare-title {
+        font-size: clamp(3rem, 16vw, 4.6rem);
+        line-height: 1.05;
+        min-height: 1.05em;
+        white-space: nowrap;
+      }
+    }
+  </style>
 </head>
 <body class="welcome-page">
   <div class="bubbles" aria-hidden="true">
