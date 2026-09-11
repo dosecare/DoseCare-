@@ -1,0 +1,21 @@
+{
+  "name": "DoseCare",
+  "short_name": "DoseCare",
+  "description": "Pediatric Dose Calculator",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#050d25",
+  "theme_color": "#071536",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
