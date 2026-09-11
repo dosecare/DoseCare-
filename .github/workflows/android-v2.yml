@@ -21,10 +21,8 @@ jobs:
       - name: Prepare bundled DoseCare V2 assets
         working-directory: .
         run: |
-          mkdir -p dosecare-v2/android/app/src/main/assets
-          rm -rf dosecare-v2/android/app/src/main/assets/dosecare-v2
-          cp -R dosecare-v2 dosecare-v2/android/app/src/main/assets/dosecare-v2
-          rm -rf dosecare-v2/android/app/src/main/assets/dosecare-v2/android
+          mkdir -p dosecare-v2/android/app/src/main/assets/dosecare-v2
+          rsync -a --exclude='android/app/src/main/assets/dosecare-v2' dosecare-v2/ dosecare-v2/android/app/src/main/assets/dosecare-v2/
 
       - name: Set up JDK
         uses: actions/setup-java@v4
