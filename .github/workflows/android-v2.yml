@@ -43,7 +43,7 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.DOSECARE_KEYSTORE_BASE64 }}
         run: |
           echo "$KEYSTORE_BASE64" | base64 --decode > dosecare-v2/android/app/dosecare-release.jks
-chmod 600 dosecare-v2/android/app/dosecare-release.jks
+          chmod 600 dosecare-v2/android/app/dosecare-release.jks
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
