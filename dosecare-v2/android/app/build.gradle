@@ -1,4 +1,8 @@
-plugins { id 'com.android.application' }
+plugins {
+    id 'com.android.application'
+}
+
+def keystoreFile = file(System.getenv("DOSECARE_KEYSTORE_FILE") ?: "dosecare-release.jks")
 
 android {
     namespace 'com.dosecare.v2'
@@ -11,5 +15,19 @@ android {
         versionCode 1
         versionName '2.0.0'
     }
-}
 
+    signingConfigs {
+        release {
+            storeFile keystoreFile
+            storePassword System.getenv("DOSECARE_KEYSTORE_PASSWORD")
+            keyAlias System.getenv("DOSECARE_KEY_ALIAS")
+            keyPassword System.getenv("DOSECARE_KEYSTORE_PASSWORD")
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+}
