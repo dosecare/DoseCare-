@@ -5,17 +5,19 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Subtle medical cross -->
+    <!-- Small medical accent, kept outside the wordmark safe area. -->
     <path
         android:fillColor="#FFFFFFFF"
-        android:fillAlpha="0.22"
-        android:pathData="M86,10 L92,10 L92,16 L98,16 L98,22 L92,22 L92,28 L86,28 L86,22 L80,22 L80,16 L86,16 Z" />
+        android:fillAlpha="0.18"
+        android:pathData="M88,10 L94,10 L94,16 L100,16 L100,22 L94,22 L94,28 L88,28 L88,22 L82,22 L82,16 L88,16 Z" />
 
-    <!-- DoseCare wordmark in a refined serif style -->
+    <!-- DoseCare wordmark. The larger horizontal scale keeps the full wordmark
+         inside the adaptive-icon safe zone instead of collapsing it into a
+         barely visible strip. -->
     <group
-        android:translateX="10"
-        android:translateY="38"
-        android:scaleX="0.0085"
+        android:translateX="11"
+        android:translateY="37"
+        android:scaleX="0.055"
         android:scaleY="0.023">
         <path android:fillColor="#FFFFFFFF" android:pathData="M506,106H692Q983,106 1138.5,272Q1294,438 1294,748Q1294,1058 1139,1222Q984,1386 692,1386H506ZM113,0V106H303V1386H113V1493H707Q1093,1493 1308.5,1296Q1524,1099 1524,748Q1524,396 1308,198Q1092,0 707,0Z" />
         <path android:fillColor="#FFFFFFFF" android:pathData="M616,70Q764,70 839.5,187Q915,304 915,532Q915,760 839.5,876.5Q764,993 616,993Q468,993 392.5,876.5Q317,760 317,532Q317,304 393,187Q469,70 616,70ZM616,-29Q384,-29 243,124.5Q102,278 102,532Q102,786 242.5,939Q383,1092 616,1092Q849,1092 989.5,939Q1130,786 1130,532Q1130,278 989.5,124.5Q849,-29 616,-29Z" />
