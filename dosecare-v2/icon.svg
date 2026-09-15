@@ -1,15 +1,36 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 <defs>
-  <radialGradient id="bg" cx="50%" cy="42%" r="72%"><stop offset="0" stop-color="#243d86"/><stop offset=".55" stop-color="#101f55"/><stop offset="1" stop-color="#050d25"/></radialGradient>
-  <linearGradient id="cross" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#eaf4ff"/><stop offset=".48" stop-color="#78dcff"/><stop offset="1" stop-color="#a99cff"/></linearGradient>
-  <filter id="glow"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <radialGradient id="bg" cx="50%" cy="42%" r="75%"><stop stop-color="#1b315f"/><stop offset=".58" stop-color="#0b1739"/><stop offset="1" stop-color="#030a1d"/></radialGradient>
+ <linearGradient id="moon" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffffff"/><stop offset=".48" stop-color="#d9efff"/><stop offset="1" stop-color="#8eb8e9"/></linearGradient>
+ <linearGradient id="bottle" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#eefbff"/><stop offset=".5" stop-color="#9bd8f2"/><stop offset="1" stop-color="#6e8fca"/></linearGradient>
+ <linearGradient id="word" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#ffffff"/><stop offset=".55" stop-color="#e8f8ff"/><stop offset="1" stop-color="#8fd5ff"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 </defs>
-<rect width="512" height="512" rx="116" fill="url(#bg)"/>
-<circle cx="256" cy="256" r="164" fill="none" stroke="#78dcff" stroke-opacity=".18" stroke-width="3"/>
-<circle cx="256" cy="256" r="132" fill="#0a1538" fill-opacity=".55" stroke="#dfe9f7" stroke-opacity=".16" stroke-width="2"/>
-<g filter="url(#glow)" fill="url(#cross)">
-  <rect x="224" y="132" width="64" height="248" rx="30"/>
-  <rect x="132" y="224" width="248" height="64" rx="30"/>
-</g>
-<circle cx="170" cy="164" r="6" fill="#fff"/><circle cx="354" cy="345" r="5" fill="#78dcff"/><circle cx="377" cy="151" r="4" fill="#a99cff"/>
+<rect width="512" height="512" rx="112" fill="url(#bg)"/>
+<!-- stars -->
+<g fill="#fff"><circle cx="83" cy="91" r="2.5"/><circle cx="426" cy="91" r="2"/><circle cx="464" cy="164" r="2.2"/><circle cx="362" cy="376" r="1.8"/><circle cx="114" cy="401" r="2"/></g>
+<g stroke="#fff" stroke-linecap="round" opacity=".9"><path d="M342 54v28M328 68h28" stroke-width="2"/><path d="M407 323v25M394.5 335.5h25" stroke-width="1.8"/><path d="M61 246v20M51 256h20" stroke-width="1.5"/></g>
+<!-- soft nebula --> <ellipse cx="256" cy="245" rx="205" ry="150" fill="#274b9a" opacity=".08" filter="url(#glow)"/>
+<!-- crescent mascot -->
+<path d="M288 84c-48 9-83 51-83 101 0 58 47 105 105 105 42 0 78-24 95-59-16 9-34 14-54 14-59 0-106-47-106-106 0-20 5-39 14-55 9 0 19-1 29 0z" fill="url(#moon)" stroke="#8bb9e6" stroke-width="3"/>
+<!-- cap/visor -->
+<path d="M199 137l68-15 32 13-82 24z" fill="#b9d9ef" stroke="#6d99c9" stroke-width="3"/>
+<ellipse cx="286" cy="128" rx="25" ry="24" fill="#eaf7ff" stroke="#4f76a7" stroke-width="4"/><circle cx="286" cy="128" r="7" fill="#20375f"/>
+<!-- face -->
+<path d="M239 185q9-14 22 0M282 187q10 14 23-1" fill="none" stroke="#17345f" stroke-width="7" stroke-linecap="round"/>
+<ellipse cx="244" cy="211" rx="13" ry="8" fill="#9dbde2" opacity=".65"/>
+<!-- bottle held in crescent -->
+<path d="M330 173l13-4 7 8-12 6z" fill="#dff5ff"/>
+<rect x="332" y="177" width="27" height="45" rx="7" fill="url(#bottle)" stroke="#4775a9" stroke-width="3" transform="rotate(7 345 200)"/>
+<rect x="333" y="173" width="25" height="8" rx="3" fill="#dff6ff" stroke="#4775a9" stroke-width="2" transform="rotate(7 345 177)"/>
+<path d="M345 186v15M338 193.5h14" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+<!-- medicine sparkle -->
+<g stroke="#b8f2ff" stroke-width="3" stroke-linecap="round"><path d="M365 159v13M359 166h12"/><path d="M380 176v9M376 180.5h8"/></g>
+<!-- ringed planet -->
+<g transform="translate(425 423)"><ellipse rx="48" ry="14" fill="none" stroke="#7187b8" stroke-width="8" opacity=".75" transform="rotate(-18)"/><circle r="27" fill="url(#moon)"/><ellipse rx="48" ry="14" fill="none" stroke="#a9c1e8" stroke-width="3" opacity=".9" transform="rotate(-18)"/></g>
+<!-- small planets -->
+<circle cx="83" cy="438" r="27" fill="#142a59" stroke="#355a92" stroke-width="2" opacity=".8"/><circle cx="112" cy="448" r="17" fill="#1d376e" opacity=".7"/>
+<!-- wordmark -->
+<text x="256" y="346" text-anchor="middle" fill="url(#word)" font-family="Georgia, 'Times New Roman', serif" font-size="61" font-weight="700" letter-spacing="-2">DoseCare</text>
+<path d="M145 359h222" stroke="#9edfff" stroke-width="1.5" opacity=".35"/>
 </svg>
