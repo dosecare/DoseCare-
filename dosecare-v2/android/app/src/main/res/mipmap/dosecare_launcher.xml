@@ -4,9 +4,9 @@
         <shape android:shape="rectangle">
             <gradient
                 android:angle="45"
-                android:startColor="#20277F"
-                android:centerColor="#4D58C5"
-                android:endColor="#8A78E6" />
+                android:startColor="#050D25"
+                android:centerColor="#102652"
+                android:endColor="#1F3D78" />
         </shape>
     </item>
     <item android:drawable="@drawable/dosecare_foreground" />
