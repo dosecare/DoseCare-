@@ -1,29 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
-    <!-- Crescent mascot -->
     <path android:fillColor="#FFF5FCFF" android:strokeColor="#FF8FB7E8" android:strokeWidth="1.2" android:pathData="M61,10 C44,13 34,25 34,40 C34,57 47,68 62,68 C72,68 81,62 85,53 C80,56 75,58 69,58 C55,58 45,48 45,35 C45,25 51,16 61,10 Z"/>
-    <!-- Cap / visor -->
     <path android:fillColor="#FFD8ECFA" android:strokeColor="#FF5F82B1" android:strokeWidth="1.2" android:pathData="M35,25 L53,21 L63,25 L39,30 Z"/>
     <path android:fillColor="#FFEAF7FF" android:strokeColor="#FF4F76A8" android:strokeWidth="1.4" android:pathData="M58,19 C63,19 67,22 67,27 C67,32 63,35 58,35 C53,35 50,32 50,27 C50,22 53,19 58,19 Z"/>
     <path android:fillColor="#FF203A63" android:pathData="M58,24 C60,24 61,25 61,27 C61,29 60,30 58,30 C56,30 55,29 55,27 C55,25 56,24 58,24 Z"/>
-    <!-- Face -->
     <path android:fillColor="#00000000" android:strokeColor="#FF17345F" android:strokeWidth="1.8" android:strokeLineCap="round" android:pathData="M42,39 C44,36 47,36 49,39 M56,40 C59,43 62,42 64,39"/>
-    <ellipse android:fillColor="#669DBDE2" android:cx="44" android:cy="45" android:rx="3.8" android:ry="2.2"/>
-    <!-- Medicine bottle -->
+    <path android:fillColor="#669DBDE2" android:pathData="M40,45 C40,42.8 48,42.8 48,45 C48,47.2 40,47.2 40,45 Z"/>
     <path android:fillColor="#FFE0F5FF" android:strokeColor="#FF4E78AB" android:strokeWidth="1.1" android:pathData="M68,39 L74,40 L77,43 L74,45 L68,43 Z"/>
     <path android:fillColor="#FF9BD7F2" android:strokeColor="#FF4E78AB" android:strokeWidth="1.2" android:pathData="M69,42 L77,43 L76,57 C76,59 74,60 72,59 L68,58 C66,58 65,56 66,54 Z"/>
     <path android:fillColor="#FFDDF7FF" android:pathData="M69,43 L76,44 L76,47 L69,46 Z"/>
     <path android:fillColor="#FFFFFFFF" android:pathData="M71,48 L73,48 L73,51 L75,51 L75,53 L73,53 L73,55 L71,55 L71,53 L69,53 L69,51 L71,51 Z"/>
-    <!-- Sparkles -->
     <path android:fillColor="#FFB7F1FF" android:pathData="M83,36 L84,39 L87,40 L84,41 L83,44 L82,41 L79,40 L82,39 Z"/>
     <path android:fillColor="#FFFFFFFF" android:pathData="M75,31 L76,33 L78,34 L76,35 L75,37 L74,35 L72,34 L74,33 Z"/>
-    <!-- Small stars -->
     <path android:fillColor="#FFFFFFFF" android:pathData="M18,14 L19,18 L23,19 L19,20 L18,24 L17,20 L13,19 L17,18 Z"/>
     <path android:fillColor="#FFFFFFFF" android:pathData="M91,13 L92,16 L95,17 L92,18 L91,21 L90,18 L87,17 L90,16 Z"/>
-    <!-- Ringed planet -->
     <path android:fillColor="#00000000" android:strokeColor="#FF8FA8D2" android:strokeWidth="2.2" android:pathData="M83,91 C88,87 99,87 101,91 C99,95 87,98 82,95 C80,94 81,92 83,91 Z"/>
     <path android:fillColor="#FF9DB9E4" android:pathData="M84,87 C84,83 87,80 91,80 C95,80 98,83 98,87 C98,91 95,94 91,94 C87,94 84,91 84,87 Z"/>
-    <!-- DoseCare wordmark, safely below the mascot -->
     <group android:scaleX="0.76" android:scaleY="0.76" android:pivotX="54" android:pivotY="45" android:translateY="32">
         <path android:fillColor="#FFFFFFFF" android:pathData="M23.16,45.49Q23.16,42.38 21.48,40.77Q19.8,39.16 16.69,39.16H14.7V51.98Q16.03,52.07 17.85,52.07Q20.58,52.07 21.87,50.46Q23.16,48.85 23.16,45.49ZM17.4,38.17Q21.51,38.17 23.49,40Q25.47,41.83 25.47,45.51Q25.47,49.23 23.56,51.15Q21.65,53.06 17.85,53.06L12.56,53.02H10.65V52.43L12.56,52.13V39.04L10.65,38.75V38.17Z"/>
         <path android:fillColor="#FFFFFFFF" android:pathData="M36.86,47.76Q36.86,53.24 31.99,53.24Q29.64,53.24 28.44,51.83Q27.25,50.43 27.25,47.76Q27.25,45.12 28.44,43.73Q29.64,42.33 32.07,42.33Q34.45,42.33 35.65,43.7Q36.86,45.07 36.86,47.76ZM34.87,47.76Q34.87,45.37 34.17,44.29Q33.47,43.22 31.99,43.22Q30.54,43.22 29.89,44.25Q29.24,45.28 29.24,47.76Q29.24,50.27 29.9,51.32Q30.56,52.37 31.99,52.37Q33.45,52.37 34.16,51.28Q34.87,50.19 34.87,47.76Z"/>
