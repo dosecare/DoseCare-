@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071536">
+  <meta name="description" content="DoseCare — Pediatric oral liquid dose calculator. Install it on your device and use it offline.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <title>DoseCare — Pediatric Dose Calculator</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Georgia,"Times New Roman",serif;background:#050d25;color:#eef4ff}body{display:flex;justify-content:center;overflow-x:hidden;background:radial-gradient(circle at 50% 0%,rgba(83,105,210,.25),transparent 38%),linear-gradient(160deg,#03091d,#071536 55%,#111b45)}.stars{position:fixed;inset:0;pointer-events:none;opacity:.65;background-image:radial-gradient(circle,rgba(255,255,255,.8) 1px,transparent 1px);background-size:72px 72px}.page{width:min(760px,100%);padding:34px 20px 46px;position:relative}.brand{text-align:center;margin:20px 0 30px}.logo{width:76px;height:76px;margin:auto;border-radius:22px;box-shadow:0 12px 35px rgba(0,0,0,.3)}h1{font-size:42px;margin:14px 0 8px;letter-spacing:.5px} .tag{margin:0;color:#bdcbea;font-size:17px;line-height:1.55}.card{border:1px solid rgba(220,230,255,.18);background:rgba(12,27,65,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:26px;padding:25px;margin-top:20px;box-shadow:0 20px 60px rgba(0,0,0,.3)}h2{font-size:23px;margin:0 0 12px}.lead{color:#d7e0f2;line-height:1.65;margin:0 0 20px}.actions{display:grid;gap:12px}.btn{display:block;width:100%;padding:15px 18px;border-radius:15px;border:1px solid rgba(220,230,255,.2);font:600 16px Georgia,"Times New Roman",serif;text-align:center;text-decoration:none;cursor:pointer}.primary{background:linear-gradient(135deg,#263187,#685bcd);color:#fff;box-shadow:0 10px 28px rgba(40,45,130,.3)}.secondary{background:rgba(255,255,255,.07);color:#eef4ff}.steps{display:grid;gap:12px;margin-top:18px}.step{display:flex;gap:13px;align-items:flex-start;color:#d7e0f2;line-height:1.5}.num{flex:0 0 30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(104,91,205,.35);font-weight:bold}.note{font-size:14px;color:#aebbd5;margin:18px 0 0;line-height:1.55}.footer{text-align:center;color:#8998b8;font-size:13px;margin-top:25px}
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+  <main class="page">
+    <header class="brand">
+      <img class="logo" src="icon.svg" alt="DoseCare">
+      <h1>DoseCare</h1>
+      <p class="tag">Pediatric oral liquid dose calculator<br>Designed for quick, clear clinical calculations.</p>
+    </header>
+
+    <section class="card">
+      <h2>Use DoseCare</h2>
+      <p class="lead">Open the calculator directly, or install DoseCare on your device so it is available from your Home Screen and can continue working offline.</p>
+      <div class="actions">
+        <a class="btn primary" href="calculator.html">Open DoseCare</a>
+        <button class="btn secondary" id="installBtn" type="button" hidden>Install DoseCare</button>
+      </div>
+      <p class="note" id="installNote" hidden></p>
+    </section>
+
+    <section class="card">
+      <h2>Install on your device</h2>
+      <div class="steps">
+        <div class="step"><span class="num">1</span><span><strong>Android:</strong> open this page in Chrome and choose <strong>Install DoseCare</strong> when offered.</span></div>
+        <div class="step"><span class="num">2</span><span><strong>iPhone / iPad:</strong> open this page in Safari → Share → <strong>Add to Home Screen</strong> → Add.</span></div>
+        <div class="step"><span class="num">3</span><span>Open DoseCare from your Home Screen and use it like an app. The installed version is designed to work offline.</span></div>
+      </div>
+    </section>
+
+    <p class="footer">DoseCare · Pediatric oral liquid dosing</p>
+  </main>
+
+  <script src="js/pwa.js"></script>
+  <script>
+    (function(){
+      var deferred=null, btn=document.getElementById('installBtn'), note=document.getElementById('installNote');
+      window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;btn.hidden=false;note.hidden=false;note.textContent='Your browser supports direct installation. Tap the button above to install DoseCare.';});
+      btn.addEventListener('click',function(){if(!deferred)return;deferred.prompt();deferred.userChoice.then(function(){deferred=null;btn.hidden=true;});});
+      window.addEventListener('appinstalled',function(){btn.hidden=true;note.hidden=false;note.textContent='DoseCare is installed. Open it from your Home Screen.';});
+    })();
+  </script>
+</body>
+</html>
