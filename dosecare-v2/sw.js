@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dosecare-v2-offline-v2';
+const CACHE_NAME = 'dosecare-v2-offline-v3';
 
 const CORE_ASSETS = [
   './',
@@ -70,8 +70,6 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(async cache => {
-        // Cache assets individually so one unavailable/non-critical asset
-        // cannot abort the entire service-worker installation.
         await Promise.allSettled(
           CORE_ASSETS.map(async asset => {
             try {
@@ -108,7 +106,6 @@ self.addEventListener('fetch', event => {
         caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
         return response;
       }).catch(() => {
-        // Navigation fallback keeps the app shell reachable offline.
         if (request.mode === 'navigate') return caches.match('./index.html');
         return new Response('', { status: 503, statusText: 'Offline' });
       });
