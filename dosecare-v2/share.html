@@ -4,13 +4,45 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#071536">
-  <meta name="description" content="DoseCare — Pediatric oral liquid dose calculator. Install it on your device and use it offline.">
+  <meta name="description" content="DoseCare — a professional pediatric oral-liquid dose calculator for pharmacists and clinical use.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DoseCare">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
-  <title>DoseCare — Pediatric Dose Calculator</title>
+  <title>Install DoseCare — iPhone & iPad</title>
   <style>
-    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Georgia,"Times New Roman",serif;background:#050d25;color:#eef4ff}body{display:flex;justify-content:center;overflow-x:hidden;background:radial-gradient(circle at 50% 0%,rgba(83,105,210,.25),transparent 38%),linear-gradient(160deg,#03091d,#071536 55%,#111b45)}.stars{position:fixed;inset:0;pointer-events:none;opacity:.65;background-image:radial-gradient(circle,rgba(255,255,255,.8) 1px,transparent 1px);background-size:72px 72px}.page{width:min(760px,100%);padding:34px 20px 46px;position:relative}.brand{text-align:center;margin:20px 0 30px}.logo{width:76px;height:76px;margin:auto;border-radius:22px;box-shadow:0 12px 35px rgba(0,0,0,.3)}h1{font-size:42px;margin:14px 0 8px;letter-spacing:.5px} .tag{margin:0;color:#bdcbea;font-size:17px;line-height:1.55}.card{border:1px solid rgba(220,230,255,.18);background:rgba(12,27,65,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:26px;padding:25px;margin-top:20px;box-shadow:0 20px 60px rgba(0,0,0,.3)}h2{font-size:23px;margin:0 0 12px}.lead{color:#d7e0f2;line-height:1.65;margin:0 0 20px}.actions{display:grid;gap:12px}.btn{display:block;width:100%;padding:15px 18px;border-radius:15px;border:1px solid rgba(220,230,255,.2);font:600 16px Georgia,"Times New Roman",serif;text-align:center;text-decoration:none;cursor:pointer}.primary{background:linear-gradient(135deg,#263187,#685bcd);color:#fff;box-shadow:0 10px 28px rgba(40,45,130,.3)}.secondary{background:rgba(255,255,255,.07);color:#eef4ff}.steps{display:grid;gap:12px;margin-top:18px}.step{display:flex;gap:13px;align-items:flex-start;color:#d7e0f2;line-height:1.5}.num{flex:0 0 30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(104,91,205,.35);font-weight:bold}.note{font-size:14px;color:#aebbd5;margin:18px 0 0;line-height:1.55}.footer{text-align:center;color:#8998b8;font-size:13px;margin-top:25px}
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;font-family:Georgia,"Times New Roman",serif;background:#050d25;color:#eef4ff}
+    body{display:flex;justify-content:center;overflow-x:hidden;background:radial-gradient(circle at 50% -5%,rgba(92,116,225,.30),transparent 38%),radial-gradient(circle at 100% 65%,rgba(62,77,160,.16),transparent 32%),linear-gradient(160deg,#03091d,#071536 55%,#111b45)}
+    .stars{position:fixed;inset:0;pointer-events:none;opacity:.55;background-image:radial-gradient(circle,rgba(255,255,255,.8) 1px,transparent 1px);background-size:76px 76px}
+    .page{width:min(760px,100%);padding:28px 18px 42px;position:relative}
+    .brand{text-align:center;margin:10px 0 24px}
+    .logo{width:82px;height:82px;margin:auto;border-radius:24px;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+    h1{font-size:40px;margin:14px 0 7px;letter-spacing:.4px}
+    .tag{margin:0;color:#bdcbea;font-size:16px;line-height:1.55}
+    .badge{display:inline-block;margin-top:13px;padding:7px 12px;border:1px solid rgba(200,215,255,.18);border-radius:999px;background:rgba(255,255,255,.06);color:#dbe5ff;font-size:12px;letter-spacing:.3px}
+    .card{border:1px solid rgba(220,230,255,.16);background:rgba(10,25,62,.76);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:26px;padding:24px;margin-top:16px;box-shadow:0 20px 60px rgba(0,0,0,.28)}
+    h2{font-size:23px;margin:0 0 10px}
+    .lead{color:#d7e0f2;line-height:1.65;margin:0 0 18px}
+    .actions{display:grid;gap:11px}
+    .btn{display:block;width:100%;padding:15px 18px;border-radius:15px;border:1px solid rgba(220,230,255,.2);font:600 16px Georgia,"Times New Roman",serif;text-align:center;text-decoration:none;cursor:pointer}
+    .primary{background:linear-gradient(135deg,#263187,#685bcd);color:#fff;box-shadow:0 10px 28px rgba(40,45,130,.3)}
+    .secondary{background:rgba(255,255,255,.07);color:#eef4ff}
+    .ios-box{border:1px solid rgba(151,178,255,.20);background:rgba(77,96,181,.10);border-radius:20px;padding:18px;margin-top:16px}
+    .ios-title{display:flex;gap:10px;align-items:center;font-size:18px;font-weight:bold;margin-bottom:7px}
+    .apple{font-family:Arial,sans-serif;font-size:22px}
+    .ios-text{color:#d7e0f2;line-height:1.6;margin:0}
+    .steps{display:grid;gap:13px;margin-top:16px}
+    .step{display:flex;gap:13px;align-items:flex-start;color:#d7e0f2;line-height:1.55}
+    .num{flex:0 0 30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(104,91,205,.35);font-weight:bold}
+    .step strong{color:#fff}
+    .share-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+    .small{font-size:14px;padding:12px 10px}
+    .status{font-size:13px;color:#aebbd5;line-height:1.5;margin:13px 0 0;min-height:19px;text-align:center}
+    .footer{text-align:center;color:#8998b8;font-size:13px;margin-top:24px}
+    @media(max-width:480px){h1{font-size:34px}.page{padding-top:20px}.card{padding:20px}.share-row{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -19,38 +51,89 @@
     <header class="brand">
       <img class="logo" src="icon.svg" alt="DoseCare">
       <h1>DoseCare</h1>
-      <p class="tag">Pediatric oral liquid dose calculator<br>Designed for quick, clear clinical calculations.</p>
+      <p class="tag">Pediatric oral-liquid dose calculator<br>Clear calculations. Clinical focus. Easy access.</p>
+      <span class="badge">Designed for pharmacists & clinical use</span>
     </header>
 
     <section class="card">
-      <h2>Use DoseCare</h2>
-      <p class="lead">Open the calculator directly, or install DoseCare on your device so it is available from your Home Screen and can continue working offline.</p>
+      <h2>Open DoseCare</h2>
+      <p class="lead">Use the calculator directly in your browser, or add DoseCare to your Home Screen for quick access like an app.</p>
       <div class="actions">
-        <a class="btn primary" href="calculator.html">Open DoseCare</a>
-        <button class="btn secondary" id="installBtn" type="button" hidden>Install DoseCare</button>
+        <a class="btn primary" href="calculator.html">Open DoseCare Calculator</a>
       </div>
-      <p class="note" id="installNote" hidden></p>
     </section>
 
     <section class="card">
-      <h2>Install on your device</h2>
+      <div class="ios-box">
+        <div class="ios-title"><span class="apple"></span><span>Install on iPhone or iPad</span></div>
+        <p class="ios-text">No App Store download is required. Safari can add DoseCare to your Home Screen as a web app.</p>
+      </div>
+
       <div class="steps">
-        <div class="step"><span class="num">1</span><span><strong>Android:</strong> open this page in Chrome and choose <strong>Install DoseCare</strong> when offered.</span></div>
-        <div class="step"><span class="num">2</span><span><strong>iPhone / iPad:</strong> open this page in Safari → Share → <strong>Add to Home Screen</strong> → Add.</span></div>
-        <div class="step"><span class="num">3</span><span>Open DoseCare from your Home Screen and use it like an app. The installed version is designed to work offline.</span></div>
+        <div class="step"><span class="num">1</span><span>Open this page in <strong>Safari</strong> on your iPhone or iPad.</span></div>
+        <div class="step"><span class="num">2</span><span>Tap the <strong>Share</strong> button in Safari.</span></div>
+        <div class="step"><span class="num">3</span><span>Select <strong>Add to Home Screen</strong>, then tap <strong>Add</strong>.</span></div>
+        <div class="step"><span class="num">4</span><span>Open <strong>DoseCare</strong> from your Home Screen. Keep using the installed version for the app-like experience.</span></div>
+      </div>
+
+      <div class="share-row">
+        <button class="btn secondary small" id="shareBtn" type="button">Share DoseCare</button>
+        <button class="btn secondary small" id="copyBtn" type="button">Copy Page Link</button>
+      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2>Android</h2>
+      <p class="lead">On supported Android browsers, use the browser's install option to add DoseCare to your Home Screen.</p>
+      <div class="actions">
+        <button class="btn secondary" id="installBtn" type="button" hidden>Install DoseCare</button>
       </div>
     </section>
 
-    <p class="footer">DoseCare · Pediatric oral liquid dosing</p>
+    <p class="footer">DoseCare · Pediatric oral-liquid dosing</p>
   </main>
 
   <script src="js/pwa.js"></script>
   <script>
     (function(){
-      var deferred=null, btn=document.getElementById('installBtn'), note=document.getElementById('installNote');
-      window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;btn.hidden=false;note.hidden=false;note.textContent='Your browser supports direct installation. Tap the button above to install DoseCare.';});
-      btn.addEventListener('click',function(){if(!deferred)return;deferred.prompt();deferred.userChoice.then(function(){deferred=null;btn.hidden=true;});});
-      window.addEventListener('appinstalled',function(){btn.hidden=true;note.hidden=false;note.textContent='DoseCare is installed. Open it from your Home Screen.';});
+      var deferred=null, installBtn=document.getElementById('installBtn');
+      var shareBtn=document.getElementById('shareBtn'), copyBtn=document.getElementById('copyBtn'), status=document.getElementById('status');
+
+      window.addEventListener('beforeinstallprompt',function(e){
+        e.preventDefault();
+        deferred=e;
+        installBtn.hidden=false;
+      });
+
+      installBtn.addEventListener('click',function(){
+        if(!deferred)return;
+        deferred.prompt();
+        deferred.userChoice.then(function(){deferred=null;installBtn.hidden=true;});
+      });
+
+      shareBtn.addEventListener('click',async function(){
+        try{
+          if(navigator.share){
+            await navigator.share({title:'DoseCare',text:'DoseCare — Pediatric oral-liquid dose calculator',url:window.location.href});
+            status.textContent='DoseCare shared successfully.';
+          }else{
+            await navigator.clipboard.writeText(window.location.href);
+            status.textContent='Page link copied. You can share it anywhere.';
+          }
+        }catch(e){
+          if(e && e.name!=='AbortError') status.textContent='You can use Safari Share to send this page.';
+        }
+      });
+
+      copyBtn.addEventListener('click',async function(){
+        try{
+          await navigator.clipboard.writeText(window.location.href);
+          status.textContent='Page link copied.';
+        }catch(e){
+          status.textContent='Use Safari Share to copy or send the page link.';
+        }
+      });
     })();
   </script>
 </body>
