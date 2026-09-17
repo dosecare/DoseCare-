@@ -1,36 +1,87 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 <defs>
- <radialGradient id="bg" cx="50%" cy="42%" r="75%"><stop stop-color="#1b315f"/><stop offset=".58" stop-color="#0b1739"/><stop offset="1" stop-color="#030a1d"/></radialGradient>
- <linearGradient id="moon" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffffff"/><stop offset=".48" stop-color="#d9efff"/><stop offset="1" stop-color="#8eb8e9"/></linearGradient>
- <linearGradient id="bottle" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#eefbff"/><stop offset=".5" stop-color="#9bd8f2"/><stop offset="1" stop-color="#6e8fca"/></linearGradient>
- <linearGradient id="word" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#ffffff"/><stop offset=".55" stop-color="#e8f8ff"/><stop offset="1" stop-color="#8fd5ff"/></linearGradient>
- <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <radialGradient id="bg" cx="50%" cy="42%" r="78%">
+    <stop offset="0" stop-color="#173d72"/>
+    <stop offset="0.55" stop-color="#0a2147"/>
+    <stop offset="1" stop-color="#030b20"/>
+  </radialGradient>
+  <linearGradient id="cross" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#ffffff"/>
+    <stop offset="0.52" stop-color="#eafaff"/>
+    <stop offset="1" stop-color="#8bdcff"/>
+  </linearGradient>
+  <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#eafaff"/>
+    <stop offset="0.5" stop-color="#77d8ff"/>
+    <stop offset="1" stop-color="#5c91df"/>
+  </linearGradient>
+  <radialGradient id="planet" cx="35%" cy="30%" r="75%">
+    <stop stop-color="#f5fcff"/>
+    <stop offset="0.5" stop-color="#b9e6ff"/>
+    <stop offset="1" stop-color="#6c96d1"/>
+  </radialGradient>
+  <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="8" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="softGlow" x="-80%" y="-80%" width="260%" height="260%">
+    <feGaussianBlur stdDeviation="3" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
 </defs>
+
+<!-- Deep-space rounded app tile -->
 <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-<!-- stars -->
-<g fill="#fff"><circle cx="83" cy="91" r="2.5"/><circle cx="426" cy="91" r="2"/><circle cx="464" cy="164" r="2.2"/><circle cx="362" cy="376" r="1.8"/><circle cx="114" cy="401" r="2"/></g>
-<g stroke="#fff" stroke-linecap="round" opacity=".9"><path d="M342 54v28M328 68h28" stroke-width="2"/><path d="M407 323v25M394.5 335.5h25" stroke-width="1.8"/><path d="M61 246v20M51 256h20" stroke-width="1.5"/></g>
-<!-- soft nebula --> <ellipse cx="256" cy="245" rx="205" ry="150" fill="#274b9a" opacity=".08" filter="url(#glow)"/>
-<!-- crescent mascot -->
-<path d="M288 84c-48 9-83 51-83 101 0 58 47 105 105 105 42 0 78-24 95-59-16 9-34 14-54 14-59 0-106-47-106-106 0-20 5-39 14-55 9 0 19-1 29 0z" fill="url(#moon)" stroke="#8bb9e6" stroke-width="3"/>
-<!-- cap/visor -->
-<path d="M199 137l68-15 32 13-82 24z" fill="#b9d9ef" stroke="#6d99c9" stroke-width="3"/>
-<ellipse cx="286" cy="128" rx="25" ry="24" fill="#eaf7ff" stroke="#4f76a7" stroke-width="4"/><circle cx="286" cy="128" r="7" fill="#20375f"/>
-<!-- face -->
-<path d="M239 185q9-14 22 0M282 187q10 14 23-1" fill="none" stroke="#17345f" stroke-width="7" stroke-linecap="round"/>
-<ellipse cx="244" cy="211" rx="13" ry="8" fill="#9dbde2" opacity=".65"/>
-<!-- bottle held in crescent -->
-<path d="M330 173l13-4 7 8-12 6z" fill="#dff5ff"/>
-<rect x="332" y="177" width="27" height="45" rx="7" fill="url(#bottle)" stroke="#4775a9" stroke-width="3" transform="rotate(7 345 200)"/>
-<rect x="333" y="173" width="25" height="8" rx="3" fill="#dff6ff" stroke="#4775a9" stroke-width="2" transform="rotate(7 345 177)"/>
-<path d="M345 186v15M338 193.5h14" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".9"/>
-<!-- medicine sparkle -->
-<g stroke="#b8f2ff" stroke-width="3" stroke-linecap="round"><path d="M365 159v13M359 166h12"/><path d="M380 176v9M376 180.5h8"/></g>
-<!-- ringed planet -->
-<g transform="translate(425 423)"><ellipse rx="48" ry="14" fill="none" stroke="#7187b8" stroke-width="8" opacity=".75" transform="rotate(-18)"/><circle r="27" fill="url(#moon)"/><ellipse rx="48" ry="14" fill="none" stroke="#a9c1e8" stroke-width="3" opacity=".9" transform="rotate(-18)"/></g>
-<!-- small planets -->
-<circle cx="83" cy="438" r="27" fill="#142a59" stroke="#355a92" stroke-width="2" opacity=".8"/><circle cx="112" cy="448" r="17" fill="#1d376e" opacity=".7"/>
-<!-- wordmark -->
-<text x="256" y="346" text-anchor="middle" fill="url(#word)" font-family="Georgia, 'Times New Roman', serif" font-size="61" font-weight="700" letter-spacing="-2">DoseCare</text>
-<path d="M145 359h222" stroke="#9edfff" stroke-width="1.5" opacity=".35"/>
+<rect x="17" y="17" width="478" height="478" rx="98" fill="none" stroke="#8dbce8" stroke-width="5" opacity=".28"/>
+<rect x="29" y="29" width="454" height="454" rx="88" fill="none" stroke="#bce8ff" stroke-width="2" opacity=".10"/>
+
+<!-- Subtle space glow -->
+<ellipse cx="256" cy="254" rx="188" ry="154" fill="#2570c5" opacity=".10" filter="url(#glow)"/>
+<ellipse cx="155" cy="122" rx="92" ry="68" fill="#54bfff" opacity=".045"/>
+
+<!-- Stars: varied sizes and sparkle shapes -->
+<g fill="#ffffff">
+  <circle cx="82" cy="91" r="2.5" opacity=".9"/>
+  <circle cx="424" cy="92" r="2.2" opacity=".85"/>
+  <circle cx="453" cy="196" r="1.8" opacity=".75"/>
+  <circle cx="78" cy="335" r="1.8" opacity=".7"/>
+  <circle cx="391" cy="116" r="1.6" opacity=".75"/>
+  <circle cx="128" cy="406" r="1.5" opacity=".7"/>
+  <circle cx="351" cy="394" r="1.7" opacity=".8"/>
+</g>
+<g stroke="#ffffff" stroke-linecap="round" filter="url(#softGlow)">
+  <path d="M344 52v31M328.5 67.5h31" stroke-width="2.2" opacity=".95"/>
+  <path d="M105 170v24M93 182h24" stroke-width="1.7" opacity=".85"/>
+  <path d="M421 292v22M410 303h22" stroke-width="1.5" opacity=".8"/>
+  <path d="M160 352v17M151.5 360.5h17" stroke-width="1.4" opacity=".72"/>
+</g>
+
+<!-- Main medical cross, clean and unmistakable at small sizes -->
+<g filter="url(#glow)">
+  <path d="M220 112h72v108h108v72H292v108h-72V292H112v-72h108z"
+        fill="url(#cross)" stroke="#d9f5ff" stroke-width="4" stroke-linejoin="round"/>
+</g>
+<path d="M220 124h72v104h104v48H292v104h-48V276H140v-48h104V124z"
+      fill="#f7fdff" opacity=".32"/>
+
+<!-- Elegant orbital loop around the medical symbol -->
+<ellipse cx="256" cy="256" rx="207" ry="132"
+         fill="none" stroke="url(#ring)" stroke-width="12" opacity=".90"
+         transform="rotate(-28 256 256)"/>
+<path d="M76 338C139 414 299 430 410 350"
+      fill="none" stroke="#9ee6ff" stroke-width="7" opacity=".42"
+      stroke-linecap="round"/>
+
+<!-- Ringed planet accent, bottom-right -->
+<g transform="translate(406 405)" filter="url(#softGlow)">
+  <ellipse rx="58" ry="17" fill="none" stroke="#709fe0" stroke-width="10" opacity=".72" transform="rotate(-18)"/>
+  <circle r="31" fill="url(#planet)" stroke="#86b8eb" stroke-width="2"/>
+  <path d="M-21 -7q21-13 42 0" fill="none" stroke="#ffffff" stroke-width="3" opacity=".38"/>
+  <ellipse rx="58" ry="17" fill="none" stroke="#bdeaff" stroke-width="3" opacity=".9" transform="rotate(-18)"/>
+</g>
+
+<!-- Tiny orbiting dot -->
+<circle cx="105" cy="391" r="9" fill="#8edfff" opacity=".75" filter="url(#softGlow)"/>
+
+<!-- No text: keeps the launcher icon clean and legible -->
 </svg>
