@@ -8,6 +8,15 @@ on:
       - 'dosecare-v2/**'
       - '.github/workflows/android-v2.yml'
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -54,6 +63,11 @@ jobs:
       - name: Build signed release APK and AAB
         run: gradle --no-daemon assembleRelease bundleRelease
 
+      - name: Prepare direct APK download
+        run: |
+          mkdir -p ../downloads
+          cp app/build/outputs/apk/release/app-release.apk ../downloads/DoseCare-V2.apk
+
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
@@ -71,3 +85,15 @@ jobs:
         with:
           name: dosecare-v2-release-aab-signed
           path: dosecare-v2/android/app/build/outputs/bundle/release/app-release.aab
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload V2 site with direct APK
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dosecare-v2
+
+      - name: Deploy V2 site and APK to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
