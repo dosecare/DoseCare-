@@ -15,7 +15,35 @@
   function conditionGroups(rs){const map=new Map();rs.forEach(r=>{const key=r.condition||r.conditions?.[0]||r.id;if(!map.has(key))map.set(key,[]);map.get(key).push(r);});return [...map.entries()];}
   function ageInMonths(){const v=Number($('age-value')?.value),u=$('age-unit')?.value;if(!Number.isFinite(v)||v<0)return null;if(u==='years')return v*12;if(u==='weeks')return v/4.34524;return v;}
   function regimenMatchesAge(r){const m=ageInMonths();if(m===null)return false;let min=r.minAgeMonths,max=r.maxAgeMonths;if(r.minAgeYears!==undefined)min=Number(r.minAgeYears)*12;if(r.maxAgeYears!==undefined)max=Number(r.maxAgeYears)*12;if(min!==undefined&&m<Number(min))return false;if(max!==undefined&&m>Number(max))return false;return true;}
-  function selectedRegimen(m){const rs=m?.regimens||[];if(rs.length===1)return rs[0];const allAgeMatches=rs.filter(regimenMatchesAge);if(allAgeMatches.length===1)return allAgeMatches[0];const group=conditionGroups(rs).find(([key])=>key===conditionSelect.value)?.[1]||[];if(!group.length)return null;const ageMatch=group.filter(regimenMatchesAge);if(ageMatch.length===1)return ageMatch[0];if(frequencySelect?.value){const chosen=group.find(r=>r.id===frequencySelect.value);if(chosen)return chosen;}return group[0]||null;}
+  function selectedRegimen(m){
+    const rs=m?.regimens||[];
+    if(rs.length===1)return rs[0];
+
+    // Always resolve the regimen against the current condition and age first.
+    // This prevents a label-only weight/age table from being selected for an
+    // age that is covered by a separate clinical weight-based regimen.
+    const groups=conditionGroups(rs);
+    const group=groups.find(([key])=>key===conditionSelect.value)?.[1]||[];
+    const candidates=group.length?group:rs;
+    const ageProvided=ageInMonths()!==null;
+    const ageMatches=candidates.filter(regimenMatchesAge);
+
+    if(ageProvided&&ageMatches.length===1)return ageMatches[0];
+    if(!ageProvided){
+      const unbounded=candidates.filter(r=>[
+        'minAgeWeeks','maxAgeWeeks','minAgeMonths','maxAgeMonths',
+        'minAgeYears','maxAgeYears'
+      ].every(k=>r[k]===undefined));
+      if(unbounded.length===1)return unbounded[0];
+    }
+
+    if(frequencySelect?.value){
+      const chosen=candidates.find(r=>r.id===frequencySelect.value);
+      if(chosen)return chosen;
+    }
+
+    return ageMatches[0]||candidates[0]||null;
+  }
   function ageBandText(r){let min=r.minAgeMonths,max=r.maxAgeMonths;if(r.minAgeYears!==undefined)min=Number(r.minAgeYears)*12;if(r.maxAgeYears!==undefined)max=Number(r.maxAgeYears)*12;if(min===undefined&&max===undefined)return '';const fmt=n=>n%12===0?`${n/12} years`:`${n} months`;if(min!==undefined&&max!==undefined)return `${fmt(min)}–${fmt(max)}`;return min!==undefined?`≥ ${fmt(min)}`:`≤ ${fmt(max)}`;}
   function compatibleFormulations(m,r){const forms=m?.formulations||[];if(!r?.allowedFormulations?.length)return forms.map((f,i)=>({...f,__index:i}));const allowed=new Set(r.allowedFormulations.map(String));return forms.map((f,i)=>({...f,__index:i})).filter(f=>allowed.has(String(f.id)));}
   function renderConcentrations(m,r){concentrationSelect.innerHTML='';const forms=compatibleFormulations(m,r);forms.forEach(f=>{const o=document.createElement('option');o.value=String(f.__index);o.textContent=f.display||f.label||`${f.mgPer5mL} mg/5 mL`;concentrationSelect.appendChild(o);});concentrationField.hidden=forms.length<=1;if(!forms.length){concentrationField.hidden=false;const o=document.createElement('option');o.value='';o.textContent='No compatible formulation configured';concentrationSelect.appendChild(o);}}
@@ -70,6 +98,6 @@
   $('age-value')?.addEventListener('input',updateRegimenUI);
   $('age-unit')?.addEventListener('change',updateRegimenUI);
   document.addEventListener('change',e=>{if(e.target===frequencySelect)updateRegimenUI();});
-  form.addEventListener('submit',e=>{e.preventDefault();message.textContent='';const m=byId(medicineSelect.value),r=selectedRegimen(m);if(!m||!r){message.textContent='Select a treatment and required condition.';return;}const req=requirements(r);const index=Math.max(0,Number(concentrationSelect.value)||0);const rawFormulation=(m.formulations||[])[index];const f=m.id==='ors'||m.id==='macrogol'||m.id==='probiotics'?rawFormulation:normalizeFormulation(rawFormulation);if(m.id!=='ors'&&!f){message.textContent='The selected oral-liquid formulation is not configured correctly.';return;}if(r.allowedFormulations?.length&&!r.allowedFormulations.map(String).includes(String(f?.id))){message.textContent='The selected formulation is not compatible with this regimen.';return;}let result;if(m.id==='macrogol'&&window.DoseCareMacrogol){result=window.DoseCareMacrogol.calculate({medicine:m,regimen:r,weight:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});}else if(m.id==='probiotics'&&window.DoseCareProbiotic){result=window.DoseCareProbiotic.calculate({medicine:m,regimen:r,weight:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});}else if(m.id==='ors'||r.type==='volume_by_age'||r.type==='volume_per_kg'){result=window.DoseCareORS?.calculate({medicine:m,regimen:r,weight:req.weight?$('weight-value').value:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});if(!result){message.textContent='The ORS calculation engine is not available. Please refresh and try again.';return;}}else{result=window.DoseCareDosingEngine.calculate({medicine:m,regimen:r,weight:req.weight?$('weight-value').value:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});}if(!result.ok){message.textContent=result.error;return;}const payload=JSON.stringify({medicine:m,formulation:f,...result});try{sessionStorage.setItem('dosecareV2Result',payload);}catch(error){console.warn('DoseCare sessionStorage unavailable:',error);}try{localStorage.setItem('dosecareV2Result',payload);}catch(error){console.warn('DoseCare localStorage unavailable:',error);}const encoded=encodeURIComponent(payload);window.location.assign(`./result.html#data=${encoded}`);});
+  form.addEventListener('submit',e=>{e.preventDefault();message.textContent='';const m=byId(medicineSelect.value);const groups=conditionGroups(m?.regimens||[]);const liveRegimen=updateFieldState(m,groups);const r=liveRegimen||selectedRegimen(m);if(!m||!r){message.textContent='Select a treatment and required condition.';return;}const req=requirements(r);const index=Math.max(0,Number(concentrationSelect.value)||0);const rawFormulation=(m.formulations||[])[index];const f=m.id==='ors'||m.id==='macrogol'||m.id==='probiotics'?rawFormulation:normalizeFormulation(rawFormulation);if(m.id!=='ors'&&!f){message.textContent='The selected oral-liquid formulation is not configured correctly.';return;}if(r.allowedFormulations?.length&&!r.allowedFormulations.map(String).includes(String(f?.id))){message.textContent='The selected formulation is not compatible with this regimen.';return;}let result;if(m.id==='macrogol'&&window.DoseCareMacrogol){result=window.DoseCareMacrogol.calculate({medicine:m,regimen:r,weight:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});}else if(m.id==='probiotics'&&window.DoseCareProbiotic){result=window.DoseCareProbiotic.calculate({medicine:m,regimen:r,weight:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});}else if(m.id==='ors'||r.type==='volume_by_age'||r.type==='volume_per_kg'){result=window.DoseCareORS?.calculate({medicine:m,regimen:r,weight:req.weight?$('weight-value').value:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});if(!result){message.textContent='The ORS calculation engine is not available. Please refresh and try again.';return;}}else{result=window.DoseCareDosingEngine.calculate({medicine:m,regimen:r,weight:req.weight?$('weight-value').value:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});}if(!result.ok){message.textContent=result.error;return;}const payload=JSON.stringify({medicine:m,formulation:f,...result});try{sessionStorage.setItem('dosecareV2Result',payload);}catch(error){console.warn('DoseCare sessionStorage unavailable:',error);}try{localStorage.setItem('dosecareV2Result',payload);}catch(error){console.warn('DoseCare localStorage unavailable:',error);}const encoded=encodeURIComponent(payload);window.location.assign(`./result.html#data=${encoded}`);});
   render();
 })();
