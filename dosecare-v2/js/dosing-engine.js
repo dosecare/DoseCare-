@@ -74,8 +74,26 @@
     const totalInitialMg = schedule.reduce((sum, step) => sum + step.doseMg, 0);
     return { ok: true, medicineId: medicine.id, regimen, weight: requiresWeight ? w : null, age: num(age), ageUnit, frequencyText: regimen.frequencyText, frequency: num(regimen.frequency ?? regimen.dosesPerDay ?? regimen.frequencyPerDay ?? schedule.length), lowMg: schedule[0].doseMg, highMg: schedule[0].doseMg, lowMl: schedule[0].doseMl, highMl: schedule[0].doseMl, dailyLowMg: null, dailyHighMg: null, scheduleTotalMg: totalInitialMg, scheduleTotalMl: totalInitialMg / mgPerMl, mgPerMl, maximumApplied: null, calculationType: 'scheduled', concentrationText: formulation?.display || null, schedule };
   }
+  function findClinicalWeightRegimen(medicine, age, ageUnit) {
+    if (!medicine || !Array.isArray(medicine.regimens)) return null;
+    const months = ageMonths(age, ageUnit);
+    if (months === null) return null;
+    return medicine.regimens.find(candidate => {
+      if (!candidate || candidate.type !== 'mg_per_kg_per_dose') return false;
+      const min = candidate.minAgeMonths ?? (candidate.minAgeYears !== undefined ? Number(candidate.minAgeYears) * 12 : undefined);
+      const max = candidate.maxAgeMonths ?? (candidate.maxAgeYears !== undefined ? Number(candidate.maxAgeYears) * 12 : undefined);
+      return (min === undefined || months >= Number(min)) && (max === undefined || months <= Number(max));
+    }) || null;
+  }
   function calculate({ medicine, regimen, age, ageUnit, weight, formulation }) {
     if (!medicine || !regimen) return fail('A medicine and a valid regimen are required.', 'MISSING_REGIMEN');
+    // Never use an OTC label weight/age band for an age that has a configured clinical
+    // weight-based regimen. This protects the calculation even if the UI selected the
+    // label regimen because of a stale/ambiguous selection state.
+    if (regimen.type === 'label_weight_age_based' && ageMonths(age, ageUnit) !== null) {
+      const clinicalRegimen = findClinicalWeightRegimen(medicine, age, ageUnit);
+      if (clinicalRegimen) regimen = clinicalRegimen;
+    }
     if (regimen.type === 'label_age_based') return calculateLabelAgeBased({ medicine, regimen, weight, age, ageUnit, formulation });
     if (regimen.type === 'label_weight_age_based') return calculateLabelWeightAge({ medicine, regimen, weight, age, ageUnit, formulation });
     if (Array.isArray(regimen.schedule) && regimen.schedule.length) return calculateScheduled({ medicine, regimen, weight, age, ageUnit, formulation });
