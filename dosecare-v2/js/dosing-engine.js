@@ -29,7 +29,7 @@
     if (minYears !== undefined && (years === null || years < Number(minYears))) return fail(years === null ? 'A valid age is required for this regimen.' : `This regimen is not configured for children younger than ${minYears} years.`, years === null ? 'INVALID_AGE' : 'AGE_BELOW_REGIMEN_MIN');
     if (maxYears !== undefined && (years === null || years > Number(maxYears))) return fail(years === null ? 'A valid age is required for this regimen.' : `This regimen is not configured for children older than ${maxYears} years.`, years === null ? 'INVALID_AGE' : 'AGE_ABOVE_REGIMEN_MAX');
     if (regimen.maxWeightKg !== undefined && w !== null && w > Number(regimen.maxWeightKg)) return fail('This pediatric regimen is limited to the configured weight range; verify the product label or use the appropriate regimen.', 'WEIGHT_ABOVE_REGIMEN_MAX');
-    if (regimen.minWeightKg !== undefined && w !== null && w < Number(regimen.minWeightKg)) return fail('This regimen is not configured for the entered weight.', 'WEIGHT_BELOW_REGIMEN_MIN');
+    if (regimen.minWeightKg !== undefined && w !== null && w < Number(regimen.minWeightKg)) return fail(regimen.minWeightMessage || 'This regimen is not configured for the entered weight.', 'WEIGHT_BELOW_REGIMEN_MIN');
     return null;
   }
   function calculateLabelAgeBased({ medicine, regimen, weight, age, ageUnit, formulation }) {
