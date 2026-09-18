@@ -87,6 +87,18 @@
     assert(!aboveAge.ok && aboveAge.code === 'AGE_ABOVE_REGIMEN_MAX', 'Age above 12 years should be rejected');
   });
 
+  test('paracetamol 5-month 2-kg infant uses the clinical weight regimen', () => {
+    const m = db.getById('paracetamol');
+    const r = m.regimens.find(x => x.id === 'clinical-weight-based-under-2');
+    const result = engine.calculate({ medicine: m, regimen: r, weight: 2, age: 5, ageUnit: 'months', formulation: m.formulations[0] });
+    assert(result.ok, result.error || '5-month / 2-kg calculation should be supported by the clinical regimen');
+    assert(near(result.lowMg, 20), `Expected 20 mg/dose, got ${result.lowMg}`);
+    assert(near(result.highMg, 30), `Expected 30 mg/dose, got ${result.highMg}`);
+    assert(near(result.lowMl, 0.625), `Expected 0.625 mL/dose, got ${result.lowMl}`);
+    assert(near(result.highMl, 0.9375), `Expected 0.9375 mL/dose, got ${result.highMl}`);
+    assert(Number(result.maximumDosesPer24Hours) === 4, `Expected max 4 doses/24h, got ${result.maximumDosesPer24Hours}`);
+  });
+
   test('paracetamol label chart maps 2–3 years and 24–35 lb to 5 mL', () => {
     const m = db.getById('paracetamol');
     const r = m.regimens.find(x => x.id === 'label-weight-age-chart');
