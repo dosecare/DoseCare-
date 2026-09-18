@@ -30,11 +30,11 @@
       await Promise.all(medicineFiles.map(file => loadScript(`data/${file}`)));
 
       // Engines depend on the completed medicine registry, so load them afterwards.
-      await loadScript('js/dosing-engine.js');
-      await loadScript('js/macrogol-engine-adapter.js');
-      await loadScript('js/probiotic-engine-adapter.js');
-      await loadScript('js/ors-engine.js');
-      await loadScript('js/calculator.js');
+      await loadScript(`js/dosing-engine.js?v=${ASSET_VERSION}`);
+      await loadScript(`js/macrogol-engine-adapter.js?v=${ASSET_VERSION}`);
+      await loadScript(`js/probiotic-engine-adapter.js?v=${ASSET_VERSION}`);
+      await loadScript(`js/ors-engine.js?v=${ASSET_VERSION}`);
+      await loadScript(`js/calculator.js?v=${ASSET_VERSION}`);
       global.DoseCareV2Ready = true;
       document.dispatchEvent(new CustomEvent('dosecare:v2-ready'));
     } catch (error) {
