@@ -258,9 +258,25 @@
   }
 
   function boot(){
+    // The welcome screen is intentionally English-only and should not pay the
+    // translation/observer cost.
+    if(document.body.classList.contains('welcome-page')) return;
+
     addToggle();
     translate(document.body);
-    const observer=new MutationObserver(()=>translate(document.body));
+
+    // Dynamic calculator/result content can change several times in one tick.
+    // Debounce translation so we do one DOM pass instead of translating the
+    // entire page for every individual mutation.
+    let scheduled=false;
+    const observer=new MutationObserver(()=>{
+      if(scheduled) return;
+      scheduled=true;
+      setTimeout(()=>{
+        scheduled=false;
+        translate(document.body);
+      },80);
+    });
     observer.observe(document.body,{childList:true,subtree:true,characterData:true});
   }
 
