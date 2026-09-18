@@ -1433,3 +1433,42 @@ form > .primary-button {
             none;
     }
 }
+
+
+/* =========================================
+   LANGUAGE TOGGLE — V2
+========================================= */
+.topbar .language-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    min-width: 74px;
+    min-height: 40px;
+    padding: 8px 16px;
+    border: 1px solid rgba(220, 230, 242, 0.32);
+    border-radius: 999px;
+    color: #eaf4ff;
+    background: rgba(20, 47, 86, 0.72);
+    font: 600 13px Georgia, "Times New Roman", serif;
+    line-height: 1;
+    cursor: pointer;
+    visibility: visible;
+    opacity: 1;
+    position: relative;
+    z-index: 5;
+}
+
+.topbar .language-toggle:hover,
+.topbar .language-toggle:focus-visible {
+    border-color: rgba(220, 230, 242, 0.65);
+    outline: none;
+}
+
+@media (max-width: 640px) {
+    .topbar {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
