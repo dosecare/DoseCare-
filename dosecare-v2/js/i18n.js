@@ -317,7 +317,7 @@
 
   function replaceMedical(text){
     let out=String(text);
-    medical.slice().sort((a,b)=>b[0].length-a[0].length).forEach(([en,ar])=>{
+    medical.concat(Object.entries(fullMedical)).sort((a,b)=>b[0].length-a[0].length).forEach(([en,ar])=>{
       out=out.split(en).join(ar);
     });
     return out;
