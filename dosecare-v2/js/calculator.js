@@ -15,6 +15,17 @@
   function conditionGroups(rs){const map=new Map();rs.forEach(r=>{const key=r.condition||r.conditions?.[0]||r.id;if(!map.has(key))map.set(key,[]);map.get(key).push(r);});return [...map.entries()];}
   function ageInMonths(){const v=Number($('age-value')?.value),u=$('age-unit')?.value;if(!Number.isFinite(v)||v<0)return null;if(u==='years')return v*12;if(u==='weeks')return v/4.34524;return v;}
   function regimenMatchesAge(r){const m=ageInMonths();if(m===null)return false;let min=r.minAgeMonths,max=r.maxAgeMonths;if(r.minAgeYears!==undefined)min=Number(r.minAgeYears)*12;if(r.maxAgeYears!==undefined)max=Number(r.maxAgeYears)*12;if(min!==undefined&&m<Number(min))return false;if(max!==undefined&&m>Number(max))return false;return true;}
+  function pickBestAgeRegimen(candidates){
+    const ageProvided=ageInMonths()!==null;
+    const ageMatches=candidates.filter(regimenMatchesAge);
+    if(ageProvided&&ageMatches.length===1)return ageMatches[0];
+    if(ageProvided&&ageMatches.length>1){
+      const clinical=ageMatches.filter(r=>!['label_weight_age_based','label_age_based'].includes(r.type));
+      if(clinical.length===1)return clinical[0];
+      return ageMatches[0]||null;
+    }
+    return null;
+  }
   function selectedRegimen(m){
     const rs=m?.regimens||[];
     if(!rs.length)return null;
@@ -47,8 +58,9 @@
     const group=groups.find(([key])=>key===conditionSelect.value)?.[1]||[];
     const ageMatches=group.filter(regimenMatchesAge);
     let r=null;
-    if(group.length===1)r=group[0];
-    else if(ageMatches.length===1)r=ageMatches[0];
+    const preferred=pickBestAgeRegimen(group);
+    if(preferred)r=preferred;
+    else if(group.length===1)r=group[0];
     else if(frequencySelect?.value)r=group.find(x=>x.id===frequencySelect.value)||group[0];
     else r=group[0]||null;
     const needsFrequency=group.length>1&&ageMatches.length!==1;
