@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dosecare-v2-offline-v15';
+const CACHE_NAME = 'dosecare-v2-offline-v16';
 
 const CORE_ASSETS = [
   './',
