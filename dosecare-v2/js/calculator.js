@@ -15,6 +15,7 @@
   function conditionGroups(rs){const map=new Map();rs.forEach(r=>{const key=r.condition||r.conditions?.[0]||r.id;if(!map.has(key))map.set(key,[]);map.get(key).push(r);});return [...map.entries()];}
   function ageInMonths(){const v=Number($('age-value')?.value),u=$('age-unit')?.value;if(!Number.isFinite(v)||v<0)return null;if(u==='years')return v*12;if(u==='weeks')return v/4.34524;return v;}
   function regimenMatchesAge(r){const m=ageInMonths();if(m===null)return false;let min=r.minAgeMonths,max=r.maxAgeMonths;if(r.minAgeYears!==undefined)min=Number(r.minAgeYears)*12;if(r.maxAgeYears!==undefined)max=Number(r.maxAgeYears)*12;if(min!==undefined&&m<Number(min))return false;if(max!==undefined&&m>Number(max))return false;return true;}
+  function regimenPriority(r){if(!r)return 99;if(['mg_per_kg_per_dose','mg_per_kg_per_day','weight_based','age_based'].includes(r.type))return 0;if(r.type==='label_age_based'||r.type==='label_weight_age_based')return 2;return 1;}
   function pickBestAgeRegimen(candidates){
     const ageProvided=ageInMonths()!==null;
     const ageMatches=candidates.filter(regimenMatchesAge);
@@ -29,13 +30,13 @@
   function selectedRegimen(m){
     const rs=m?.regimens||[];
     if(!rs.length)return null;
-    const ageMatches=rs.filter(regimenMatchesAge);
+    const ageMatches=rs.filter(regimenMatchesAge).sort((a,b)=>regimenPriority(a)-regimenPriority(b));
     const preferredAgeMatch=ageMatches.find(r=>r.type!=='label_weight_age_based'&&r.type!=='label_age_based')||ageMatches[0];
     if(preferredAgeMatch)return preferredAgeMatch;
     if(rs.length===1)return rs[0];
     const group=conditionGroups(rs).find(([key])=>key===conditionSelect.value)?.[1]||[];
     if(!group.length)return null;
-    const groupAgeMatches=group.filter(regimenMatchesAge);
+    const groupAgeMatches=group.filter(regimenMatchesAge).sort((a,b)=>regimenPriority(a)-regimenPriority(b));
     const preferredGroupAgeMatch=groupAgeMatches.find(r=>r.type!=='label_weight_age_based'&&r.type!=='label_age_based')||groupAgeMatches[0];
     if(preferredGroupAgeMatch)return preferredGroupAgeMatch;
     if(frequencySelect?.value){const chosen=group.find(r=>r.id===frequencySelect.value);if(chosen)return chosen;}
