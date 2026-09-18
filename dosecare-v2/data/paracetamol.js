@@ -14,19 +14,16 @@ DoseCareV2Database.register({
   }],
   allowedFormulations: ['160mg-5mL'],
   regimens: [{
-    id: 'label-weight-age-chart',
-    type: 'label_weight_age_based',
-    allowedFormulations: ['160mg-5mL'],
-    frequencyText: 'Every 4 hours as needed',
-    maximumDosesPer24Hours: 5,
-    table: [
-      { minLb: 24, maxLb: 35, minAgeYears: 2, maxAgeYears: 3, doseMl: 5 },
-      { minLb: 36, maxLb: 47, minAgeYears: 4, maxAgeYears: 5, doseMl: 7.5 },
-      { minLb: 48, maxLb: 59, minAgeYears: 6, maxAgeYears: 8, doseMl: 10 },
-      { minLb: 60, maxLb: 71, minAgeYears: 9, maxAgeYears: 10, doseMl: 12.5 },
-      { minLb: 72, maxLb: 95, minAgeYears: 11, maxAgeYears: 11, doseMl: 15 }
-    ],
-    under24LbMessage: 'For a child under 24 lb or under 2 years, the product label directs the user to ask a doctor.'
+    id: 'who-weight-based',
+    type: 'mg_per_kg_per_dose',
+    minDose: 15,
+    maxDose: 15,
+    frequency: 4,
+    frequencyText: 'Every 4–6 hours as needed; maximum 4 doses in 24 hours.',
+    maximumDosesPer24Hours: 4,
+    unit: 'mg/kg/dose',
+    minAgeMonths: 3,
+    notes: 'WHO Model Formulary for Children: infants and children may receive 15 mg/kg per dose every 4–6 hours as necessary, with a maximum of 4 doses in 24 hours. Infants under 3 months should not receive paracetamol unless advised by a doctor.'
   }],
   information: {
     class: 'Analgesic / antipyretic',
