@@ -4,7 +4,7 @@
  */
 (function (global) {
   'use strict';
-  const ASSET_VERSION = '2026-09-18-fix5';
+  const ASSET_VERSION = '2026-09-18-fix6';
   const medicineFiles = [
     'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js','carbocisteine.js','bromhexine.js','guaifenesin.js','dextromethorphan.js',
     'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js','metronidazole.js',
