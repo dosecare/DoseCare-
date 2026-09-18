@@ -1,6 +1,9 @@
 name: Deploy DoseCare V2 to GitHub Pages
 
 on:
+  push:
+    branches:
+      - dosecare-v2
   workflow_dispatch:
 
 permissions:
