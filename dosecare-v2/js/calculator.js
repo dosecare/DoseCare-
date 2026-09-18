@@ -17,32 +17,20 @@
   function regimenMatchesAge(r){const m=ageInMonths();if(m===null)return false;let min=r.minAgeMonths,max=r.maxAgeMonths;if(r.minAgeYears!==undefined)min=Number(r.minAgeYears)*12;if(r.maxAgeYears!==undefined)max=Number(r.maxAgeYears)*12;if(min!==undefined&&m<Number(min))return false;if(max!==undefined&&m>Number(max))return false;return true;}
   function selectedRegimen(m){
     const rs=m?.regimens||[];
+    if(!rs.length)return null;
+    const ageMatches=rs.filter(regimenMatchesAge);
+    // When the entered age identifies exactly one configured regimen,
+    // always use that regimen before any condition/frequency fallback.
+    // This prevents a label-only age/weight chart from being selected
+    // for an age that has a separate clinical weight-based regimen.
+    if(ageMatches.length===1)return ageMatches[0];
     if(rs.length===1)return rs[0];
-
-    // Always resolve the regimen against the current condition and age first.
-    // This prevents a label-only weight/age table from being selected for an
-    // age that is covered by a separate clinical weight-based regimen.
-    const groups=conditionGroups(rs);
-    const group=groups.find(([key])=>key===conditionSelect.value)?.[1]||[];
-    const candidates=group.length?group:rs;
-    const ageProvided=ageInMonths()!==null;
-    const ageMatches=candidates.filter(regimenMatchesAge);
-
-    if(ageProvided&&ageMatches.length===1)return ageMatches[0];
-    if(!ageProvided){
-      const unbounded=candidates.filter(r=>[
-        'minAgeWeeks','maxAgeWeeks','minAgeMonths','maxAgeMonths',
-        'minAgeYears','maxAgeYears'
-      ].every(k=>r[k]===undefined));
-      if(unbounded.length===1)return unbounded[0];
-    }
-
-    if(frequencySelect?.value){
-      const chosen=candidates.find(r=>r.id===frequencySelect.value);
-      if(chosen)return chosen;
-    }
-
-    return ageMatches[0]||candidates[0]||null;
+    const group=conditionGroups(rs).find(([key])=>key===conditionSelect.value)?.[1]||[];
+    if(!group.length)return null;
+    const groupAgeMatches=group.filter(regimenMatchesAge);
+    if(groupAgeMatches.length===1)return groupAgeMatches[0];
+    if(frequencySelect?.value){const chosen=group.find(r=>r.id===frequencySelect.value);if(chosen)return chosen;}
+    return group[0]||null;
   }
   function ageBandText(r){let min=r.minAgeMonths,max=r.maxAgeMonths;if(r.minAgeYears!==undefined)min=Number(r.minAgeYears)*12;if(r.maxAgeYears!==undefined)max=Number(r.maxAgeYears)*12;if(min===undefined&&max===undefined)return '';const fmt=n=>n%12===0?`${n/12} years`:`${n} months`;if(min!==undefined&&max!==undefined)return `${fmt(min)}–${fmt(max)}`;return min!==undefined?`≥ ${fmt(min)}`:`≤ ${fmt(max)}`;}
   function compatibleFormulations(m,r){const forms=m?.formulations||[];if(!r?.allowedFormulations?.length)return forms.map((f,i)=>({...f,__index:i}));const allowed=new Set(r.allowedFormulations.map(String));return forms.map((f,i)=>({...f,__index:i})).filter(f=>allowed.has(String(f.id)));}
