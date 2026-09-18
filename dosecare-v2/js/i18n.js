@@ -344,6 +344,7 @@
 
   function translate(root){
     const lang=language();
+    translateMedicineSpecific(root);
 
     root.querySelectorAll('*').forEach(el=>{
       if(el.children.length) return;
