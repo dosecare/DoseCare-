@@ -23,7 +23,11 @@
     const multipleConditions=groups.length>1;
     conditionField.hidden=!multipleConditions;
     if(!multipleConditions&&groups.length===1)conditionSelect.value=groups[0][0];
-    if(multipleConditions&&!conditionSelect.value){setFieldVisibility(null);frequencyField.hidden=true;return null;}
+    if(multipleConditions&&!conditionSelect.value){
+      const ageCompatibleGroups=groups.filter(([,regimens])=>regimens.some(regimenMatchesAge));
+      if(ageCompatibleGroups.length===1)conditionSelect.value=ageCompatibleGroups[0][0];
+      else{setFieldVisibility(null);frequencyField.hidden=true;return null;}
+    }
     const group=groups.find(([key])=>key===conditionSelect.value)?.[1]||[];
     const ageMatches=group.filter(regimenMatchesAge);
     let r=null;
@@ -50,7 +54,11 @@
     const rs=m.regimens||[],groups=conditionGroups(rs);
     groups.forEach(([key])=>{const o=document.createElement('option');o.value=key;o.textContent=key;conditionSelect.appendChild(o);});
     if(groups.length===1)conditionSelect.value=groups[0][0];
-    if(groups.length>1&&!conditionSelect.value){recommendedDose.textContent='Select a condition / regimen to view the dose';setFieldVisibility(null);renderConcentrations(m,null);return;}
+    if(groups.length>1&&!conditionSelect.value){
+      const ageCompatibleGroups=groups.filter(([,regimens])=>regimens.some(regimenMatchesAge));
+      if(ageCompatibleGroups.length===1)conditionSelect.value=ageCompatibleGroups[0][0];
+      else{recommendedDose.textContent='Select a condition / regimen to view the dose';setFieldVisibility(null);renderConcentrations(m,null);return;}
+    }
     const r=updateFieldState(m,groups);
     recommendedDose.textContent=r?doseText(r):(rs.length?'Select a condition / regimen to view the dose':'Dose not configured');
     renderConcentrations(m,r);
