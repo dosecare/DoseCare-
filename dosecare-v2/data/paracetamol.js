@@ -16,7 +16,7 @@ DoseCareV2Database.register({
       { minLb: 60, maxLb: 71, minAgeYears: 9, maxAgeYears: 10, doseMl: 12.5 },
       { minLb: 72, maxLb: 95, minAgeYears: 11, maxAgeYears: 11, doseMl: 15 }
     ],
-    under24LbMessage: 'For a child under 24 lb or under 2 years, the product label directs the user to ask a doctor.'
+    under24LbMessage: 'This product label does not provide a self-dosing band for children under 24 lb or under 2 years. Verify the product label and consult a clinician for infants and smaller children.',\n    noMatchingBandMessage: 'No labeled dose band matches this age/weight. The selected 160 mg/5 mL product label starts at 24 lb and 2 years; for younger or smaller children, verify the product label and consult a clinician rather than estimating a dose.'
   }],
   information: {
     class: 'Analgesic / antipyretic',
