@@ -13,12 +13,22 @@
   ];
   function loadScript(src) {
     return new Promise((resolve, reject) => {
-      const script = document.createElement('script'); script.src = src; script.async = false; script.onload = resolve; script.onerror = () => reject(new Error(`Failed to load ${src}`)); document.head.appendChild(script);
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      script.onload = resolve;
+      script.onerror = () => reject(new Error(`Failed to load ${src}`));
+      document.head.appendChild(script);
     });
   }
+
   async function boot() {
     try {
-      for (const file of medicineFiles) await loadScript(`data/${file}`);
+      // Medicine records are independent registrations, so load them in parallel.
+      // This removes the old 40-file waterfall on the calculator startup path.
+      await Promise.all(medicineFiles.map(file => loadScript(`data/${file}`)));
+
+      // Engines depend on the completed medicine registry, so load them afterwards.
       await loadScript('js/dosing-engine.js');
       await loadScript('js/macrogol-engine-adapter.js');
       await loadScript('js/probiotic-engine-adapter.js');
