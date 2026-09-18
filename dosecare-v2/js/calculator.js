@@ -30,16 +30,14 @@
     const rs=m?.regimens||[];
     if(!rs.length)return null;
     const ageMatches=rs.filter(regimenMatchesAge);
-    // When the entered age identifies exactly one configured regimen,
-    // always use that regimen before any condition/frequency fallback.
-    // This prevents a label-only age/weight chart from being selected
-    // for an age that has a separate clinical weight-based regimen.
-    if(ageMatches.length===1)return ageMatches[0];
+    const preferredAgeMatch=ageMatches.find(r=>r.type!=='label_weight_age_based'&&r.type!=='label_age_based')||ageMatches[0];
+    if(preferredAgeMatch)return preferredAgeMatch;
     if(rs.length===1)return rs[0];
     const group=conditionGroups(rs).find(([key])=>key===conditionSelect.value)?.[1]||[];
     if(!group.length)return null;
     const groupAgeMatches=group.filter(regimenMatchesAge);
-    if(groupAgeMatches.length===1)return groupAgeMatches[0];
+    const preferredGroupAgeMatch=groupAgeMatches.find(r=>r.type!=='label_weight_age_based'&&r.type!=='label_age_based')||groupAgeMatches[0];
+    if(preferredGroupAgeMatch)return preferredGroupAgeMatch;
     if(frequencySelect?.value){const chosen=group.find(r=>r.id===frequencySelect.value);if(chosen)return chosen;}
     return group[0]||null;
   }
