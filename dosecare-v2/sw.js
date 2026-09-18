@@ -1,8 +1,8 @@
 /* DoseCare V2 — offline-first service worker */
-const CACHE_NAME = 'dosecare-v2-offline-v4';
+const CACHE_NAME = 'dosecare-v2-offline-v5';
 const CORE_FILES = [
   './','./index.html','./calculator.html','./result.html','./manifest.json','./icons/icon.svg',
-  './css/style.css','./css/legacy-visual.css','./css/language.css','./css/soft-glass.css','./css/author-font.css',
+  './css/style.css','./css/language.css','./css/soft-glass.css','./css/author-font.css',
   './js/language.js','./js/database.js','./js/database-loader.js','./js/dosing-engine.js','./js/dosing-engine-guards.js','./js/calculator.js','./js/result.js',
   './js/macrogol-engine-adapter.js','./js/probiotic-engine-adapter.js','./js/ors-engine.js','./js/macrogol-result-adapter.js','./js/probiotic-result-adapter.js',
   './data/paracetamol.js','./data/ibuprofen.js','./data/mefenamic-acid.js','./data/ambroxol.js','./data/carbocisteine.js','./data/bromhexine.js','./data/guaifenesin.js','./data/dextromethorphan.js',
