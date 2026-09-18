@@ -323,6 +323,21 @@
     return out;
   }
 
+  const medicineNames={
+    paracetamol:'باراسيتامول (أسيتامينوفين)',ibuprofen:'إيبوبروفين','mefenamic-acid':'حمض الميفيناميك',
+    ambroxol:'أمبروكسول',carbocisteine:'كاربوسيستين',bromhexine:'برومهيكسين',guaifenesin:'غوايفينيسين',
+    dextromethorphan:'ديكستروميثورفان',amoxicillin:'أموكسيسيلين','amoxicillin-clavulanate':'أموكسيسيلين/كلافولانات',
+    azithromycin:'أزيثروميسين',cephalexin:'سيفالكسين',cefuroxime:'سيفوروكسيم',cefixime:'سيفيكسيم',
+    cefpodoxime:'سيفبودوكسيم',cefdinir:'سيفدينير',cefprozil:'سيفبروزيل',clarithromycin:'كلاريثروميسين',
+    clindamycin:'كليندامايسين',cefaclor:'سيفاكلور',erythromycin:'إريثرومايسين',metronidazole:'ميترونيدازول',
+    cetirizine:'سيتريزين',loratadine:'لوراتادين',desloratadine:'ديسلوراتادين',chlorpheniramine:'كلورفينيرامين',
+    fexofenadine:'فيكسوفينادين',diphenhydramine:'ديفينهيدرامين',ondansetron:'أوندانسيترون',
+    prednisolone:'بريدنيزولون',salbutamol:'سالبيوتامول',lactulose:'لاكتولوز',omeprazole:'أوميبرازول',
+    'magnesium-hydroxide':'هيدروكسيد المغنيسيوم',famotidine:'فاموتيدين',
+    'sulfamethoxazole-trimethoprim':'سلفاميثوكسازول/تريميثوبريم','zinc-sulfate':'كبريتات الزنك',
+    domperidone:'دومبيريدون',simethicone:'سيميثيكون','hyoscine-butylbromide':'هيوسين بيوتيل بروميد'
+  };
+
   function translateMedicineSpecific(root){
     const state=window.DoseCareV2ResultMedicine;
     const db=window.DoseCareV2Arabic;
@@ -337,6 +352,7 @@
         return;
       }
       let value=ar[field];
+      if((field==='name'||field==='activeIngredient') && medicineNames[state.id]) value=medicineNames[state.id];
       if(Array.isArray(value)) value=value.join(' • ');
       el.textContent=(value!=null && String(value).trim()) ? value : replaceMedical(original);
     });
