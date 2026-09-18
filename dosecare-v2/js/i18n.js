@@ -49,7 +49,7 @@
     if(document.getElementById('dosecare-language-toggle')) return;
     const topbar=document.querySelector('.topbar'); if(!topbar) return;
     const button=document.createElement('button');
-    button.id='dosecare-language-toggle'; button.type='button'; button.className='language-toggle';
+    button.id='dosecare-language-toggle'; button.type='button'; button.className='language-toggle'; button.setAttribute('aria-label','Change language'); button.title='Change language';
     button.addEventListener('click',()=>{localStorage.setItem(KEY,language()==='en'?'ar':'en');translate(document.body);button.textContent=language()==='en'?'عربي':'English';});
     topbar.appendChild(button);
     button.textContent=language()==='en'?'عربي':'English';
