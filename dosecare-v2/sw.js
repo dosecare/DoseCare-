@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dosecare-v2-offline-v5';
+const CACHE_NAME = 'dosecare-v2-offline-v6';
 
 const CORE_ASSETS = [
   './',
@@ -18,7 +18,6 @@ const CORE_ASSETS = [
   './js/result.js',
   './js/macrogol-result-adapter.js',
   './js/probiotic-result-adapter.js',
-  './js/i18n.js',
   './js/pwa.js',
   './manifest.json',
   './icon.svg',
