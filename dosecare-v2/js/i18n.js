@@ -323,6 +323,25 @@
     return out;
   }
 
+  function translateMedicineSpecific(root){
+    const state=window.DoseCareV2ResultMedicine;
+    const db=window.DoseCareV2Arabic;
+    if(!state || !db || !db[state.id]) return;
+    const ar=db[state.id];
+    root.querySelectorAll('.medical-dynamic[data-medical-field]').forEach(el=>{
+      if(!el.dataset.i18nOriginal) el.dataset.i18nOriginal=el.textContent;
+      const field=el.dataset.medicalField;
+      const original=el.dataset.i18nOriginal;
+      if(language()==='en'){
+        el.textContent=original;
+        return;
+      }
+      let value=ar[field];
+      if(Array.isArray(value)) value=value.join(' • ');
+      el.textContent=(value!=null && String(value).trim()) ? value : replaceMedical(original);
+    });
+  }
+
   function translate(root){
     const lang=language();
 
