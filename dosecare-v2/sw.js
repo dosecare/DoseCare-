@@ -1,10 +1,11 @@
-const CACHE_NAME = 'dosecare-v2-offline-v3';
+const CACHE_NAME = 'dosecare-v2-offline-v4';
 
 const CORE_ASSETS = [
   './',
   './index.html',
   './calculator.html',
   './result.html',
+  './share.html',
   './css/style.css',
   './css/legacy-visual.css',
   './js/database.js',
@@ -69,18 +70,12 @@ const CORE_ASSETS = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(async cache => {
-        await Promise.allSettled(
-          CORE_ASSETS.map(async asset => {
-            try {
-              await cache.add(asset);
-            } catch (error) {
-              console.warn('DoseCare offline cache skipped:', asset, error);
-            }
-          })
-        );
-      })
+      .then(cache => cache.addAll(CORE_ASSETS))
       .then(() => self.skipWaiting())
+      .catch(error => {
+        console.error('DoseCare offline cache installation failed:', error);
+        throw error;
+      })
   );
 });
 
