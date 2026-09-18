@@ -7,8 +7,33 @@ DoseCareV2Database.register({
   dosageForm: 'Oral suspension',
   route: 'Oral',
   formulations: [{ display: '160 mg/5 mL', mgPer5mL: 160, concentration: { amount: 160, unit: 'mg', volume: 5, volumeUnit: 'mL' } }],
-  regimens: [{
-    id: 'label-weight-age-chart', type: 'label_weight_age_based', frequencyText: 'Every 4 hours as needed', maximumDosesPer24Hours: 5,
+  regimens: [
+  {
+    id: 'clinical-weight-based-under-2',
+    type: 'mg_per_kg_per_dose',
+    condition: 'Clinical weight-based dosing (3–23 months)',
+    minAgeMonths: 3,
+    maxAgeMonths: 23,
+    minDose: 10,
+    maxDose: 15,
+    unit: 'mg/kg/dose',
+    frequencyText: 'Every 4–6 hours as needed',
+    interval: 'Every 4–6 hours as needed',
+    intervalHours: 4,
+    maximumDosesPer24Hours: 5,
+    maxDailyDose: 60,
+    requiresAge: true,
+    requiresWeight: true,
+    notes: 'For children under 2 years, use only when the dose has been clinically confirmed. Verify the child’s weight and clinical status before administration.'
+  },
+  {
+    id: 'label-weight-age-chart',
+    type: 'label_weight_age_based',
+    condition: 'OTC product label (2–11 years)',
+    minAgeYears: 2,
+    maxAgeYears: 11,
+    frequencyText: 'Every 4 hours as needed',
+    maximumDosesPer24Hours: 5,
     table: [
       { minLb: 24, maxLb: 35, minAgeYears: 2, maxAgeYears: 3, doseMl: 5 },
       { minLb: 36, maxLb: 47, minAgeYears: 4, maxAgeYears: 5, doseMl: 7.5 },
