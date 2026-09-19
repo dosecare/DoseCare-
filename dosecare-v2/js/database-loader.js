@@ -4,10 +4,10 @@
  */
 (function (global) {
   'use strict';
-  const ASSET_VERSION = '2026-09-18-fix8';
+  const ASSET_VERSION = '2026-09-19-oseltamivir1';
   const medicineFiles = [
     'paracetamol.js','ibuprofen.js','mefenamic-acid.js','ambroxol.js','carbocisteine.js','bromhexine.js','guaifenesin.js','dextromethorphan.js',
-    'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js','metronidazole.js',
+    'amoxicillin.js','amoxicillin-clavulanate.js','azithromycin.js','cephalexin.js','cefuroxime.js','cefixime.js','cefpodoxime.js','cefdinir.js','cefprozil.js','clarithromycin.js','clindamycin.js','cefaclor.js','erythromycin.js','metronidazole.js','oseltamivir.js',
     'cetirizine.js','loratadine.js','desloratadine.js','chlorpheniramine.js','fexofenadine.js','diphenhydramine.js',
     'ondansetron.js','prednisolone.js','salbutamol.js',
     'lactulose.js','omeprazole.js','magnesium-hydroxide.js','famotidine.js','sulfamethoxazole-trimethoprim.js','zinc-sulfate.js','domperidone.js','simethicone.js','hyoscine-butylbromide.js'
@@ -26,7 +26,7 @@
   async function boot() {
     try {
       // Medicine records are independent registrations, so load them in parallel.
-      // This removes the old 40-file waterfall on the calculator startup path.
+      // This removes the old medicine-file waterfall on the calculator startup path.
       await Promise.all(medicineFiles.map(file => loadScript(`data/${file}`)));
 
       // Engines depend on the completed medicine registry, so load them afterwards.
