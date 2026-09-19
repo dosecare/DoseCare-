@@ -1,6 +1,6 @@
 window.DoseCareV2Audit = (() => {
   const expectedIds = [
-    'albendazole','amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole','oseltamivir','nystatin','fluconazole','acyclovir','ferrous-sulfate','cholecalciferol','levetiracetam','phenobarbital',
+    'albendazole','levothyroxine','amoxicillin','amoxicillin-clavulanate','azithromycin','cephalexin','cefuroxime','cefixime','cefpodoxime','cefdinir','cefprozil','clarithromycin','clindamycin','cefaclor','erythromycin','metronidazole','oseltamivir','nystatin','fluconazole','acyclovir','ferrous-sulfate','cholecalciferol','levetiracetam','phenobarbital',
     'paracetamol','ibuprofen','mefenamic-acid','ambroxol','carbocisteine','bromhexine','guaifenesin','dextromethorphan','cetirizine','loratadine','desloratadine','chlorpheniramine','fexofenadine','diphenhydramine','ondansetron','prednisolone','salbutamol',
     'lactulose','omeprazole','magnesium-hydroxide','famotidine','sulfamethoxazole-trimethoprim','zinc-sulfate','domperidone','simethicone','hyoscine-butylbromide'
   ];
