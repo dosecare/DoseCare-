@@ -16,6 +16,12 @@
   <header class="topbar"><a href="index.html" class="brand">DoseCare</a></header>
   <section class="glass-card calculator-card">
     <div class="section-heading"><p class="eyebrow">DOSE CALCULATOR</p><p>Select the medicine to begin.</p></div>
+    <section class="medicine-library" aria-label="Medicine Library">
+      <div class="library-heading"><div><p class="eyebrow">MEDICINE LIBRARY</p><h2>50 pediatric medicines</h2></div><span id="library-count">50 medicines</span></div>
+      <div id="library-categories" class="library-categories" role="tablist" aria-label="Medicine categories"></div>
+      <div id="medicine-library-list" class="medicine-library-list"></div>
+      <p id="library-empty" class="library-empty" hidden>No medicines match your search.</p>
+    </section>
     <form id="dose-form" novalidate>
       <label class="field medicine-search-field"><span>Search medicine</span><input id="medicine-search" type="search" autocomplete="off" placeholder="Type the first letters of a medicine…"></label>
       <label class="field"><span>Treatment</span><select id="medicine-select" required><option value="">Select treatment</option></select></label>
@@ -33,6 +39,6 @@
 </main>
 <script src="js/database.js"></script>
 <script src="js/database-loader.js"></script>
-<script>(function(){const search=document.getElementById('medicine-search'),select=document.getElementById('medicine-select');if(!search||!select)return;function filterMedicines(){const query=search.value.trim().toLowerCase(),current=select.value;Array.from(select.options).forEach((option,index)=>{if(index===0)return;option.hidden=!!query&&!option.textContent.trim().toLowerCase().startsWith(query)});if(current&&select.options[select.selectedIndex]&&select.options[select.selectedIndex].hidden)select.value=''}search.addEventListener('input',filterMedicines)})();</script>
+
 <script src="js/pwa.js"></script>
 </body></html>
