@@ -1496,3 +1496,19 @@ form > .primary-button {
   .medicine-library-list{grid-template-columns:1fr;max-height:340px}
   .library-heading h2{font-size:1.15rem}
 }
+
+/* Refined medicine search */
+.medicine-search-wrap{position:relative;margin:0 0 14px;z-index:20}
+.medicine-search-wrap>input{width:100%;box-sizing:border-box;padding:15px 44px 15px 43px;border:1px solid rgba(220,225,234,.18);border-radius:16px;background:rgba(5,18,40,.5);color:#eef1f5;font:inherit;outline:none}
+.medicine-search-wrap>input:focus{border-color:rgba(220,225,234,.48);box-shadow:0 0 0 3px rgba(220,225,234,.06)}
+.medicine-search-wrap>input::placeholder{color:var(--muted)}
+.search-icon{position:absolute;left:15px;top:50%;transform:translateY(-52%);font-size:1.35rem;color:var(--muted);pointer-events:none}
+#clear-medicine-search{position:absolute;right:11px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:0;border-radius:50%;background:rgba(220,225,234,.1);color:#e7e9ed;font-size:1.15rem;cursor:pointer}
+.medicine-search-results{position:absolute;left:0;right:0;top:calc(100% + 7px);padding:7px;border:1px solid rgba(220,225,234,.16);border-radius:17px;background:rgba(6,20,42,.97);box-shadow:0 18px 45px rgba(0,0,0,.3);backdrop-filter:blur(18px)}
+.medicine-search-result{display:flex;flex-direction:column;align-items:flex-start;width:100%;padding:11px 12px;border:0;border-radius:12px;background:transparent;color:#e7e9ed;text-align:left;cursor:pointer}
+.medicine-search-result:hover{background:rgba(220,225,234,.09)}
+.medicine-search-result strong{font-size:.92rem}.medicine-search-result span{margin-top:3px;color:var(--muted);font-size:.72rem}
+.selected-medicine{display:flex;align-items:center;gap:9px;margin:-3px 0 14px;padding:9px 12px;border:1px solid rgba(220,225,234,.13);border-radius:13px;background:rgba(220,225,234,.045)}
+.selected-medicine strong{font-size:.9rem}.selected-medicine>span:last-child{margin-left:auto;color:var(--muted);font-size:.72rem}
+.selected-medicine-label{font-size:.67rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.legacy-treatment-field{margin-top:2px}
