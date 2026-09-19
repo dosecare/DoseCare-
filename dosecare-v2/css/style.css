@@ -1606,3 +1606,42 @@ form > .primary-button {
   .hero-dose{font-size:clamp(3.7rem,19vw,5.5rem)}
   .hero-support{align-items:flex-start;flex-direction:column;gap:3px}
 }
+
+/* =========================================
+   SAFETY CHECK — V2
+========================================= */
+.safety-card{
+  border-color:rgba(241,184,190,.28);
+  background:linear-gradient(135deg,rgba(86,40,55,.24),rgba(7,25,52,.24));
+}
+.safety-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:16px;
+}
+.safety-heading .eyebrow{margin:0 0 5px;color:#e5c4c8}
+.safety-heading h2{font-size:clamp(1.25rem,4vw,1.65rem);line-height:1.15}
+.safety-icon{
+  display:grid;
+  place-items:center;
+  width:36px;
+  height:36px;
+  flex:0 0 36px;
+  border:1px solid rgba(241,184,190,.35);
+  border-radius:50%;
+  color:#f1b8be;
+  background:rgba(241,184,190,.08);
+  font-weight:700;
+}
+.safety-list{display:grid;gap:10px}
+.safety-item{
+  padding:13px 14px;
+  border:1px solid rgba(241,184,190,.14);
+  border-radius:15px;
+  background:rgba(7,24,49,.34);
+}
+.safety-item span{display:block;margin-bottom:5px;color:#d7bbc0;font-size:.75rem;font-weight:700}
+.safety-item strong{display:block;color:#e9e5e7;line-height:1.5}
+.safety-note{margin:14px 2px 0;color:var(--muted);font-size:.82rem;line-height:1.55}
