@@ -93,33 +93,41 @@
   function updateRegimenUI(){const m=byId(medicineSelect.value),groups=conditionGroups(m?.regimens||[]);const r=updateFieldState(m,groups);recommendedDose.textContent=r?doseText(r):'Select a condition / regimen to view the dose';renderConcentrations(m,r);}
   medicines.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=m.name;medicineSelect.appendChild(o);});
   let activeCategory='All';
-  const libraryList=$('medicine-library-list'),libraryCategories=$('library-categories'),libraryCount=$('library-count'),libraryEmpty=$('library-empty'),medicineSearch=$('medicine-search');
+  const libraryList=$('medicine-library-list'),libraryCategories=$('library-categories'),libraryCount=$('library-count'),libraryEmpty=$('library-empty'),medicineSearch=$('medicine-search'),searchResults=$('medicine-search-results'),clearSearch=$('clear-medicine-search'),selectedMedicine=$('selected-medicine');
+  function selectMedicine(id){
+    medicineSelect.value=id;
+    medicineSelect.dispatchEvent(new Event('change'));
+    const m=byId(id);
+    if(selectedMedicine&&m){selectedMedicine.hidden=false;selectedMedicine.innerHTML='<span class="selected-medicine-label">Selected medicine</span><strong>'+m.name+'</strong><span>'+(m.dosageForm||'Oral liquid')+'</span>';}
+    if(searchResults)searchResults.hidden=true;
+    if(medicineSearch)medicineSearch.blur();
+  }
   function renderLibrary(){
     if(!libraryList||!libraryCategories)return;
     const q=(medicineSearch?.value||'').trim().toLowerCase();
     const categories=['All',...new Set(medicines.map(m=>m.category||'Other').sort())];
     libraryCategories.innerHTML='';
-    categories.forEach(cat=>{
-      const b=document.createElement('button'); b.type='button'; b.className='library-category'+(cat===activeCategory?' active':''); b.textContent=cat;
-      b.setAttribute('role','tab'); b.setAttribute('aria-selected',cat===activeCategory?'true':'false');
-      b.addEventListener('click',()=>{activeCategory=cat;renderLibrary();}); libraryCategories.appendChild(b);
-    });
-    const filtered=medicines.filter(m=>{
-      const text=[m.name,m.genericName,m.category].filter(Boolean).join(' ').toLowerCase();
-      return (activeCategory==='All'||(m.category||'Other')===activeCategory)&&(!q||text.includes(q));
-    }).sort((a,b)=>a.name.localeCompare(b.name));
+    categories.forEach(cat=>{const b=document.createElement('button');b.type='button';b.className='library-category'+(cat===activeCategory?' active':'');b.textContent=cat;b.setAttribute('role','tab');b.setAttribute('aria-selected',cat===activeCategory?'true':'false');b.addEventListener('click',()=>{activeCategory=cat;renderLibrary();});libraryCategories.appendChild(b);});
+    const filtered=medicines.filter(m=>{const text=[m.name,m.genericName,m.category].filter(Boolean).join(' ').toLowerCase();return(activeCategory==='All'||(m.category||'Other')===activeCategory)&&(!q||text.includes(q));}).sort((a,b)=>a.name.localeCompare(b.name));
     libraryList.innerHTML='';
-    filtered.forEach(m=>{
-      const b=document.createElement('button'); b.type='button'; b.className='medicine-library-item';
-      b.innerHTML='<strong>'+m.name+'</strong><span>'+(m.dosageForm||'Oral liquid')+'</span>';
-      b.addEventListener('click',()=>{medicineSelect.value=m.id;medicineSelect.dispatchEvent(new Event('change'));document.getElementById('dose-form')?.scrollIntoView({behavior:'smooth',block:'start'});});
-      libraryList.appendChild(b);
-    });
+    filtered.forEach(m=>{const b=document.createElement('button');b.type='button';b.className='medicine-library-item';b.innerHTML='<strong>'+m.name+'</strong><span>'+(m.dosageForm||'Oral liquid')+'</span>';b.addEventListener('click',()=>selectMedicine(m.id));libraryList.appendChild(b);});
     if(libraryCount)libraryCount.textContent=filtered.length+' medicine'+(filtered.length===1?'':'s');
     if(libraryEmpty)libraryEmpty.hidden=filtered.length>0;
-    Array.from(medicineSelect.options).forEach((option,index)=>{if(index===0)return;const text=option.textContent.toLowerCase();option.hidden=!!q&&!text.includes(q);});
-    if(medicineSelect.value&&medicineSelect.options[medicineSelect.selectedIndex]?.hidden)medicineSelect.value='';
+    if(clearSearch)clearSearch.hidden=!q;
+    renderSearchResults();
   }
+  function renderSearchResults(){
+    if(!searchResults||!medicineSearch)return;
+    const q=medicineSearch.value.trim().toLowerCase();
+    if(!q){searchResults.hidden=true;searchResults.innerHTML='';return;}
+    const matches=medicines.filter(m=>[m.name,m.genericName,m.category].filter(Boolean).join(' ').toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name)).slice(0,8);
+    searchResults.innerHTML='';
+    matches.forEach(m=>{const b=document.createElement('button');b.type='button';b.className='medicine-search-result';b.innerHTML='<strong>'+m.name+'</strong><span>'+((m.category||'Pediatric medicine'))+' · '+(m.dosageForm||'Oral liquid')+'</span>';b.addEventListener('click',()=>selectMedicine(m.id));searchResults.appendChild(b);});
+    searchResults.hidden=matches.length===0;
+  }
+  medicineSearch?.addEventListener('input',()=>{renderSearchResults();renderLibrary();});
+  medicineSearch?.addEventListener('focus',renderSearchResults);
+  clearSearch?.addEventListener('click',()=>{medicineSearch.value='';renderLibrary();medicineSearch.focus();});
 
   medicineSelect.addEventListener('change',render);
   medicineSearch?.addEventListener('input',renderLibrary);
