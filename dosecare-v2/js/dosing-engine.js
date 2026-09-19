@@ -74,6 +74,48 @@
     const totalInitialMg = schedule.reduce((sum, step) => sum + step.doseMg, 0);
     return { ok: true, medicineId: medicine.id, regimen, weight: requiresWeight ? w : null, age: num(age), ageUnit, frequencyText: regimen.frequencyText, frequency: num(regimen.frequency ?? regimen.dosesPerDay ?? regimen.frequencyPerDay ?? schedule.length), lowMg: schedule[0].doseMg, highMg: schedule[0].doseMg, lowMl: schedule[0].doseMl, highMl: schedule[0].doseMl, dailyLowMg: null, dailyHighMg: null, scheduleTotalMg: totalInitialMg, scheduleTotalMl: totalInitialMg / mgPerMl, mgPerMl, maximumApplied: null, calculationType: 'scheduled', concentrationText: formulation?.display || null, schedule };
   }
+  function calculateFixedVolume({ medicine, regimen, weight, age, ageUnit, formulation }) {
+    const a = num(age), w = num(weight);
+    const needsAge = regimen.requiresAge === true;
+    const needsWeight = regimen.requiresWeight === true;
+    if (needsAge && (a === null || a < 0 || !['months', 'years', 'weeks'].includes(ageUnit))) return fail('Enter a valid child age.', 'INVALID_AGE');
+    if (needsWeight && (w === null || w <= 0)) return fail('Enter a valid child weight in kg.', 'INVALID_WEIGHT');
+    const boundError = validateBounds(regimen, w, a, ageUnit);
+    if (boundError) return boundError;
+
+    const lowMl = num(regimen.minDoseMl ?? regimen.doseMl ?? regimen.volumeMl);
+    const highMl = num(regimen.maxDoseMl ?? regimen.doseMl ?? regimen.volumeMl);
+    if (lowMl === null || highMl === null || lowMl < 0 || highMl < lowMl) {
+      return fail('The configured fixed liquid dose cannot be calculated safely.', 'INVALID_DOSE_VOLUME');
+    }
+
+    const frequency = num(regimen.frequency ?? regimen.dosesPerDay ?? regimen.frequencyPerDay ?? 1);
+    if (!frequency || frequency <= 0) return fail('The regimen frequency is missing or invalid.', 'INVALID_FREQUENCY');
+
+    return {
+      ok: true,
+      medicineId: medicine.id,
+      regimen,
+      weight: needsWeight ? w : null,
+      age: needsAge ? a : null,
+      ageUnit: needsAge ? ageUnit : null,
+      frequencyText: regimen.frequencyText || null,
+      frequency,
+      lowMg: null,
+      highMg: null,
+      lowMl,
+      highMl,
+      dailyLowMg: null,
+      dailyHighMg: null,
+      dailyLowMl: lowMl * frequency,
+      dailyHighMl: highMl * frequency,
+      mgPerMl: null,
+      maximumApplied: null,
+      calculationType: 'fixed_volume',
+      concentrationText: formulation?.display || null
+    };
+  }
+
   function findClinicalWeightRegimen(medicine, age, ageUnit) {
     if (!medicine || !Array.isArray(medicine.regimens)) return null;
     const months = ageMonths(age, ageUnit);
@@ -93,6 +135,9 @@
     if (regimen.type === 'label_weight_age_based' && ageMonths(age, ageUnit) !== null) {
       const clinicalRegimen = findClinicalWeightRegimen(medicine, age, ageUnit);
       if (clinicalRegimen) regimen = clinicalRegimen;
+    }
+    if (regimen.type === 'fixed_dose' && (regimen.doseMl !== undefined || regimen.minDoseMl !== undefined || regimen.maxDoseMl !== undefined || regimen.volumeMl !== undefined)) {
+      return calculateFixedVolume({ medicine, regimen, weight, age, ageUnit, formulation });
     }
     if (regimen.type === 'label_age_based') return calculateLabelAgeBased({ medicine, regimen, weight, age, ageUnit, formulation });
     if (regimen.type === 'label_weight_age_based') return calculateLabelWeightAge({ medicine, regimen, weight, age, ageUnit, formulation });
