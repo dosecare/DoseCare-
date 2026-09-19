@@ -1741,3 +1741,12 @@ form > .primary-button {
 @media(max-width:640px){
   .result-actions{grid-template-columns:1fr}
 }
+
+@media(max-width:640px){
+  .glass-card{padding:20px 17px}
+  .result-actions{margin-top:16px}
+  .result-action{min-height:54px}
+  .safety-item{padding:12px 13px}
+  .medicine-info-section summary{padding:14px 2px}
+  .sources{margin-top:20px}
+}
