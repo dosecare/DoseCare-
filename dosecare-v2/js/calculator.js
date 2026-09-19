@@ -92,7 +92,37 @@
   }
   function updateRegimenUI(){const m=byId(medicineSelect.value),groups=conditionGroups(m?.regimens||[]);const r=updateFieldState(m,groups);recommendedDose.textContent=r?doseText(r):'Select a condition / regimen to view the dose';renderConcentrations(m,r);}
   medicines.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=m.name;medicineSelect.appendChild(o);});
+  let activeCategory='All';
+  const libraryList=$('medicine-library-list'),libraryCategories=$('library-categories'),libraryCount=$('library-count'),libraryEmpty=$('library-empty'),medicineSearch=$('medicine-search');
+  function renderLibrary(){
+    if(!libraryList||!libraryCategories)return;
+    const q=(medicineSearch?.value||'').trim().toLowerCase();
+    const categories=['All',...new Set(medicines.map(m=>m.category||'Other').sort())];
+    libraryCategories.innerHTML='';
+    categories.forEach(cat=>{
+      const b=document.createElement('button'); b.type='button'; b.className='library-category'+(cat===activeCategory?' active':''); b.textContent=cat;
+      b.setAttribute('role','tab'); b.setAttribute('aria-selected',cat===activeCategory?'true':'false');
+      b.addEventListener('click',()=>{activeCategory=cat;renderLibrary();}); libraryCategories.appendChild(b);
+    });
+    const filtered=medicines.filter(m=>{
+      const text=[m.name,m.genericName,m.category].filter(Boolean).join(' ').toLowerCase();
+      return (activeCategory==='All'||(m.category||'Other')===activeCategory)&&(!q||text.includes(q));
+    }).sort((a,b)=>a.name.localeCompare(b.name));
+    libraryList.innerHTML='';
+    filtered.forEach(m=>{
+      const b=document.createElement('button'); b.type='button'; b.className='medicine-library-item';
+      b.innerHTML='<strong>'+m.name+'</strong><span>'+(m.dosageForm||'Oral liquid')+'</span>';
+      b.addEventListener('click',()=>{medicineSelect.value=m.id;medicineSelect.dispatchEvent(new Event('change'));document.getElementById('dose-form')?.scrollIntoView({behavior:'smooth',block:'start'});});
+      libraryList.appendChild(b);
+    });
+    if(libraryCount)libraryCount.textContent=filtered.length+' medicine'+(filtered.length===1?'':'s');
+    if(libraryEmpty)libraryEmpty.hidden=filtered.length>0;
+    Array.from(medicineSelect.options).forEach((option,index)=>{if(index===0)return;const text=option.textContent.toLowerCase();option.hidden=!!q&&!text.includes(q);});
+    if(medicineSelect.value&&medicineSelect.options[medicineSelect.selectedIndex]?.hidden)medicineSelect.value='';
+  }
+
   medicineSelect.addEventListener('change',render);
+  medicineSearch?.addEventListener('input',renderLibrary);
   conditionSelect.addEventListener('change',updateRegimenUI);
   $('age-value')?.addEventListener('input',updateRegimenUI);
   $('age-unit')?.addEventListener('change',updateRegimenUI);
@@ -105,5 +135,6 @@
       const clinicalRegimen=(m.regimens||[]).find(candidate=>candidate?.type==='mg_per_kg_per_dose'&&regimenMatchesAge(candidate));
       if(clinicalRegimen) r=clinicalRegimen;
     }if(!m||!r){message.textContent='Select a treatment and required condition.';return;}const req=requirements(r);const index=Math.max(0,Number(concentrationSelect.value)||0);const rawFormulation=(m.formulations||[])[index];const f=m.id==='ors'||m.id==='macrogol'||m.id==='probiotics'?rawFormulation:normalizeFormulation(rawFormulation);if(m.id!=='ors'&&!f){message.textContent='The selected oral-liquid formulation is not configured correctly.';return;}if(r.allowedFormulations?.length&&!r.allowedFormulations.map(String).includes(String(f?.id))){message.textContent='The selected formulation is not compatible with this regimen.';return;}let result;if(m.id==='macrogol'&&window.DoseCareMacrogol){result=window.DoseCareMacrogol.calculate({medicine:m,regimen:r,weight:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});}else if(m.id==='probiotics'&&window.DoseCareProbiotic){result=window.DoseCareProbiotic.calculate({medicine:m,regimen:r,weight:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});}else if(m.id==='ors'||r.type==='volume_by_age'||r.type==='volume_per_kg'){result=window.DoseCareORS?.calculate({medicine:m,regimen:r,weight:req.weight?$('weight-value').value:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});if(!result){message.textContent='The ORS calculation engine is not available. Please refresh and try again.';return;}}else{result=window.DoseCareDosingEngine.calculate({medicine:m,regimen:r,weight:req.weight?$('weight-value').value:null,age:req.age?$('age-value').value:null,ageUnit:$('age-unit').value,formulation:f});}if(!result.ok){message.textContent=result.error;return;}const payload=JSON.stringify({medicine:m,formulation:f,...result});try{sessionStorage.setItem('dosecareV2Result',payload);}catch(error){console.warn('DoseCare sessionStorage unavailable:',error);}try{localStorage.setItem('dosecareV2Result',payload);}catch(error){console.warn('DoseCare localStorage unavailable:',error);}const encoded=encodeURIComponent(payload);window.location.assign(`./result.html#data=${encoded}`);});
+  renderLibrary();
   render();
 })();
