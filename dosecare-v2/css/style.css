@@ -1512,3 +1512,97 @@ form > .primary-button {
 .selected-medicine strong{font-size:.9rem}.selected-medicine>span:last-child{margin-left:auto;color:var(--muted);font-size:.72rem}
 .selected-medicine-label{font-size:.67rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 .legacy-treatment-field{margin-top:2px}
+
+/* =========================================
+   RESULT HERO — V2
+========================================= */
+.result-hero{
+  padding:clamp(24px,5vw,44px);
+  text-align:center;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(120,170,235,.14), transparent 48%),
+    linear-gradient(135deg, rgba(43,78,126,.42), rgba(7,25,52,.28));
+  border-color:rgba(220,230,242,.30);
+}
+.result-hero-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+  text-align:left;
+}
+.result-hero-top .eyebrow{margin:0}
+.result-hero-patient{
+  color:var(--muted);
+  font-size:.82rem;
+  white-space:nowrap;
+}
+.hero-dose{
+  margin:8px 0 2px;
+  font-size:clamp(4rem,14vw,7rem);
+  line-height:.95;
+  letter-spacing:-.035em;
+  color:#f0f3f7;
+  text-shadow:0 10px 35px rgba(0,0,0,.22);
+}
+.hero-frequency{
+  margin-top:13px;
+  color:#dbe3ed;
+  font-size:clamp(1.15rem,3.5vw,1.55rem);
+  line-height:1.3;
+  font-weight:700;
+}
+.hero-secondary{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:1rem;
+}
+.hero-meta{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:9px;
+  margin-top:28px;
+  text-align:left;
+}
+.hero-meta>div{
+  padding:12px 13px;
+  border:1px solid rgba(220,225,234,.13);
+  border-radius:15px;
+  background:rgba(5,18,40,.30);
+}
+.hero-meta span,
+.hero-support span{
+  display:block;
+  margin-bottom:5px;
+  color:var(--muted);
+  font-size:.73rem;
+  font-weight:700;
+}
+.hero-meta strong{
+  display:block;
+  line-height:1.35;
+}
+.hero-support{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-top:10px;
+  padding:13px 15px;
+  border-top:1px solid rgba(220,225,234,.12);
+  color:var(--muted);
+  text-align:left;
+}
+.hero-support span{margin:0}
+.hero-support strong{color:#e7e9ed}
+.calculation-card{
+  scroll-margin-top:20px;
+}
+@media(max-width:640px){
+  .result-hero-top{align-items:flex-start}
+  .result-hero-patient{font-size:.76rem}
+  .hero-meta{grid-template-columns:1fr}
+  .hero-dose{font-size:clamp(3.7rem,19vw,5.5rem)}
+  .hero-support{align-items:flex-start;flex-direction:column;gap:3px}
+}
