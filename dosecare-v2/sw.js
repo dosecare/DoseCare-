@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dosecare-v2-offline-v16';
+const CACHE_NAME = 'dosecare-v2-offline-v17';
 
 const CORE_ASSETS = [
   './',
@@ -12,6 +12,7 @@ const CORE_ASSETS = [
   './js/database-loader.js',
   './js/calculator.js',
   './js/dosing-engine.js',
+  './js/adapters.js',
   './js/macrogol-engine-adapter.js',
   './js/probiotic-engine-adapter.js',
   './js/ors-engine.js',
@@ -23,7 +24,6 @@ const CORE_ASSETS = [
   './icon.svg',
   './sw.js',
 
-  // Every active pediatric oral-liquid medicine used by the V2 loader.
   './data/paracetamol.js',
   './data/ibuprofen.js',
   './data/mefenamic-acid.js',
@@ -46,6 +46,16 @@ const CORE_ASSETS = [
   './data/cefaclor.js',
   './data/erythromycin.js',
   './data/metronidazole.js',
+  './data/oseltamivir.js',
+  './data/nystatin.js',
+  './data/fluconazole.js',
+  './data/acyclovir.js',
+  './data/ferrous-sulfate.js',
+  './data/cholecalciferol.js',
+  './data/levetiracetam.js',
+  './data/phenobarbital.js',
+  './data/albendazole.js',
+  './data/levothyroxine.js',
   './data/cetirizine.js',
   './data/loratadine.js',
   './data/desloratadine.js',
@@ -66,41 +76,58 @@ const CORE_ASSETS = [
   './data/hyoscine-butylbromide.js'
 ];
 
-self.addEventListener('install', event => {
+self.addEventListener('install', function (event) {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(CORE_ASSETS))
-      .then(() => self.skipWaiting())
-      .catch(error => {
+      .then(function (cache) {
+        return cache.addAll(CORE_ASSETS);
+      })
+      .then(function () {
+        return self.skipWaiting();
+      })
+      .catch(function (error) {
         console.error('DoseCare offline cache installation failed:', error);
         throw error;
       })
   );
 });
 
-self.addEventListener('activate', event => {
+self.addEventListener('activate', function (event) {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-    )).then(() => self.clients.claim())
+    caches.keys().then(function (keys) {
+      return Promise.all(
+        keys.filter(function (key) { return key !== CACHE_NAME; })
+          .map(function (key) { return caches.delete(key); })
+      );
+    }).then(function () {
+      return self.clients.claim();
+    })
   );
 });
 
-self.addEventListener('fetch', event => {
-  const request = event.request;
+self.addEventListener('fetch', function (event) {
+  var request = event.request;
   if (request.method !== 'GET') return;
 
+  var url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
   event.respondWith(
-    caches.match(request).then(cached => {
+    caches.match(request, { ignoreSearch: true }).then(function (cached) {
       if (cached) return cached;
 
-      return fetch(request).then(response => {
-        if (!response || response.status !== 200 || response.type === 'opaque') return response;
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+      return fetch(request).then(function (response) {
+        if (response && response.ok) {
+          var copy = response.clone();
+          caches.open(CACHE_NAME).then(function (cache) {
+            cache.put(request, copy);
+          });
+        }
         return response;
-      }).catch(() => {
-        if (request.mode === 'navigate') return caches.match('./index.html');
+      }).catch(function () {
+        if (request.mode === 'navigate') {
+          return caches.match('./calculator.html');
+        }
         return new Response('', { status: 503, statusText: 'Offline' });
       });
     })
