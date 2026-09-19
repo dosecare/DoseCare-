@@ -12,7 +12,6 @@ const CORE_ASSETS = [
   './js/database-loader.js',
   './js/calculator.js',
   './js/dosing-engine.js',
-  './js/adapters.js',
   './js/macrogol-engine-adapter.js',
   './js/probiotic-engine-adapter.js',
   './js/ors-engine.js',
