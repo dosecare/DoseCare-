@@ -29,7 +29,7 @@ DoseCareV2Database.register({
       type: 'scheduled',
       condition: 'Treatment of influenza',
       minAgeWeeks: 2,
-      maxAgeMonths: 12,
+      maxAgeMonths: 11.999,
       frequency: 2,
       frequencyText: 'Twice daily for 5 days',
       requiresAge: true,
@@ -49,10 +49,10 @@ DoseCareV2Database.register({
       maxAgeYears: 12,
       frequencyText: 'Twice daily for 5 days',
       table: [
-        { minLb: 0, maxLb: 33.0693, minAgeYears: 1, maxAgeYears: 12, doseMl: 5 },
-        { minLb: 33.2896, maxLb: 50.7063, minAgeYears: 1, maxAgeYears: 12, doseMl: 7.5 },
-        { minLb: 50.9272, maxLb: 88.1849, minAgeYears: 1, maxAgeYears: 12, doseMl: 10 },
-        { minLb: 88.4053, maxLb: 999, minAgeYears: 1, maxAgeYears: 12, doseMl: 12.5 }
+        { minLb: 0, maxLb: 33.2897, minAgeYears: 1, maxAgeYears: 12, doseMl: 5 },
+        { minLb: 33.2898, maxLb: 50.9267, minAgeYears: 1, maxAgeYears: 12, doseMl: 7.5 },
+        { minLb: 50.9268, maxLb: 88.4053, minAgeYears: 1, maxAgeYears: 12, doseMl: 10 },
+        { minLb: 88.4054, maxLb: 999, minAgeYears: 1, maxAgeYears: 12, doseMl: 12.5 }
       ],
       noMatchingBandMessage:
         'The entered age and/or weight does not match a configured oseltamivir labeled dose band. Verify the product label or consult a clinician.'
