@@ -1711,3 +1711,33 @@ form > .primary-button {
   color:var(--muted);
   line-height:1.65;
 }
+
+.result-actions{
+  display:grid;
+  grid-template-columns:1fr 1.35fr;
+  gap:10px;
+  margin:18px 0 8px;
+}
+.result-action{
+  min-height:52px;
+  padding:13px 18px;
+  border:1px solid rgba(220,225,234,.16);
+  border-radius:15px;
+  font:inherit;
+  font-weight:700;
+  cursor:pointer;
+  transition:transform .18s ease,background .18s ease,border-color .18s ease;
+}
+.result-action:hover{transform:translateY(-1px)}
+.result-action.secondary{
+  background:rgba(8,24,48,.45);
+  color:#dbe3ed;
+}
+.result-action.primary{
+  background:rgba(83,112,157,.42);
+  color:#f0f3f7;
+  border-color:rgba(220,230,242,.25);
+}
+@media(max-width:640px){
+  .result-actions{grid-template-columns:1fr}
+}
