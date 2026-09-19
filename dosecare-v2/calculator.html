@@ -23,8 +23,9 @@
       <p id="library-empty" class="library-empty" hidden>No medicines match your search.</p>
     </section>
     <form id="dose-form" novalidate>
-      <label class="field medicine-search-field"><span>Search medicine</span><input id="medicine-search" type="search" autocomplete="off" placeholder="Type the first letters of a medicine…"></label>
-      <label class="field"><span>Treatment</span><select id="medicine-select" required><option value="">Select treatment</option></select></label>
+      <div class="medicine-search-wrap"><span class="search-icon" aria-hidden="true">⌕</span><input id="medicine-search" type="search" autocomplete="off" placeholder="Search medicine…" aria-label="Search medicine"><button id="clear-medicine-search" type="button" aria-label="Clear search" hidden>×</button><div id="medicine-search-results" class="medicine-search-results" hidden></div></div>
+      <div class="selected-medicine" id="selected-medicine" hidden></div>
+      <label class="field legacy-treatment-field"><span>Treatment</span><select id="medicine-select" required><option value="">Select treatment</option></select></label>
       <div id="condition-field" class="field" hidden><label for="condition-select">Condition</label><select id="condition-select"></select></div>
       <div class="dose-preview glass-field"><span>Recommended pediatric dose</span><strong id="recommended-dose">Select a treatment first</strong></div>
       <div class="grid-2">
