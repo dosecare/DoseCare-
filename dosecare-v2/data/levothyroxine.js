@@ -11,7 +11,7 @@ window.DoseCareV2Database?.register({
     {
       id: '20mcg-per-ml',
       display: '100 mcg/5 mL (20 mcg/mL)',
-      concentration: { amount: 20, volume: 1, unit: 'mcg/mL' }
+      concentration: { amount: 0.02, volume: 1, unit: 'mg/mL' }
     }
   ],
   regimens: [
