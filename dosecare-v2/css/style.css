@@ -1682,3 +1682,32 @@ form > .primary-button {
 .calculation-details[open] summary::after{content:'−'}
 .calculation-details .calculation-list{padding:12px}
 @media(max-width:640px){.calculation-summary{grid-template-columns:1fr}}
+
+.medicine-info-section{
+  margin-top:10px;
+  border-top:1px solid rgba(220,225,234,.10);
+}
+.medicine-info-section summary{
+  cursor:pointer;
+  list-style:none;
+  padding:15px 4px;
+  color:#e7e9ed;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.medicine-info-section summary::-webkit-details-marker{display:none}
+.medicine-info-section summary::after{
+  content:"+";
+  color:var(--muted);
+  font-size:1.2rem;
+  font-weight:400;
+}
+.medicine-info-section[open] summary::after{content:"−"}
+.medicine-info-section p{
+  margin:0 4px 15px;
+  color:var(--muted);
+  line-height:1.65;
+}
