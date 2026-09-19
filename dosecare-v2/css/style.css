@@ -1268,6 +1268,23 @@ form > .primary-button {
 
 
 /* =========================================
+   SOURCES & REFERENCES — V2
+========================================= */
+.sources-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:4px}
+.sources-heading .eyebrow{margin:0 0 5px}
+.sources-heading h2{font-size:clamp(1.25rem,4vw,1.65rem);line-height:1.15}
+.sources-count{display:grid;place-items:center;min-width:34px;height:34px;padding:0 9px;border:1px solid rgba(220,225,234,.2);border-radius:999px;background:rgba(220,225,234,.07);color:#e7e9ed;font-size:.8rem;font-weight:700}
+.sources-intro{margin:10px 0 14px;color:var(--muted);font-size:.84rem;line-height:1.5}
+.reference-list{display:grid;gap:8px}
+.reference-item{padding:14px 15px;border:1px solid rgba(220,225,234,.12);border-radius:15px;background:rgba(7,24,49,.30);transition:border-color .2s ease,background .2s ease,transform .2s ease}
+.reference-item:hover{border-color:rgba(220,225,234,.30);background:rgba(25,55,92,.40);transform:translateY(-1px)}
+.reference-top{display:flex!important;align-items:center;gap:8px;margin-bottom:7px}
+.reference-top small{color:var(--muted);font-size:.68rem;letter-spacing:.08em;font-weight:700}
+.reference-top em{font-style:normal;color:#d9e0e9;font-size:.72rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.reference-top b{margin-left:auto;color:#dce3ec;font-size:1rem;line-height:1}
+.reference-item strong{display:block;color:#eef1f5;line-height:1.45}
+
+/* =========================================
    MOBILE
 ========================================= */
 
